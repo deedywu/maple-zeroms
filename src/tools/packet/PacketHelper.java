@@ -187,7 +187,6 @@ public class PacketHelper {
 //            mplew.writeAsciiString(chr.getMarriageRing(false).getPartnerName(), 13);
 //        }
 
-
     }
 
     public static void addInventoryInfo(MaplePacketLittleEndianWriter mplew, MapleCharacter chr) {
@@ -369,7 +368,6 @@ public class PacketHelper {
          * mplew.writeInt(invB != null ? invB.getItemId() : 0);
          * mplew.writeInt(invC != null ? invC.getItemId() : 0);
          */
-
         for (int i = 0; i < 3; i++) {
             if (channelserver) {
                 mplew.writeInt(chr.getPet(i) != null ? chr.getPet(i).getPetItemId() : 0);
@@ -665,11 +663,11 @@ public class PacketHelper {
         mplew.writeShort(0);
         // mplew.write(0);
         // mplew.write(active ? pet.getSummoned() ? pet.getSummonedValue() : 0 : 0);//显示装备栏上宠物的位置
-       /*
+        /*
          * for (int i = 0; i < 4; i++) { mplew.write(0); //0x40 before, changed
          * to 0? }
          */
-        /*
+ /*
          * if (pet.getPetItemId() == 5000054) { mplew.writeInt(0);
          * mplew.writeInt(pet.getSecondsLeft() > 0 ? pet.getSecondsLeft() : 0);
          * //in seconds, 3600 = 1 hr. mplew.writeShort(0); } else {
@@ -723,7 +721,7 @@ public class PacketHelper {
          * if (ring) { mplew.write(1); mplew.writeInt(equip.getUniqueId());
          * mplew.writeInt(0); }
          */
-        /*
+ /*
          * if (!equipped) { mplew.write(0); }
          */
         mplew.write(item.getType());

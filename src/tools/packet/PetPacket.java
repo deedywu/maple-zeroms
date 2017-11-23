@@ -45,11 +45,11 @@ public class PetPacket {
             System.out.println("updatePet--------------------");
         }
         mplew.writeShort(SendPacketOpcode.MODIFY_INVENTORY_ITEM.getValue());
-        
+
         //mplew.writeShort(pet.getInventoryPosition());
         mplew.write(pet.getInventoryPosition());
         mplew.write(2);
-        
+
         mplew.write(3);
         mplew.write(5);
         mplew.writeShort(pet.getInventoryPosition());

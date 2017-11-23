@@ -22,8 +22,6 @@ package tools.data.output;
 
 import org.apache.mina.core.buffer.IoBuffer;
 
-
-
 /**
  * Uses a <code>org.apache.mina.common.ByteBuffer</code> to implement a generic
  * little-endian sequence of bytes.

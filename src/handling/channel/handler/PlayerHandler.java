@@ -110,7 +110,7 @@ public class PlayerHandler {
         }
     }
 
-  /*  public static void ChangeKeymap(final SeekableLittleEndianAccessor slea, final MapleCharacter chr) {
+    /*  public static void ChangeKeymap(final SeekableLittleEndianAccessor slea, final MapleCharacter chr) {
 
         if (slea.available() > 8 && chr != null) { // else = pet auto pot
             chr.updateTick(slea.readInt());
@@ -146,8 +146,8 @@ public class PlayerHandler {
             }
         }
     }
-*/
-      public static void ChangeKeymap(LittleEndianAccessor slea, MapleCharacter chr) {
+     */
+    public static void ChangeKeymap(LittleEndianAccessor slea, MapleCharacter chr) {
         if ((slea.available() > 8) && (chr != null)) {
             slea.skip(4);
             int numChanges = slea.readInt();
@@ -249,15 +249,13 @@ public class PlayerHandler {
                     chr.dropMessage(1, "你可能不能添加此地图.");
                 }
             }
-        } else {
-            if (addrem == 0) {
-                chr.deleteFromRegRocks(slea.readInt());
-            } else if (addrem == 1) {
-                if (!FieldLimitType.VipRock.check(chr.getMap().getFieldLimit())) {
-                    chr.addRegRockMap();
-                } else {
-                    chr.dropMessage(1, "你可能不能添加此地图.");
-                }
+        } else if (addrem == 0) {
+            chr.deleteFromRegRocks(slea.readInt());
+        } else if (addrem == 1) {
+            if (!FieldLimitType.VipRock.check(chr.getMap().getFieldLimit())) {
+                chr.addRegRockMap();
+            } else {
+                chr.dropMessage(1, "你可能不能添加此地图.");
             }
         }
         c.getSession().write(MTSCSPacket.getTrockRefresh(chr, vip == 1, addrem == 3));
@@ -459,12 +457,10 @@ public class PlayerHandler {
                     mpattack = stats.getMp() - 1;
                 }
                 chr.addMPHP(-damage, -mpattack);
+            } else if (isDeadlyAttack) {
+                chr.addMPHP(stats.getHp() > 1 ? -(stats.getHp() - 1) : 0, stats.getMp() > 1 ? -(stats.getMp() - 1) : 0);
             } else {
-                if (isDeadlyAttack) {
-                    chr.addMPHP(stats.getHp() > 1 ? -(stats.getHp() - 1) : 0, stats.getMp() > 1 ? -(stats.getMp() - 1) : 0);
-                } else {
-                    chr.addMPHP(-damage, -mpattack);
-                }
+                chr.addMPHP(-damage, -mpattack);
             }
             chr.handleBattleshipHP(-damage);
         }
@@ -571,7 +567,7 @@ public class PlayerHandler {
     }
 
     public static final void SkillEffect(final SeekableLittleEndianAccessor slea, final MapleCharacter chr) {
-        
+
         final int skillId = slea.readInt();
         final byte level = slea.readByte();
         final byte flags = slea.readByte();
@@ -668,8 +664,8 @@ public class PlayerHandler {
                     final int mountid = MapleStatEffect.parseMountInfo(c.getPlayer(), skill.getId());
                     if (mountid != 0 && mountid != GameConstants.getMountItem(skill.getId()) && !c.getPlayer().isGM() && c.getPlayer().getBuffedValue(MapleBuffStat.MONSTER_RIDING) == null && c.getPlayer().getInventory(MapleInventoryType.EQUIPPED).getItem((byte) -118) == null) {
                         if (!GameConstants.isMountItemAvailable(mountid, c.getPlayer().getJob())) {
-                         //   c.getSession().write(MaplePacketCreator.enableActions());
-                       //     return;
+                            //   c.getSession().write(MaplePacketCreator.enableActions());
+                            //     return;
                         }
                     }
                     effect.applyTo(c.getPlayer(), pos);
@@ -793,7 +789,7 @@ public class PlayerHandler {
                 if (numFinisherOrbs == 0) {
                     return;
                 }
-               maxdamage = 199999; // FIXME reenable damage calculation for finishers
+                maxdamage = 199999; // FIXME reenable damage calculation for finishers
             }
         }
         chr.checkFollow();
@@ -1069,7 +1065,7 @@ public class PlayerHandler {
                 }
                 if (healHP > check_hp * 2 && healHP > 20) {
                     chr.getCheatTracker().registerOffense(CheatingOffense.回复过多HP, String.valueOf(healHP) + " 服务器:" + check_hp);
-                  //  healHP = check_hp;
+                    //  healHP = check_hp;
                 }
                 chr.addHP(healHP);
             }
@@ -1078,7 +1074,7 @@ public class PlayerHandler {
             if (healMP != 0) {
                 if (healMP > check_mp * 2 && healMP > 20) {
                     chr.getCheatTracker().registerOffense(CheatingOffense.回复过多MP, String.valueOf(healMP) + "服务器:" + check_mp);
-                  //  healMP = check_mp;
+                    //  healMP = check_mp;
                 }
                 chr.addMP(healMP);
             }
@@ -1094,7 +1090,6 @@ public class PlayerHandler {
         final Point Original_Pos = chr.getPosition(); // 4 bytes Added on v.80 MSEA
         slea.skip(33);
 
-       
         List<LifeMovementFragment> res;
         try {
             res = MovementParse.parseMovement(slea, 1);
@@ -1105,7 +1100,7 @@ public class PlayerHandler {
 
         if (res != null && c.getPlayer().getMap() != null) { // TODO more validation of input data
             if (slea.available() < 11 || slea.available() > 26) {
-              //  System.out.println("slea.available != 11-26 (movement parsing error)\n" + slea.toString(true));
+                //  System.out.println("slea.available != 11-26 (movement parsing error)\n" + slea.toString(true));
                 return;
             }
             final List<LifeMovementFragment> res2 = new ArrayList<LifeMovementFragment>(res);
@@ -1256,7 +1251,7 @@ public class PlayerHandler {
 
                     chr.changeMap(to, to.getPortal(0));
                 } else {
-                                        chr.getStat().setHp((short) 50);
+                    chr.getStat().setHp((short) 50);
                     MapleMap to = chr.getMap().getReturnMap();
                     if (to == null) {
                         chr.setHp(50);
@@ -1354,12 +1349,10 @@ public class PlayerHandler {
                     final MapleMap to = ChannelServer.getInstance(c.getChannel()).getMapFactory().getMap(targetid);
                     chr.changeMap(to, to.getPortal(0));
                 }
+            } else if (portal != null) {
+                portal.enterPortal(c);
             } else {
-                if (portal != null) {
-                    portal.enterPortal(c);
-                } else {
-                    c.getSession().write(MaplePacketCreator.enableActions());
-                }
+                c.getSession().write(MaplePacketCreator.enableActions());
             }
         }
     }
@@ -1422,7 +1415,7 @@ public class PlayerHandler {
     //MapleCharacter.UpdateCharMessageZone();
     //chr.UpdateCharMessageZone();
     //System.err.println("SetCharMessage");
-        /*
+    /*
      * } else if (type == 1) { // 表情 int expression = slea.readByte();
      * c.getPlayer().setexpression(expression);
      * System.err.println("Expression"); } else if (type == 2) { // 生日及星座 int
@@ -1433,7 +1426,7 @@ public class PlayerHandler {
      * System.err.println("Constellation"); }
      */
     //}
-        /*
+    /*
      * public String getcharmessage(final MapleClient c) {
      *
      * return c.getPlayer().getcharmessage();

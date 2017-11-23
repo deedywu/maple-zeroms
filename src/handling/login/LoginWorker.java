@@ -79,20 +79,17 @@ public class LoginWorker {
 //                    c.getSession().close();
                 }
             }, 10 * 60 * 10000));
+        } else if (c.getGender() == 10) {
+            c.getSession().write(LoginPacket.getGenderNeeded(c));
+
         } else {
-            if (c.getGender() == 10) {
-                c.getSession().write(LoginPacket.getGenderNeeded(c));
+            c.getSession().write(LoginPacket.getAuthSuccessRequest(c));
+            c.getSession().write(LoginPacket.getServerList(0, LoginServer.getServerName(), LoginServer.getLoad()));
+            c.getSession().write(LoginPacket.getEndOfServerList());
 
-            } else {
-                c.getSession().write(LoginPacket.getAuthSuccessRequest(c));
-                c.getSession().write(LoginPacket.getServerList(0, LoginServer.getServerName(), LoginServer.getLoad()));
-                c.getSession().write(LoginPacket.getEndOfServerList());
-
-            }
-           /* c.getSession().write(LoginPacket.getLoginFailed(7));
+        } /* c.getSession().write(LoginPacket.getLoginFailed(7));
 
             System.out.println("登录Z");
             return;*/
-        }
     }
 }

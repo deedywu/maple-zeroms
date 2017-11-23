@@ -38,7 +38,7 @@ public class LoginInformationProvider {
         }
         return false;
     }
-  /*  public static enum JobType {
+    /*  public static enum JobType {
 
         反抗者(0, "Resistance", 3000, 931000000),
         冒险家(1, "", 0, 0),

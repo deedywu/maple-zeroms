@@ -70,7 +70,7 @@ public class MonsterCarnivalHandler {
                 c.getPlayer().getMap().broadcastMessage(MonsterCarnivalPacket.playerSummoned(c.getPlayer().getName(), tab, num));
                 c.getSession().write(MaplePacketCreator.enableActions());
             } else {
-               // c.getPlayer().getMap().broadcastMessage(MonsterCarnivalPacket.playerSummoned1(c.getPlayer().getName(), tab, num));
+                // c.getPlayer().getMap().broadcastMessage(MonsterCarnivalPacket.playerSummoned1(c.getPlayer().getName(), tab, num));
                 c.getPlayer().dropMessage(5, "你不能再召唤怪物了.");
                 c.getSession().write(MaplePacketCreator.enableActions());
             }
@@ -117,7 +117,7 @@ public class MonsterCarnivalHandler {
                 c.getPlayer().getMap().broadcastMessage(MonsterCarnivalPacket.playerSummoned(c.getPlayer().getName(), tab, num));
                 c.getSession().write(MaplePacketCreator.enableActions());
             } else {
-               // c.getPlayer().getMap().broadcastMessage(MonsterCarnivalPacket.playerSummoned1(c.getPlayer().getName(), tab, num));
+                // c.getPlayer().getMap().broadcastMessage(MonsterCarnivalPacket.playerSummoned1(c.getPlayer().getName(), tab, num));
                 c.getPlayer().dropMessage(5, "发生错误B.");
                 c.getSession().write(MaplePacketCreator.enableActions());
             }
@@ -137,7 +137,7 @@ public class MonsterCarnivalHandler {
                 c.getPlayer().getMap().broadcastMessage(MonsterCarnivalPacket.playerSummoned(c.getPlayer().getName(), tab, num));
                 c.getSession().write(MaplePacketCreator.enableActions());
             } else {
-               // c.getPlayer().getMap().broadcastMessage(MonsterCarnivalPacket.playerSummoned1(c.getPlayer().getName(), tab, num));
+                // c.getPlayer().getMap().broadcastMessage(MonsterCarnivalPacket.playerSummoned1(c.getPlayer().getName(), tab, num));
                 c.getPlayer().dropMessage(5, "你不能再召唤了.");
                 c.getSession().write(MaplePacketCreator.enableActions());
             }

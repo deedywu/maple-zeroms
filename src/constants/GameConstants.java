@@ -71,9 +71,8 @@ public class GameConstants {
     public static final String[] RESERVED = {"Rental"};
     private static final int[] mobHpVal = {0, 15, 20, 25, 35, 50, 65, 80, 95, 110, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 405, 435, 465, 495, 525, 580, 650, 720, 790, 900, 990, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 2400, 2520, 2640, 2760, 2880, 3000, 3200, 3400, 3600, 3800, 4000, 4300, 4600, 4900, 5200, 5500, 5900, 6300, 6700, 7100, 7500, 8000, 8500, 9000, 9500, 10000, 11000, 12000, 13000, 14000, 15000, 17000, 19000, 21000, 23000, 25000, 27000, 29000, 31000, 33000, 35000, 37000, 39000, 41000, 43000, 45000, 47000, 49000, 51000, 53000, 55000, 57000, 59000, 61000, 63000, 65000, 67000, 69000, 71000, 73000, 75000, 77000, 79000, 81000, 83000, 85000, 89000, 91000, 93000, 95000, 97000, 99000, 101000, 103000, 105000, 107000, 109000, 111000, 113000, 115000, 118000, 120000, 125000, 130000, 135000, 140000, 145000, 150000, 155000, 160000, 165000, 170000, 175000, 180000, 185000, 190000, 195000, 200000, 205000, 210000, 215000, 220000, 225000, 230000, 235000, 240000, 250000, 260000, 270000, 280000, 290000, 300000, 310000, 320000, 330000, 340000, 350000, 360000, 370000, 380000, 390000, 400000, 410000, 420000, 430000, 440000, 450000, 460000, 470000, 480000, 490000, 500000, 510000, 520000, 530000, 550000, 570000, 590000, 610000, 630000, 650000, 670000, 690000, 710000, 730000, 750000, 770000, 790000, 810000, 830000, 850000, 870000, 890000, 910000};
     public static int 单机IP = 1;
-     public static final int 每日签到系统_签到记录 = 7;
+    public static final int 每日签到系统_签到记录 = 7;
     public static final int 每日签到系统_当前时间 = 9;
-    
 
     public static int getExpNeededForLevel(final int level) {
         if (level < 0 || level >= exp.length) {
@@ -147,9 +146,9 @@ public class GameConstants {
     public static boolean isLinkedAranSkill(final int id) {
         return getLinkedAranSkill(id) != id;
     }
-    
-    public static int getMountS(int s){
-       // int s = Randomizer.nextInt(316);
+
+    public static int getMountS(int s) {
+        // int s = Randomizer.nextInt(316);
         switch (s) {
             case 1:
                 return 1932003;
@@ -794,7 +793,7 @@ public class GameConstants {
             default:
                 return 1930001;
         }
-        
+
     }
 
     public static int getLinkedAranSkill(final int id) {
@@ -1024,6 +1023,7 @@ public class GameConstants {
         }
         return (itemId / 100 == 20491) || (itemId == 2040126);
     }
+
     public static boolean is强化卷轴(int scrollId) {
         return scrollId / 100 == 20493;
     }
@@ -1031,7 +1031,8 @@ public class GameConstants {
     public static boolean is潜能卷轴(int scrollId) {
         return (scrollId / 100 == 20494) || (scrollId / 100 == 20497) || (scrollId == 5534000) || (scrollId == 2049405);
     }
-     public static boolean is特殊卷轴(int scrollId) {
+
+    public static boolean is特殊卷轴(int scrollId) {
         switch (scrollId) {
             case 2040727:
             case 2041058:
@@ -1047,6 +1048,7 @@ public class GameConstants {
         }
         return false;
     }
+
     public static boolean isCleanSlate(int itemId) {
         return itemId / 100 == 20490;
     }
@@ -1117,30 +1119,30 @@ public class GameConstants {
             case 1072747:
             //Capes    
             case 1102481:
-            case 1102482:    
-            case 1102483:    
-            case 1102484:    
-            case 1102485:    
+            case 1102482:
+            case 1102483:
+            case 1102484:
+            case 1102485:
             //Belts
-            case 1132174:    
+            case 1132174:
             case 1132175:
             case 1132176:
             case 1132177:
-            case 1132178:   
-         //   case 1082543: Warrior Gloves
-         //   case 1082544: Mage Gloves
-         //   case 1082545: Bowman Gloves
-         //   case 1082546: Thief Gloves
-         //   case 1082547: Pirate Gloves       
+            case 1132178:
+                //   case 1082543: Warrior Gloves
+                //   case 1082544: Mage Gloves
+                //   case 1082545: Bowman Gloves
+                //   case 1082546: Thief Gloves
+                //   case 1082547: Pirate Gloves       
                 //Gloves Are not in 144.3 so they're commented out
                 return true;
             default:
                 return false;
         }
     }
-    
+
     public static boolean isNovaGear(final int itemId) {
-            switch (itemId) {
+        switch (itemId) {
             //Boots
             case 1072737: // Nova Hyades Boots
             case 1072738: // Nova Hermes Boots
@@ -1161,12 +1163,12 @@ public class GameConstants {
             case 1132171: // Nova Charon Belt
             case 1132172: // Nova Lycaon Belt
             case 1132173: // Nova Altair Belt
-                    return true;
+                return true;
             default:
                 return false;
         }
     }
-    
+
     public static boolean isSpecialShield(final int itemid) {
         return itemid / 1000 == 1098 || itemid / 1000 == 1099 || itemid / 10000 == 135;
     }
@@ -1238,7 +1240,7 @@ public class GameConstants {
     public static boolean isCustomQuest(final int id) {
         return id > 99999;
     }
-   
+
     public static int getTaxAmount(final int meso) {
         if (meso >= 100000000) {
             return (int) Math.round(0.06 * meso);
@@ -1744,15 +1746,15 @@ public class GameConstants {
         1012140, 10,
         1012141, 10
     };
-    public static int[] fishingReward = {  //钓鱼物品
+    public static int[] fishingReward = { //钓鱼物品
         0, 30, // Meso
         1, 10, // EXP
         // 1302021, 5, // Pico Pico Hammer
         // 1072238, 1, // Voilet Snowshoe
         // 1072239, 1, // Yellow Snowshoe
-         2049100, 1, // Chaos Scroll
-         2049301, 1, // Equip Enhancer Scroll
-         2049401, 1, // Potential Scroll
+        2049100, 1, // Chaos Scroll
+        2049301, 1, // Equip Enhancer Scroll
+        2049401, 1, // Potential Scroll
         // 1302000, 3, // Sword
         // 1442011, 1, // Surfboard
         //  4000517, 8, // Golden Fish
@@ -1834,63 +1836,63 @@ public class GameConstants {
         1032017, 5, // Salmon (183cm)
         1032018, 5, // Salmon (227cm)
         1032019, 5, // Salmon (288cm)
-       1032022, 5,// Pot
-        2044901,5,
-        2044902,5,
-        2044802,5,
-        2044801,5,
-        2044702,5,
-        2044701,5,
-        2044602,5,
-        2044601,5,
-        2044501,5,
-        2044502,5,
-        2044402,5,
-        2044401,5,
-        2044302,5,
-        2044301,5,
-        2044201,5,
-        2044202,5,
-        2044102,5,
-        2044101,5,
-        2044002,5,
-        2044001,5,
-        2043802,5,
-        2043801,5,
-        2043702,5,
-        2043701,5,
-        2043302,5,
-        2043301,5,
-        2043202,5,
-        2043201,5,
-        2043102,5,
-        2043101,5,
-        2043002,5,
-        2043001,5,
-        2040801,5,
-        2040814,5,
-        2040815,5,
-        2040816,5,
-        2040817,5,
-        2040802,5,
-        2040915,5,
-        2040914,5,
-        2040805,5,
-        2040804,5,
-        2040532,5,
-        2040534,5,
-        2040517,5,
-        2040516,5,
-        2040514,5,
-        2040513,5,
-        2040502,5,
-        2040501,5,
-        2040323,5,
-        2040321,5,
-        2040317,5,
-        2040316,5,
-        2040302,5,
-        2040301,5
+        1032022, 5,// Pot
+        2044901, 5,
+        2044902, 5,
+        2044802, 5,
+        2044801, 5,
+        2044702, 5,
+        2044701, 5,
+        2044602, 5,
+        2044601, 5,
+        2044501, 5,
+        2044502, 5,
+        2044402, 5,
+        2044401, 5,
+        2044302, 5,
+        2044301, 5,
+        2044201, 5,
+        2044202, 5,
+        2044102, 5,
+        2044101, 5,
+        2044002, 5,
+        2044001, 5,
+        2043802, 5,
+        2043801, 5,
+        2043702, 5,
+        2043701, 5,
+        2043302, 5,
+        2043301, 5,
+        2043202, 5,
+        2043201, 5,
+        2043102, 5,
+        2043101, 5,
+        2043002, 5,
+        2043001, 5,
+        2040801, 5,
+        2040814, 5,
+        2040815, 5,
+        2040816, 5,
+        2040817, 5,
+        2040802, 5,
+        2040915, 5,
+        2040914, 5,
+        2040805, 5,
+        2040804, 5,
+        2040532, 5,
+        2040534, 5,
+        2040517, 5,
+        2040516, 5,
+        2040514, 5,
+        2040513, 5,
+        2040502, 5,
+        2040501, 5,
+        2040323, 5,
+        2040321, 5,
+        2040317, 5,
+        2040316, 5,
+        2040302, 5,
+        2040301, 5
     };
 
     public static boolean isDragonItem(int itemId) {
@@ -2027,7 +2029,7 @@ public class GameConstants {
 
     //if only there was a way to find in wz files -.-
     public static boolean isEffectRing(int itemid) {
-        
+
         return isFriendshipRing(itemid) || isCrushRing(itemid) || isMarriageRing(itemid);
     }
 
@@ -2036,7 +2038,7 @@ public class GameConstants {
             case 1112800:
             case 1112801:
             case 1112802:
-          //  case 1112804:
+            //  case 1112804:
             case 1112810: //new
             case 1112811: //new, doesnt work in friendship?
             case 1112812: //new, im ASSUMING it's friendship cuz of itemID, not sure.
@@ -2045,7 +2047,7 @@ public class GameConstants {
 
             case 1112816:
             case 1112817:
-           
+
                 return true;
         }
         return false;
@@ -2570,10 +2572,11 @@ public class GameConstants {
     public static boolean is周年庆卷轴(int itemId) {
         return itemId / 1000 == 2046;
     }
-    
+
     public static int is周年庆卷轴成功率(int itemId) {
-        return ((itemId == 2046308) || (itemId == 2046309) || (itemId == 2046213) || (itemId == 2046214) || (itemId == 2046006) || (itemId == 2046007) || (itemId == 2046025) || (itemId == 2046026) || ((itemId >= 2046106) && (itemId <= 2046107))) ? 20 : ((itemId == 2046008) || (itemId == 2046009) || (itemId == 2046219) || (itemId == 2046220) || (itemId == 2046310) || (itemId == 2046311)) ? 50: ((itemId == 2043108) || (itemId == 2043208) || (itemId == 2043308) || (itemId == 2043405) || (itemId == 2043708) || (itemId == 2043808) || (itemId == 2044008) || (itemId == 2044108) || (itemId == 2044208) || (itemId == 2044308)) ? 100: ((itemId == 2044408) || (itemId == 2044508) || (itemId == 2044608) || (itemId == 2044708) || (itemId == 2044810) || (itemId == 2044905)) ? 40: 1;
+        return ((itemId == 2046308) || (itemId == 2046309) || (itemId == 2046213) || (itemId == 2046214) || (itemId == 2046006) || (itemId == 2046007) || (itemId == 2046025) || (itemId == 2046026) || ((itemId >= 2046106) && (itemId <= 2046107))) ? 20 : ((itemId == 2046008) || (itemId == 2046009) || (itemId == 2046219) || (itemId == 2046220) || (itemId == 2046310) || (itemId == 2046311)) ? 50 : ((itemId == 2043108) || (itemId == 2043208) || (itemId == 2043308) || (itemId == 2043405) || (itemId == 2043708) || (itemId == 2043808) || (itemId == 2044008) || (itemId == 2044108) || (itemId == 2044208) || (itemId == 2044308)) ? 100 : ((itemId == 2044408) || (itemId == 2044508) || (itemId == 2044608) || (itemId == 2044708) || (itemId == 2044810) || (itemId == 2044905)) ? 40 : 1;
     }
+
     public static int getSuccessTablet(final int scrollId, final int level) {
         if (scrollId % 1000 / 100 == 2) { //2047_2_00 = armor, 2047_3_00 = accessory
             switch (level) {
@@ -3543,15 +3546,15 @@ public class GameConstants {
         }
         return mobHpVal[level];
     }
-    
+
     public static final List<Balloon> lBalloon = new ArrayList<>();
 
     public static List<Balloon> getBalloons() {
-         //Point 0,0 Coordinates: 232, 107
-         //Point 96,0 Coordinates: 328, 107
+        //Point 0,0 Coordinates: 232, 107
+        //Point 96,0 Coordinates: 328, 107
         if (lBalloon.isEmpty()) {
-           lBalloon.add(new Balloon(ServerProperties.getProperty("ZeroMS.WorldName")+ "冒险岛\r\n【超强独创，修复完美，欢迎各位玩家入驻】---!", 236, 122));
-           // lBalloon.add(new Balloon("蓝蜗牛制作!", 396, 276));
+            lBalloon.add(new Balloon(ServerProperties.getProperty("ZeroMS.WorldName") + "冒险岛\r\n【超强独创，修复完美，欢迎各位玩家入驻】---!", 236, 122));
+            // lBalloon.add(new Balloon("蓝蜗牛制作!", 396, 276));
             //lBalloon.add(new Balloon(ServerProperties.getProperty("tms.WorldName")+ "冒险岛\r\n【守候是最长情的告白--蓝蜗牛】!", 96, 243));
 //            lBalloon.add(new Balloon(ServerProperties.getProperty("tms.WorldName")+ "冒险岛\r\n【就是牛就是屌】!", 96, 173));
 //            lBalloon.add(new Balloon(ServerProperties.getProperty("tms.WorldName")+ "冒险岛\r\n【就是牛就是屌】!", 96, 113));
@@ -3574,7 +3577,7 @@ public class GameConstants {
 //            lBalloon.add(new Balloon(ServerProperties.getProperty("tms.WorldName")+ "冒险岛\r\n【就是牛就是屌】!", 496, 293));
         }
         return lBalloon;
-    } 
+    }
 
     public static boolean isMarriageRing(int itemId) {
         switch (itemId) {
@@ -3597,7 +3600,7 @@ public class GameConstants {
             case 1112319:
             case 1112320:
             case 1112803:
-         //   case 1112804:
+            //   case 1112804:
             case 1112806:
             case 1112807:
             case 1112808:
@@ -3628,7 +3631,7 @@ public class GameConstants {
         double defRange = ((base + rangeInc) * (base + rangeInc));// 膀娄絛瞅
         if (def != null) {
             // 璸衡絛瞅((maxX * maxX) + (maxY * maxY)) + (м絛瞅 * м絛瞅))
-        //    defRange += def.getMaxDistanceSq() + (def.getRange() * def.getRange());
+            //    defRange += def.getMaxDistanceSq() + (def.getRange() * def.getRange());
             if (getAttackRangeBySkill(attack) != 0) {// 钡﹚м絛瞅
                 defRange = getAttackRangeBySkill(attack);
             }
@@ -3637,19 +3640,20 @@ public class GameConstants {
         }
         return defRange;
     }
-        private static double getAttackRangeBySkill(AttackInfo attack) {
+
+    private static double getAttackRangeBySkill(AttackInfo attack) {
         double defRange = 0;
         switch (attack.skill) {
-            case 21120006: 
+            case 21120006:
                 defRange = 800000.0;
                 break;
             case 2121007:
-            case 2221007: 
-            case 2321008: 
+            case 2221007:
+            case 2321008:
                 defRange = 750000.0;
                 break;
-            case 2221006: 
-            case 3101005: 
+            case 2221006:
+            case 3101005:
             case 21101003:
                 defRange = 600000.0;
                 break;
@@ -3680,7 +3684,8 @@ public class GameConstants {
         }
         return defRange;
     }
-       private static double getAttackRangeByWeapon(MapleCharacter chr) {
+
+    private static double getAttackRangeByWeapon(MapleCharacter chr) {
 //        IItem weapon_item = chr.getInventory(MapleInventoryType.EQUIPPED).getItem((byte) -11);
 //        MapleWeaponType weapon = GameConstants.getWeaponType(weapon_item.getItemId());
 //        switch (weapon) {
@@ -3693,10 +3698,11 @@ public class GameConstants {
 //            case :       // 
 //                return 180000;
 //            default:
-                return 100000;
-        
+        return 100000;
+
     }
-        public static int getPartyPlayHP(int mobID) {
+
+    public static int getPartyPlayHP(int mobID) {
         switch (mobID) {
             case 4250000: //苔藓蜗牛
                 return 836000;
@@ -3719,7 +3725,8 @@ public class GameConstants {
         }
         return 0;
     }
-public static int getPartyPlayEXP(int mobID) {
+
+    public static int getPartyPlayEXP(int mobID) {
         switch (mobID) {
             case 4250000: //苔藓蜗牛
                 return 5770;
@@ -3742,7 +3749,8 @@ public static int getPartyPlayEXP(int mobID) {
         }
         return 0;
     }
- public static int getPartyPlay(int mapId) {
+
+    public static int getPartyPlay(int mapId) {
         switch (mapId) {
             case 300010000: //艾琳森林 - 苔藓树丛入口
             case 300010100: //艾琳森林 - 苔藓树丛西部森林1
@@ -3761,15 +3769,16 @@ public static int getPartyPlayEXP(int mobID) {
         }
         return 0;
     }
-  public static int getPartyPlay(int mapId, int def) {
+
+    public static int getPartyPlay(int mapId, int def) {
         int dd = getPartyPlay(mapId);
         if (dd > 0) {
             return dd;
         }
         return def / 2;
     }
-  
-        public static boolean isShareQuestInfo(int questid) {
+
+    public static boolean isShareQuestInfo(int questid) {
         switch (questid) {
             case 每日签到系统_签到记录:
             case 每日签到系统_当前时间:
@@ -3778,7 +3787,8 @@ public static int getPartyPlayEXP(int mobID) {
                 return false;
         }
     }
-         public static int getTraitExpNeededForLevel(int level) {
+
+    public static int getTraitExpNeededForLevel(int level) {
         if ((level < 0) || (level >= cumulativeTraitExp.length)) {
             return Integer.MAX_VALUE;
         }

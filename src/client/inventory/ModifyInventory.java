@@ -3,8 +3,9 @@ package client.inventory;
 import constants.GameConstants;
 
 public class ModifyInventory {
-    
+
     public static class Types {
+
         public static final int ADD = 0;
         public static final int UPDATE = 1;
         public static final int MOVE = 2;

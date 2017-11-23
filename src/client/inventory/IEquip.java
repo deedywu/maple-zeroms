@@ -42,7 +42,7 @@ public interface IEquip extends IItem {
     public byte getEquipLevel();
 
     public int getEquipLevels();
-    
+
     public int getEquipExp();
 
     public int getEquipExpForLevel();

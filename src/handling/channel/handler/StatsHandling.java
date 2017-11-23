@@ -42,7 +42,7 @@ import tools.data.input.SeekableLittleEndianAccessor;
 public class StatsHandling {
 
     private static Logger log = LoggerFactory.getLogger(StatsHandling.class);
-    
+
     public static final void DistributeAP(final SeekableLittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
         final List<Pair<MapleStat, Integer>> statupdate = new ArrayList<Pair<MapleStat, Integer>>(2);
         c.getSession().write(MaplePacketCreator.updatePlayerStats(statupdate, true, chr.getJob()));
@@ -274,7 +274,7 @@ public class StatsHandling {
                 chr.setRemainingSp(chr.getRemainingSp(skillbook) - 1, skillbook);
             }
             chr.updateSingleStat(MapleStat.AVAILABLESP, chr.getRemainingSp());
-           // c.getSession().write(MaplePacketCreator.updateSp(chr, false));
+            // c.getSession().write(MaplePacketCreator.updateSp(chr, false));
             chr.changeSkillLevel(skill, (byte) (curLevel + 1), chr.getMasterLevel(skill));
         } else if (!skill.canBeLearnedBy(chr.getJob())) {
 //            AutobanManager.getInstance().addPoints(c, 1000, 0, "Trying to learn a skill for a different job (" + skillid + ")");
@@ -283,8 +283,8 @@ public class StatsHandling {
     }
 
     public static final void AutoAssignAP(final SeekableLittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
-         List statupdate = new ArrayList(2);
-     //   c.getSession().write(MaplePacketCreator.updatePlayerStats(statupdate, 0));
+        List statupdate = new ArrayList(2);
+        //   c.getSession().write(MaplePacketCreator.updatePlayerStats(statupdate, 0));
         c.getSession().write(MaplePacketCreator.updatePlayerStats(statupdate, true, chr.getJob()));
         final PlayerStats playerst = chr.getStat();
         slea.readInt();
@@ -323,8 +323,8 @@ public class StatsHandling {
                         statupdate.add(new Pair(MapleStat.LUK, Integer.valueOf(playerst.getLuk())));
                         break;
                     default:
-                      //  c.getSession().write(MaplePacketCreator.updatePlayerStats(MaplePacketCreator.EMPTY_STATUPDATE, 0));
-                    c.getSession().write(MaplePacketCreator.updatePlayerStats(MaplePacketCreator.EMPTY_STATUPDATE, true, chr.getJob()));
+                        //  c.getSession().write(MaplePacketCreator.updatePlayerStats(MaplePacketCreator.EMPTY_STATUPDATE, 0));
+                        c.getSession().write(MaplePacketCreator.updatePlayerStats(MaplePacketCreator.EMPTY_STATUPDATE, true, chr.getJob()));
                         return;
                 }
                 chr.setRemainingAp((short) (chr.getRemainingAp() - updatenumber));
@@ -332,12 +332,12 @@ public class StatsHandling {
                 log.info("[h4x] Player {} is distributing AP to {} without having any", chr.getName(), Integer.valueOf(update));
             }
         }
-       // statupdate.add(new Pair(MapleStat.AVAILABLEAP, Integer.valueOf(chr.getRemainingAp())));
+        // statupdate.add(new Pair(MapleStat.AVAILABLEAP, Integer.valueOf(chr.getRemainingAp())));
         statupdate.add(new Pair<MapleStat, Integer>(MapleStat.AVAILABLEAP, (int) chr.getRemainingAp()));
         c.getSession().write(MaplePacketCreator.updatePlayerStats(statupdate, true, chr.getJob()));
-     //   c.getSession().write(MaplePacketCreator.updatePlayerStats(statupdate, 0));
-        
-       /* chr.updateTick(slea.readInt());
+        //   c.getSession().write(MaplePacketCreator.updatePlayerStats(statupdate, 0));
+
+        /* chr.updateTick(slea.readInt());
         slea.skip(4);
         if (slea.available() < 16) {
             System.out.println("AutoAssignAP : \n" + slea.toString(true));

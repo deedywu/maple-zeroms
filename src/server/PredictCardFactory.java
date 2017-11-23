@@ -49,7 +49,7 @@ public class PredictCardFactory {
             comment.score = MapleDataTool.getIntConvert("score", commentDat, 0);
             comment.effectType = MapleDataTool.getIntConvert("effectType", commentDat, 0);
             this.predictCardComment.put(Integer.valueOf(Integer.parseInt(commentDat.getName())), comment);
-          //  System.out.println("Type :" + comment.effectType + " score : " + comment.score + " MSG: " + comment.worldmsg0 + " || " + comment.worldmsg1);
+            //  System.out.println("Type :" + comment.effectType + " score : " + comment.score + " MSG: " + comment.worldmsg0 + " || " + comment.worldmsg1);
         }
     }
 

@@ -55,7 +55,7 @@ public class GuildHandler {
     private static final void respawnPlayer(final MapleCharacter mc) {
         mc.getMap().broadcastMessage(mc, MaplePacketCreator.removePlayerFromMap(mc.getId()), false);
         mc.getMap().broadcastMessage(mc, MaplePacketCreator.spawnPlayerMapobject(mc), false);
- 
+
     }
 
     private static final class Invited {

@@ -55,7 +55,8 @@ public class MapleMapEffect {
 
     public MaplePacket makeStartData() {
         return jukebox ? MTSCSPacket.playCashSong(itemId, msg) : MaplePacketCreator.startMapEffect(msg, itemId, active);
-    }  
+    }
+
     public void sendStartData(MapleClient c) {
         c.getSession().write(makeStartData());
     }

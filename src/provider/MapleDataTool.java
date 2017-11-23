@@ -70,14 +70,12 @@ public class MapleDataTool {
     public static int getInt(MapleData data, int def) {
         if (data == null || data.getData() == null) {
             return def;
+        } else if (data.getType() == MapleDataType.STRING) {
+            return Integer.parseInt(getString(data));
+        } else if (data.getType() == MapleDataType.SHORT) {
+            return Integer.valueOf(((Short) data.getData()).shortValue());
         } else {
-            if (data.getType() == MapleDataType.STRING) {
-                return Integer.parseInt(getString(data));
-            } else if (data.getType() == MapleDataType.SHORT) {
-                return Integer.valueOf(((Short) data.getData()).shortValue());
-            } else {
-                return ((Integer) data.getData()).intValue();
-            }
+            return ((Integer) data.getData()).intValue();
         }
     }
 

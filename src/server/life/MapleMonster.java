@@ -354,7 +354,7 @@ public class MapleMonster extends AbstractLoadedMapleLife {
             if (attacker.getStat().equippedFairy) {
                 Equipment_Bonus_EXP += (int) ((exp / 100.0) * 30);      //经验吊坠固定百分之50; attacker.getFairyExp()
             }
-    
+
             int wedding_EXP = 0;
             if (attacker.getMarriageId() > 0 && attacker.getMap().getCharacterById_InMap(attacker.getMarriageId()) != null) {
                 wedding_EXP += (exp / 100) * 1.;
@@ -728,11 +728,11 @@ public class MapleMonster extends AbstractLoadedMapleLife {
     public final void applyStatus(final MapleCharacter from, final MonsterStatusEffect status, final boolean poison, final long duration, final boolean venom, final boolean checkboss) {
         if (!isAlive()) {
             return;
-        } 
-        if (status.getSkill()!=2111003) {    //开放封禁状态技能
-            if(from.hasGmLevel(5)){
+        }
+        if (status.getSkill() != 2111003) {    //开放封禁状态技能
+            if (from.hasGmLevel(5)) {
                 from.dropMessage(6, "怪物: " + getId() + " 状态: " + status.getStati().name() + " 中毒: " + poison + " 持续时间: " + duration);
-            }              
+            }
             return;
         }
         ISkill skilz = SkillFactory.getSkill(status.getSkill());
@@ -965,7 +965,7 @@ public class MapleMonster extends AbstractLoadedMapleLife {
     public List<Triple<Integer, Integer, Integer>> getSkills() {
         return stats.getSkills();
     }
-    
+
     public final boolean hasSkill(final int skillId, final int level) {
         return stats.hasSkill(skillId, level);
     }

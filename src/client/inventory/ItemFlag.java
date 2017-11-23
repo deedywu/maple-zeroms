@@ -1,4 +1,3 @@
-
 package client.inventory;
 
 public enum ItemFlag {

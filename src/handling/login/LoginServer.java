@@ -39,7 +39,6 @@ import org.apache.mina.core.filterchain.IoFilter;
 import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.core.session.IoSession;
 
-
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.SocketSessionConfig;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
@@ -56,8 +55,8 @@ public class LoginServer {
     private static byte flag;
     private static int maxCharacters, userLimit, usersOn = 0;
     private static boolean finishedShutdown = true, adminOnly = false;
-    private static final HashMap<Integer, Triple<String, String, Integer>> loginAuth = new HashMap<Integer, Triple<String, String, Integer>>();   
- // private static final HashMap<Integer, Triple<String, String, Integer>> loginAuth = new HashMap();
+    private static final HashMap<Integer, Triple<String, String, Integer>> loginAuth = new HashMap<Integer, Triple<String, String, Integer>>();
+    // private static final HashMap<Integer, Triple<String, String, Integer>> loginAuth = new HashMap();
     private static final HashSet<String> loginIPAuth = new HashSet();
     private static final LoginServer instance = new LoginServer();
 
@@ -89,20 +88,21 @@ public class LoginServer {
     public static final void addChannel(final int channel) {
         load.put(channel, 0);
     }
-    
+
     public static final void removeChannel(final int channel) {
         load.remove(channel);
     }
-    
-     public static final void closeConn(String ip) {
-    int count = 0;
-    for (IoSession ss : acceptor.getManagedSessions().values())
-      if (ss.getRemoteAddress().toString().split(":")[0].equals(ip)) {
-        ss.close(false);
-        return;
-      }
-  }
-     
+
+    public static final void closeConn(String ip) {
+        int count = 0;
+        for (IoSession ss : acceptor.getManagedSessions().values()) {
+            if (ss.getRemoteAddress().toString().split(":")[0].equals(ip)) {
+                ss.close(false);
+                return;
+            }
+        }
+    }
+
     public static final void run_startup_configurations() {
         /*
          * userLimit =
@@ -148,7 +148,7 @@ public class LoginServer {
             return;
         }
         System.out.println("正在关闭登录伺服器...");
- //       acceptor.setCloseOnDeactivation(true);
+        //       acceptor.setCloseOnDeactivation(true);
 //        for (IoSession ss : acceptor.getManagedSessions().values()) {
 //            ss.close(true);
 //        }

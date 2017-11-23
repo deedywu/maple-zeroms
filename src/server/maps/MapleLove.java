@@ -6,7 +6,6 @@ import handling.MaplePacket;
 import java.awt.Point;
 import tools.MaplePacketCreator;
 
-
 public class MapleLove extends AbstractMapleMapObject {
 
     private Point pos;

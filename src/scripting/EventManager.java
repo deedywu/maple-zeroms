@@ -122,6 +122,7 @@ public class EventManager {
             }
         }, delay);
     }
+
     public ScheduledFuture<?> scheduleAtTimestamp(final String methodName, long timestamp) {
         return EventTimer.getInstance().scheduleAtTimestamp(new Runnable() {
 
@@ -203,32 +204,37 @@ public class EventManager {
             FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Event name : " + name + ", method Name : setup:\n" + ex);
         }
     }
-     /**
+
+    /**
      * @param party
      * @param map
      */
-    public void startInstance(handling.world.party.MapleParty party, MapleMap map,int maxLevel) {
+    public void startInstance(handling.world.party.MapleParty party, MapleMap map, int maxLevel) {
         startInstance(party, map, 255);
     }
-public void startInstance(handling.world.party.MapleParty party, MapleMap map) {
+
+    public void startInstance(handling.world.party.MapleParty party, MapleMap map) {
         startInstance(party, map, 255);
     }
+
     /**
      * @param party
      * @param map
      * @param maxLevel
      */
-    public void startInstance(handling.world.party.MapleParty party, MapleMap map, int maxLevel,int mixLevel) {
+    public void startInstance(handling.world.party.MapleParty party, MapleMap map, int maxLevel, int mixLevel) {
         startInstance(party, map, 255, 0);
     }
-   public void startInstance_Solo(String mapid, MapleCharacter chr) {
+
+    public void startInstance_Solo(String mapid, MapleCharacter chr) {
         try {
             EventInstanceManager eim = (EventInstanceManager) iv.invokeFunction("setup", (Object) mapid);
             eim.registerPlayer(chr);
         } catch (Exception ex) {
-             FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Event name : " + name + ", method Name : setup:\r\n" + ex);
+            FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Event name : " + name + ", method Name : setup:\r\n" + ex);
         }
     }
+
     public void startInstance(String mapid, MapleCharacter chr) {
         try {
             EventInstanceManager eim = (EventInstanceManager) iv.invokeFunction("setup", (Object) mapid);
@@ -248,7 +254,8 @@ public void startInstance(handling.world.party.MapleParty party, MapleMap map) {
             FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Event name : " + name + ", method Name : setup:\n" + ex);
         }
     }
-   public void startInstance_Party(String string, MapleCharacter player, int averageLevel) {
+
+    public void startInstance_Party(String string, MapleCharacter player, int averageLevel) {
         try {
             int totalLevel = 0;
             int memberSize = 0;
@@ -267,7 +274,7 @@ public void startInstance(handling.world.party.MapleParty party, MapleMap map) {
             EventInstanceManager eim = (EventInstanceManager) iv.invokeFunction("setup", arrobject);
             eim.registerParty(player.getParty(), player.getMap());
         } catch (Exception ex) {
-           FileoutputUtil.log(FileoutputUtil.ScriptEx_Log,"Event name : " + name + ", method Name : setup:\r\n" + ex);
+            FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Event name : " + name + ", method Name : setup:\r\n" + ex);
         }
     }
 
@@ -401,6 +408,7 @@ public void startInstance(handling.world.party.MapleParty party, MapleMap map) {
             FileoutputUtil.log("log\\Script_Except.log", new StringBuilder().append("Event name : ").append(this.name).append(", method Name : setup-squad:\n").append(ex).toString());
         }
     }
+
     public void warpAllPlayer(int from, int to) {
         final MapleMap tomap = getMapFactory().getMap(to);
         final MapleMap frommap = getMapFactory().getMap(from);
@@ -411,8 +419,8 @@ public void startInstance(handling.world.party.MapleParty party, MapleMap map) {
             }
         }
     }
-    
-        public int online() {
+
+    public int online() {
         Connection con = DatabaseConnection.getConnection();
         PreparedStatement ps;
         ResultSet re;
@@ -427,7 +435,7 @@ public void startInstance(handling.world.party.MapleParty party, MapleMap map) {
             Logger.getLogger(EventInstanceManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         return count;
-    }    
+    }
 
     public MapleMapFactory getMapFactory() {
         return getChannelServer().getMapFactory();
@@ -454,7 +462,7 @@ public void startInstance(handling.world.party.MapleParty party, MapleMap map) {
     }
 
     public void broadcastYellowMsg(final String msg) {
-      //  getChannelServer().broadcastPacket(MaplePacketCreator.yellowChat(msg));
+        //  getChannelServer().broadcastPacket(MaplePacketCreator.yellowChat(msg));
     }
 
     public void broadcastServerMsg(final int type, final String msg, final boolean weather) {
@@ -487,7 +495,7 @@ public void startInstance(handling.world.party.MapleParty party, MapleMap map) {
             for (MapleEventType x : MapleEventType.values()) {
                 //if (Randomizer.nextInt(MapleEventType.values().length) == 0 && x != MapleEventType.OxQuiz/*選邊站*/) {
                 if (Randomizer.nextInt(MapleEventType.values().length) == 0) {
-                     t = x;
+                    t = x;
                     break;
                 }
             }

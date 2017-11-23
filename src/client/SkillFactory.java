@@ -42,8 +42,8 @@ public class SkillFactory {
     private static final Map<Integer, ISkill> skills = new HashMap<Integer, ISkill>();
     private static final Map<Integer, List<Integer>> skillsByJob = new HashMap<Integer, List<Integer>>();
     private static final Map<Integer, SummonSkillEntry> SummonSkillInformation = new HashMap<Integer, SummonSkillEntry>();
-     private final static MapleData stringData = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/String.wz")).getData("Skill.img");
-   private static MapleDataProvider datasource = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/Skill.wz"));
+    private final static MapleData stringData = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/String.wz")).getData("Skill.img");
+    private static MapleDataProvider datasource = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/Skill.wz"));
 
     public static final ISkill getSkill(final int id) {
         if (skills.size() != 0) {
@@ -92,6 +92,7 @@ public class SkillFactory {
         }
         return null;
     }
+
     public static ISkill getSkill1(int id) {
         ISkill ret = (ISkill) skills.get(Integer.valueOf(id));
         if (ret != null) {
@@ -111,6 +112,7 @@ public class SkillFactory {
             return ret;
         }
     }
+
     public static final List<Integer> getSkillsByJob(final int jobId) {
         return skillsByJob.get(jobId);
     }

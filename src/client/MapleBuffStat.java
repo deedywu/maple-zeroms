@@ -61,7 +61,7 @@ public enum MapleBuffStat implements Serializable {
     MONSTER_RIDING(0x10000000000L, true),
     SPEED_INFUSION(/*
      * 0x40000000000L
-     */140737488355328L, true),
+             */140737488355328L, true),
     HOMING_BEACON(0x80000000000L, true),
     ELEMENT_RESET(0x200000000000000L, true),
     ARAN_COMBO(0x1000000000000000L, true),

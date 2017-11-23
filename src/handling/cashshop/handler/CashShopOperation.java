@@ -235,7 +235,7 @@ public class CashShopOperation {
                  * c.getSession().write(MTSCSPacket.sendCSFail(0xB1));
                  * doCSPackets(c); return; }
                  */
-                /*
+ /*
                  * for (int i : GameConstants.cashBlock) { if (item.getId() ==
                  * i) { c.getPlayer().dropMessage(1,
                  * GameConstants.getCashBlockedMsg(item.getId()));
@@ -457,7 +457,6 @@ public class CashShopOperation {
              * //显示点卷 c.getSession().write(MaplePacketCreator.enableActions());
              * //能行动 return; }
              */
-
             //slea.readMapleAsciiString(); // as13
             int sn = slea.readInt();
             if (sn == 209000310) {
@@ -556,7 +555,7 @@ public class CashShopOperation {
             }
 
         } else if (action == 0x1F) {//购买礼包
-           /*
+            /*
              * int 关闭 = 1; if (关闭 == 1) { chr.dropMessage(1, "暂不支持。");
              * c.getPlayer().saveToDB(true, true);
              * c.getSession().write(MTSCSPacket.showNXMapleTokens(c.getPlayer()));
@@ -621,7 +620,6 @@ public class CashShopOperation {
             chr.modifyCSPoints(type, -item.getPrice(), false);
 
             //  c.sendPacket(MTSCSPacket.showBoughtCSPackage(ccz, c.getAccID()));
-
 //            Map<Integer, IItem> ccz = new HashMap<Integer, IItem>();
 //            for (CashItemInfo i : ccc) {
 //                IItem itemz = c.getPlayer().getCashInventory().toItem(i);

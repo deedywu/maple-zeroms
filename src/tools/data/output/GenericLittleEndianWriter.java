@@ -36,7 +36,6 @@ public class GenericLittleEndianWriter implements LittleEndianWriter {
     private static Charset ASCII = Charset.forName("GBK"); // ISO-8859-1, UTF-8
     private ByteOutputStream bos;
 
-
     /**
      * Class constructor - Protected to prevent instantiation with no arguments.
      */

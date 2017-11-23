@@ -162,7 +162,7 @@ public class MobPacket {
         mplew.write(6);
         mplew.write(5);
 
-	//colour legend: (applies to both colours)
+        //colour legend: (applies to both colours)
         //1 = red, 2 = dark blue, 3 = light green, 4 = dark green, 5 = black, 6 = light blue, 7 = purple
         return mplew.getPacket();
     }
@@ -201,7 +201,6 @@ public class MobPacket {
         }
     }
 
-    
     public static MaplePacket spawnMonster(MapleMonster life, int spawnType, int effect, int link) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -271,6 +270,7 @@ public class MobPacket {
         }
         //wh spawn - 15 zeroes instead of 16, then 98 F4 56 A6 C7 C9 01 28, then 7 zeroes
     }
+
     public static MaplePacket controlMonster(MapleMonster life, boolean newSpawn, boolean aggro) {
         return spawnMonsterInternal(life, true, newSpawn, aggro, 0, false);
     }
@@ -326,7 +326,8 @@ public class MobPacket {
 
         return mplew.getPacket();
     }
-   /* public static MaplePacket controlMonster(MapleMonster life, boolean newSpawn, boolean aggro) {
+
+    /* public static MaplePacket controlMonster(MapleMonster life, boolean newSpawn, boolean aggro) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         if (ServerConstants.调试输出封包) {

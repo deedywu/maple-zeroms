@@ -79,7 +79,7 @@ public class EventScriptManager extends AbstractScriptManager {
             try {
                 ((ScriptEngine) entry.iv).put("em", entry.em);
                 entry.iv.invokeFunction("init", (Object) null);
-               
+
             } catch (final Exception ex) {
                 System.out.println("Error initiating event: " + entry.script + ":" + ex);
                 FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Error initiating event: " + entry.script + ":" + ex);

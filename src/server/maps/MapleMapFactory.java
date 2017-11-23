@@ -58,19 +58,18 @@ public class MapleMapFactory {
     private final Map<Integer, Integer> DeStorymaps = new HashMap<Integer, Integer>() {
 
         {
-           // put(230000000, 0);// 水下世界
-           // put(211000000, 0);//冰封雪域
+            // put(230000000, 0);// 水下世界
+            // put(211000000, 0);//冰封雪域
             //put(200082200, 0);//通天塔底下1层
-           // put(221000000, 0);//地球防御本部
-           // put(222000000, 0);//童话村
-           // put(240000000, 0);//神木村
+            // put(221000000, 0);//地球防御本部
+            // put(222000000, 0);//童话村
+            // put(240000000, 0);//神木村
             //put(260000000, 0);//阿里安特
             //put(261000000, 0);//玛家提亚
             //put(250000000, 0);//武陵
             //  put(541010000, 0);//幽灵船
             //  put(240010501, 0);//祭司之林
-                      
-                              
+
         }
     };
     private final Map<Integer, MapleMap> instanceMap = new HashMap<Integer, MapleMap>();
@@ -244,18 +243,18 @@ public class MapleMapFactory {
                 map.setOnUserEnter(MapleDataTool.getString(mapData.getChildByPath("info/onUserEnter"), String.valueOf(mapid)));
 
                 maps.put(omapid, map);
-                    try {
+                try {
                     PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM spawns WHERE mid = ?");
                     ps.setInt(1, omapid);
                     ResultSet rs = ps.executeQuery();
                     while (rs.next()) {
                         int spawnsid = rs.getInt("idd");
                         int f = rs.getInt("f");
-                        int spwanshide=rs.getInt("hide");
+                        int spwanshide = rs.getInt("hide");
                         boolean hide = false;  //NPC隐藏
-                        if(spwanshide==1){
-                            hide=true;
-                        }                     
+                        if (spwanshide == 1) {
+                            hide = true;
+                        }
                         String spawnstype = rs.getString("type");
                         int spawnsfh = rs.getInt("fh");
                         int cy = rs.getInt("cy");
@@ -269,22 +268,22 @@ public class MapleMapFactory {
                             Point pos = null;              //定义一个位置坐标
                             pos = new Point(x, y);
                             npc.setPosition(pos);
-                             npc.setCy(cy);
-                        npc.setRx0(rx0);
-                        npc.setRx1(rx1);
-                        npc.setFh(spawnsfh);
-                        npc.setCustom(true);
-                       map.addMapObject(npc);
-                       map.broadcastMessage(MaplePacketCreator.spawnNPC(npc,true));        
-                        }                      
+                            npc.setCy(cy);
+                            npc.setRx0(rx0);
+                            npc.setRx1(rx1);
+                            npc.setFh(spawnsfh);
+                            npc.setCustom(true);
+                            map.addMapObject(npc);
+                            map.broadcastMessage(MaplePacketCreator.spawnNPC(npc, true));
+                        }
                         if (spawnstype.equals("n")) {
                         } else if (spawnstype.equals("m")) {
-                         AbstractLoadedMapleLife myLife1 = loadLife(spawnsid, f, hide, spawnsfh, cy, rx0, rx1, x, y, spawnstype);
+                            AbstractLoadedMapleLife myLife1 = loadLife(spawnsid, f, hide, spawnsfh, cy, rx0, rx1, x, y, spawnstype);
                             MapleMonster monster = (MapleMonster) myLife1;
                             map.addMonsterSpawn(monster, mobTime);
                         }
                     }
-                } catch (SQLException e) {        
+                } catch (SQLException e) {
                 }
             } finally {
                 lock.unlock();
@@ -490,9 +489,6 @@ public class MapleMapFactory {
     public Collection<MapleMap> getAllInstanceMaps() {
         return instanceMap.values();
     }
-    
-   
-
 
     private static AbstractLoadedMapleLife loadLife(int id, int f, boolean hide, int fh, int cy, int rx0, int rx1, int x, int y, String type) {
         final AbstractLoadedMapleLife myLife = MapleLifeFactory.getLife(id, type);
@@ -786,12 +782,12 @@ public class MapleMapFactory {
              * pos1 = new Point(498, 4); pos2 = new Point(498, 4); pos3 = new
              * Point(498, 4); } break;
              */
-            /*
+ /*
              * case 209080000: // Happyvile mobtime = 2700; monsterid = 9400708;
              * pos1 = new Point(-115, 154); pos2 = new Point(-115, 154); pos3 =
              * new Point(-115, 154); break;
              */
-            /*
+ /*
              * case 677000001: mobtime = 60; monsterid = 9400612; msg = "Marbas
              * has appeared."; pos1 = new Point(99, 60); pos2 = new Point(99,
              * 60); pos3 = new Point(99, 60); break; case 677000003: mobtime =

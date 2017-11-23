@@ -30,8 +30,6 @@ public class MapleTrait {
         }
     }
 
-   
-
     public boolean recalcLevel() {
         if (this.totalExp < 0) {
             this.totalExp = 0;

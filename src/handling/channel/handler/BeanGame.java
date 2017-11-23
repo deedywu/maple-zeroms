@@ -13,7 +13,7 @@ public class BeanGame {
         //System.out.println("豆�?�出?��???" +slea.toString());
         MapleCharacter chr = c.getPlayer();
         List<Beans> beansInfo = new ArrayList<Beans>();
-        
+
         int type = slea.readByte();
         int 力度 = 0;
         int 豆豆序號 = 0;
@@ -28,9 +28,9 @@ public class BeanGame {
             豆豆序號 = slea.readInt() + 1;
             chr.setBeansRange(力度);
             chr.setBeansNum(豆豆序號);
-                if (豆豆序號 == 1) {
-                    chr.setCanSetBeansNum(false);
-                }
+            if (豆豆序號 == 1) {
+                chr.setCanSetBeansNum(false);
+            }
         } else if (type == 2) { //没�?�在??��?��??
             if ((type == 11) || (type == 0)) {
                 力度 = slea.readShort();
@@ -42,31 +42,31 @@ public class BeanGame {
                 }
             }
         } else if (type == 6) {
-                slea.skip(1);
-                int 循環次數 = slea.readByte();
-                if (循環次數 == 0) {
-                    return;
-                }
-                if (循環次數 != 1) {
-                    slea.skip((循環次數 - 1) * 8);
-                }
-                if (chr.isCanSetBeansNum()) {
-                    chr.setBeansNum(chr.getBeansNum() + 循環次數);
-                }
-                chr.gainBeans(-循環次數);
-                chr.setCanSetBeansNum(true);
+            slea.skip(1);
+            int 循環次數 = slea.readByte();
+            if (循環次數 == 0) {
+                return;
+            }
+            if (循環次數 != 1) {
+                slea.skip((循環次數 - 1) * 8);
+            }
+            if (chr.isCanSetBeansNum()) {
+                chr.setBeansNum(chr.getBeansNum() + 循環次數);
+            }
+            chr.gainBeans(-循環次數);
+            chr.setCanSetBeansNum(true);
         } else if ((type == 11) || (type == 6)) {
             力度 = slea.readShort();
             chr.setBeansRange(力度);
-            byte size = (byte) (slea.readByte()+1);
+            byte size = (byte) (slea.readByte() + 1);
             short Pos = slea.readShort();
             byte Type = (byte) (slea.readByte() + 1);
-           // for (int i = 0; i < 5; i++) {
-                // beansInfo.add(new Beans(chr.getBeansRange() + rand(-100, 100), getBeanType(), chr.getBeansNum() + i));
-           // }
-            c.getSession().write(MaplePacketCreator.showBeans(力度,size, Pos, Type));
+            // for (int i = 0; i < 5; i++) {
+            // beansInfo.add(new Beans(chr.getBeansRange() + rand(-100, 100), getBeanType(), chr.getBeansNum() + i));
+            // }
+            c.getSession().write(MaplePacketCreator.showBeans(力度, size, Pos, Type));
         } else {
-                System.out.println("未處理的類型【" + type + "】\n包" + slea.toString());
+            System.out.println("未處理的類型【" + type + "】\n包" + slea.toString());
         }
     }
 

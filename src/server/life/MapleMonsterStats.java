@@ -32,7 +32,7 @@ public class MapleMonsterStats {
     private int point;
     private int eva;
     private int acc;
-    private int PhysicalAttack,PhysicalDefense, MagicDefense;
+    private int PhysicalAttack, PhysicalDefense, MagicDefense;
     private int MagicAttack;
     private int speed;
     private int partyBonusR;
@@ -162,13 +162,15 @@ public class MapleMonsterStats {
     public final int getMagicDefense() {
         return MagicDefense;
     }
-     public void setPhysicalDefense(final int PhysicalDefense) {
+
+    public void setPhysicalDefense(final int PhysicalDefense) {
         this.PhysicalDefense = PhysicalDefense;
     }
 
     public int getPhysicalDefense() {
         return PhysicalDefense;
     }
+
     public int getEva() {
         return eva;
     }
@@ -277,7 +279,7 @@ public class MapleMonsterStats {
         return ret;
     }
 
-     public void setMobile(boolean mobile) {
+    public void setMobile(boolean mobile) {
         this.mobile = mobile;
     }
 
@@ -289,7 +291,7 @@ public class MapleMonsterStats {
         return animationTimes.containsKey("move") || animationTimes.containsKey("fly");
     }
 
-     public void setFly(boolean fly) {
+    public void setFly(boolean fly) {
         this.fly = fly;
     }
 
@@ -406,7 +408,7 @@ public class MapleMonsterStats {
         this.tagBgColor = (byte) tagBgColor;
     }
 
-   public void setSkills(List<Triple<Integer, Integer, Integer>> skill_) {
+    public void setSkills(List<Triple<Integer, Integer, Integer>> skill_) {
         for (Triple<Integer, Integer, Integer> skill : skill_) {
             skills.add(skill);
         }
@@ -416,8 +418,7 @@ public class MapleMonsterStats {
         return Collections.unmodifiableList(this.skills);
     }
 
-
-     public byte getNoSkills() {
+    public byte getNoSkills() {
         return (byte) skills.size();
     }
 
@@ -429,6 +430,7 @@ public class MapleMonsterStats {
         }
         return false;
     }
+
     public boolean isFirstAttack() {
         return firstAttack;
     }
@@ -565,7 +567,7 @@ public class MapleMonsterStats {
         this.skeleton = skeleton;
     }
 
-   public List<loseItem> loseItem() {
+    public List<loseItem> loseItem() {
         return loseItem;
     }
 
@@ -616,9 +618,8 @@ public class MapleMonsterStats {
         this.transMobs = transMobs;
     }
 
-  
-
     public static class TransMobs {
+
         private List<Integer> mobids;
         private List<Pair<Integer, Integer>> skills;
         private int time;

@@ -1462,7 +1462,7 @@ public class AdminCommand {
             return new StringBuilder().append("!removeitem <角色名称> <物品ID> - 移除玩家身上的道具").toString();
         }
     }
-    
+
     public static class LockItem extends CommandExecute {
 
         @Override
@@ -3593,15 +3593,17 @@ public class AdminCommand {
             return 1;
         }
     }
-            public static class 倍率管理 extends CommandExecute {
-                 public int execute(MapleClient c, String splitted[]) {
-                         MapleCharacter mc=c.getPlayer();
-                if (splitted.length > 2) {
+
+    public static class 倍率管理 extends CommandExecute {
+
+        public int execute(MapleClient c, String splitted[]) {
+            MapleCharacter mc = c.getPlayer();
+            if (splitted.length > 2) {
                 int arg = Integer.parseInt(splitted[2]);
                 int seconds = Integer.parseInt(splitted[3]);
                 int mins = Integer.parseInt(splitted[4]);
                 int hours = Integer.parseInt(splitted[5]);
-                int time = seconds + (mins * 60) + (hours * 60 * 60);           
+                int time = seconds + (mins * 60) + (hours * 60 * 60);
                 boolean bOk = true;
                 for (final ChannelServer cservs : ChannelServer.getAllInstances()) {
                     if (splitted[1].equals("exp")) {
@@ -3632,14 +3634,14 @@ public class AdminCommand {
                         } else {
                             mc.dropMessage("操作已被系统限制。");
                         }
-                    }  else {
+                    } else {
                         bOk = false;
                     }
-                    final String rate = splitted[1];              
-                                            Timer timer = new Timer();
+                    final String rate = splitted[1];
+                    Timer timer = new Timer();
                     timer.schedule(new TimerTask() {
                         @Override
-                            public void run() {
+                        public void run() {
                             if (rate.equals("exp")) {
                                 cservs.setExpRate(2);
                             } else if (rate.equals("drop")) {
@@ -3651,7 +3653,7 @@ public class AdminCommand {
                             }
                             cservs.broadcastPacket(MaplePacketCreator.serverNotice(6, " 系统双倍活动已经结束。系统已成功自动切换为正常游戏模式！"));
                         }
-                     },time * 1000);
+                    }, time * 1000);
                 }
                 if (bOk == false) {
                     mc.dropMessage("使用方法: !rate <exp|drop|meso|boss> <类> <秒> <分> <时>");
@@ -3659,9 +3661,9 @@ public class AdminCommand {
             } else {
                 mc.dropMessage("使用方法: !rate <exp|drop|meso|boss> <类> <秒> <分> <时>");
             }
-                     return 1;
-           }
+            return 1;
         }
+    }
 
     public static class WarpAllHere extends CommandExecute {
 

@@ -19,9 +19,10 @@ public class InternCommand {
 
     public static class 跟踪 extends Warp {
     }
-     public static class 跟踪2 extends Warp2 {
+
+    public static class 跟踪2 extends Warp2 {
     }
- 
+
     public static class 封号 extends Ban {
     }
 
@@ -156,7 +157,7 @@ public class InternCommand {
             return 1;
         }
     }
-    
+
     public static class Warp2 extends CommandExecute {
 
         @Override

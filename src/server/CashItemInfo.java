@@ -20,7 +20,8 @@ public class CashItemInfo {
         this.gender = gender;
         this.onSale = sale;
     }
- public CashItemInfo(int itemId, int count, int price, int sn, int expire, int gender, boolean sale, String name) {
+
+    public CashItemInfo(int itemId, int count, int price, int sn, int expire, int gender, boolean sale, String name) {
         this.itemId = itemId;
         this.count = count;
         this.price = price;
@@ -30,6 +31,7 @@ public class CashItemInfo {
         this.onSale = sale;
         this.name = name;
     }
+
     public int getId() {
         return itemId;
     }
@@ -41,9 +43,11 @@ public class CashItemInfo {
         return 0;
 
     }
+
     public int getExpire() {
         return expire;
     }
+
     public int getCount() {
         return count;
     }

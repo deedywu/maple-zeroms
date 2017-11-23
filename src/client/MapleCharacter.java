@@ -4334,6 +4334,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
         dropMessage(6, message);
     }
 
+    // 1点券 2抵用券
     public void modifyCSPoints(int type, int quantity, boolean show) {
 
         switch (type) {

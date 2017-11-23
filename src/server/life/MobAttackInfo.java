@@ -7,7 +7,7 @@ public class MobAttackInfo {
     private boolean isDeadlyAttack;
     private int mpBurn, mpCon;
     private int diseaseSkill, diseaseLevel;
-     public int PADamage, MADamage, attackAfter, range = 0;
+    public int PADamage, MADamage, attackAfter, range = 0;
     public Point lt = null, rb = null;
     public boolean magic = false, isElement = false;
 
@@ -53,6 +53,7 @@ public class MobAttackInfo {
     public int getMpCon() {
         return mpCon;
     }
+
     public int getRange() {
         int maxX = Math.max(Math.abs(lt == null ? 0 : lt.x), Math.abs(rb == null ? 0 : rb.x));
         int maxY = Math.max(Math.abs(lt == null ? 0 : lt.y), Math.abs(rb == null ? 0 : rb.y));

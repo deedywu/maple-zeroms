@@ -98,10 +98,8 @@ public class MapleShop {
         if (npc == null || npc.getName().equals("MISSINGNO")) {
             c.getPlayer().dropMessage(1, "商店" + id + "找不到此代码为" + getNpcId() + "的Npc");
             return;
-        } else {
-            if (c.getPlayer().isAdmin()) {
-                c.getPlayer().dropMessage("您已建立与商店" + id + "的连接");
-            }
+        } else if (c.getPlayer().isAdmin()) {
+            c.getPlayer().dropMessage("您已建立与商店" + id + "的连接");
         }
         c.getPlayer().setShop(this);
         c.getSession().write(MaplePacketCreator.getNPCShop(c, getNpcId(), items));
@@ -139,7 +137,8 @@ public class MapleShop {
                 }
                 c.getSession().write(MaplePacketCreator.confirmShopTransaction((byte) 0));
             }
-        } /*
+        }
+        /*
          * else if (item != null && quantity == 1 &&
          * c.getPlayer().haveItem(item.getReqItem(), item.getReqItemQ(), false,
          * true)) { if (MapleInventoryManipulator.checkSpace(c, itemId,

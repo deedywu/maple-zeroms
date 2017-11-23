@@ -172,7 +172,6 @@ public class ChannelServer implements Serializable {
         System.out.println("Channel " + channel + ", Saving characters...");
 
         // getPlayerStorage().disconnectAll();
-
         System.out.println("Channel " + channel + ", Unbinding...");
 
         //temporary while we dont have !addchannel
@@ -375,6 +374,7 @@ public class ChannelServer implements Serializable {
             this.doubleDrop = doubleDrop;
         }
     }
+
     /*
      * public static final void startChannel_Main() { serverStartTime =
      * System.currentTimeMillis();
@@ -708,10 +708,9 @@ public class ChannelServer implements Serializable {
         instances.remove(Integer.valueOf(this.channel));
         setFinishShutdown();
     }
-   
-     //-------------------------------------0620新加 清除bosslog全部数据 功能2 清除bosslog制定数据
 
- public void setQKBossLog() {
+    //-------------------------------------0620新加 清除bosslog全部数据 功能2 清除bosslog制定数据
+    public void setQKBossLog() {
         Connection con1 = DatabaseConnection.getConnection();
         try {
             PreparedStatement ps;
@@ -719,10 +718,11 @@ public class ChannelServer implements Serializable {
             ps.executeUpdate();
             ps.close();
         } catch (SQLException Ex) {
-               log.error("Error while insert bosslog.", Ex);
+            log.error("Error while insert bosslog.", Ex);
         }
     }
-        public void setQLBossLog(String id, String bossid) {
+
+    public void setQLBossLog(String id, String bossid) {
         Connection con1 = DatabaseConnection.getConnection();
         try {
             PreparedStatement ps;
@@ -732,10 +732,11 @@ public class ChannelServer implements Serializable {
             ps.executeUpdate();
             ps.close();
         } catch (SQLException Ex) {
-               log.error("Error while insert bosslog.", Ex);
+            log.error("Error while insert bosslog.", Ex);
         }
     }
-  /*  public void AutoSaveAll() {
+
+    /*  public void AutoSaveAll() {
           for (ChannelServer chan : ChannelServer.getAllInstances()) {
             for (MapleCharacter chr : chan.getPlayerStorage().getAllCharacters()) {
                 if (chr != null){
@@ -774,7 +775,7 @@ public class ChannelServer implements Serializable {
                log.error("存档失败.", t);
            }
   }
-  */
+     */
     public static boolean forceRemovePlayerByCharName(String Name) {
         for (ChannelServer ch : ChannelServer.getAllInstances()) {
             Collection<MapleCharacter> chrs = ch.getPlayerStorage().getAllCharactersThreadSafe();
@@ -788,7 +789,7 @@ public class ChannelServer implements Serializable {
                             c.getClient().disconnect(true, false, false);
                             c.getClient().getSession().close();
                         }
-                        
+
                     } catch (Exception ex) {
                     }
                     chrs = ch.getPlayerStorage().getAllCharactersThreadSafe();
@@ -868,9 +869,6 @@ public class ChannelServer implements Serializable {
             }
         }
 
-
-
     }
 
-   
 }

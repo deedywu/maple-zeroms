@@ -30,10 +30,10 @@ public class CashItemInfoA {
         return itemId;
     }
 
-
     public boolean genderEquals(int g) {
         return g == this.gender || this.gender == 2;
     }
+
     public int getItemId() {
         return itemId;
     }

@@ -66,7 +66,7 @@ public class MovementParse {
                     final AbsoluteLifeMovement alm = new AbsoluteLifeMovement(command, new Point(xpos, ypos), duration, newstate);
                     alm.setUnk(unk);
                     alm.setPixelsPerSecond(new Point(xwobble, ywobble));
-		    // log.trace("Move to {},{} command {} wobble {},{} ? {} state {} duration {}", new Object[] { xpos,
+                    // log.trace("Move to {},{} command {} wobble {},{} ? {} state {} duration {}", new Object[] { xpos,
                     // xpos, command, xwobble, ywobble, newstate, duration });
                     res.add(alm);
                     break;
@@ -83,7 +83,7 @@ public class MovementParse {
                     final short duration = lea.readShort();
                     final RelativeLifeMovement rlm = new RelativeLifeMovement(command, new Point(xmod, ymod), duration, newstate);
                     res.add(rlm);
-		    // log.trace("Relative move {},{} state {}, duration {}", new Object[] { xmod, ymod, newstate,
+                    // log.trace("Relative move {},{} state {}, duration {}", new Object[] { xmod, ymod, newstate,
                     // duration });
                     break;
                 }
@@ -140,8 +140,8 @@ public class MovementParse {
                 case 22: {
                     int unk = lea.readShort();
                     int newstate = lea.readByte();
-                   final AranMovement acm = new AranMovement(command, new Point(0, 0), unk, newstate);
-                        res.add(acm);
+                    final AranMovement acm = new AranMovement(command, new Point(0, 0), unk, newstate);
+                    res.add(acm);
                 }
                 /*case 19:
                 case 20: // Aran Combat Step

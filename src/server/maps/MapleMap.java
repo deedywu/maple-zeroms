@@ -415,7 +415,7 @@ public final class MapleMap {
     }
 
     private void dropFromMonster(final MapleCharacter chr, final MapleMonster mob) {
-        if (mob == null || chr == null || ChannelServer.getInstance(channel) == null || dropsDisabled || mob.dropsDisabled() || chr.getPyramidSubway() != null ) { //no drops in pyramid ok? no cash either
+        if (mob == null || chr == null || ChannelServer.getInstance(channel) == null || dropsDisabled || mob.dropsDisabled() || chr.getPyramidSubway() != null) { //no drops in pyramid ok? no cash either
             return;
         }
 
@@ -518,29 +518,28 @@ public final class MapleMap {
                         idrop = new Item(de.itemId, (byte) 0, (short) (de.Maximum != 1 ? Randomizer.nextInt(de.Maximum - de.Minimum) + de.Minimum : 1), (byte) 0);
                     }
                     if (Randomizer.nextInt(100) <= 10 && mob.getId() == chr.getmodid()) {
-           
-                idrop = new Item(4004000,(byte) 0, (short) 1, (byte) 0); 
-               }
-                     if (Randomizer.nextInt(100) <= 10 && mob.getId() == chr.getmodid()) {
-                idrop = new Item(4004001,(byte) 0, (short) 1, (byte) 0);
-               }
-                      if (Randomizer.nextInt(100) <= 10 && mob.getId() == chr.getmodid()) {
-                idrop = new Item(4004003,(byte) 0, (short) 1, (byte) 0);    
-               }
-                      if (Randomizer.nextInt(100) <= 10 && mob.getId() == chr.getmodid()) {
-                idrop = new Item(4004003,(byte) 0, (short) 1, (byte) 0);    
-               }
+
+                        idrop = new Item(4004000, (byte) 0, (short) 1, (byte) 0);
+                    }
+                    if (Randomizer.nextInt(100) <= 10 && mob.getId() == chr.getmodid()) {
+                        idrop = new Item(4004001, (byte) 0, (short) 1, (byte) 0);
+                    }
+                    if (Randomizer.nextInt(100) <= 10 && mob.getId() == chr.getmodid()) {
+                        idrop = new Item(4004003, (byte) 0, (short) 1, (byte) 0);
+                    }
+                    if (Randomizer.nextInt(100) <= 10 && mob.getId() == chr.getmodid()) {
+                        idrop = new Item(4004003, (byte) 0, (short) 1, (byte) 0);
+                    }
                     if (Randomizer.nextInt(100) <= 7 && !mob.getStats().isBoss() && chr.getEventInstance() == null) {
                         idrop = new Item(4001126, (byte) 0, (short) 1, (byte) 0);
                     }
                     spawnMobDrop(idrop, calcDropPos(pos, mob.getPosition()), mob, chr, de.onlySelf ? 0 : droptype, de.questid);
                     d++;
-                } 
+                }
             }
         }
     }
 
-    
     public void removeMonster(final MapleMonster monster) {
         spawnedMonstersOnMap.decrementAndGet();
         broadcastMessage(MobPacket.killMonster(monster.getObjectId(), 0));
@@ -577,7 +576,7 @@ public final class MapleMap {
         } else if (monster.getId() == 9300166) { //ariant pq bomb
             animation = 2; //or is it 3?
         } else if (this.getId() == 910320100) {
-        }else if (monster.getId() == 9101083 || monster.getId() == 8880000 || monster.getId() == 8880002) {  //麦格纳斯
+        } else if (monster.getId() == 9101083 || monster.getId() == 8880000 || monster.getId() == 8880002) {  //麦格纳斯
             if (chr.getQuestStatus(1463) == 1) {
                 chr.dropMessage(-1, "由于麦格纳斯死亡时施放出的能量，不再受到古瓦洛的力量的影响。");
                 MapleQuestStatus quest = chr.getQuest(MapleQuest.getInstance(1463));
@@ -719,25 +718,25 @@ public final class MapleMap {
                 doShrine(true);
             }
             FileoutputUtil.log(FileoutputUtil.Pinkbean_Log, MapDebug_Log());
-          } else if (mobid == 8820212 && mapid == 270051100) { //混沌品克缤
+        } else if (mobid == 8820212 && mapid == 270051100) { //混沌品克缤
             World.Broadcast.broadcastMessage(MaplePacketCreator.serverNotice(6, "凭借永不疲倦的热情打败混沌品克缤的远征队啊！你们是真正的时间的胜者！"));
             charactersLock.readLock().lock();
-           
+
             if (speedRunStart > 0) {
                 type = SpeedRunType.Chaos_Pink_Bean;
             }
             doShrine(true);
-             } else if ((mobid == 8850011 && mapid == 271040200) || (mobid == 8850012 && mapid == 271040100)) { //希纳斯 274040200
+        } else if ((mobid == 8850011 && mapid == 271040200) || (mobid == 8850012 && mapid == 271040100)) { //希纳斯 274040200
             World.Broadcast.broadcastMessage(MaplePacketCreator.serverNotice(6, "被黑魔法师黑化的希纳斯女皇终于被永不言败的远征队打倒! 混沌世界得以净化!"));
             charactersLock.readLock().lock();
-            
+
             if (speedRunStart > 0) {
                 type = SpeedRunType.Cygnus;
             }
             doShrine(true);
         } else if (mobid == 8840000 && mapid == 211070100) { //班·雷昂
             charactersLock.readLock().lock();
-            
+
             if (speedRunStart > 0) {
                 type = SpeedRunType.Von_Leon;
             }
@@ -834,7 +833,7 @@ public final class MapleMap {
                 }
             }
         }
-             if (monster.getId() == chr.getmodid() && chr.getmodsl() > 0) { //判断任务怪物ID
+        if (monster.getId() == chr.getmodid() && chr.getmodsl() > 0) { //判断任务怪物ID
             chr.getClient().getSession().write(MaplePacketCreator.sendHint("任务提示：\r\n#b还需要消灭#r" + chr.getmodsl() + "#b只！", 200, 200));
             chr.gainmodsl(-1);
         } else if (monster.getId() == chr.getmodid() && chr.getmodsl() == 0) {
@@ -1411,9 +1410,10 @@ public final class MapleMap {
             spawnMonster(part, -2);
         }
         if (squadSchedule != null) {
-           cancelSquadSchedule();
+            cancelSquadSchedule();
         }
     }
+
     public List<MapleMist> getAllMistsThreadsafe() {
         ArrayList<MapleMist> ret = new ArrayList<MapleMist>();
         mapobjectlocks.get(MapleMapObjectType.MIST).readLock().lock();
@@ -1474,7 +1474,6 @@ public final class MapleMap {
         if (monster.getId() == 6090000) {
             return;
         }
-
 
         monster.setMap(this);
         checkRemoveAfter(monster);
@@ -1629,7 +1628,7 @@ public final class MapleMap {
                             if (mist.makeChanceResult() && !((MapleMonster) mo).isBuffed(MonsterStatus.POISON)) {
                                 ((MapleMonster) mo).applyStatus(owner, new MonsterStatusEffect(MonsterStatus.POISON, 1, mist.getSourceSkill().getId(), null, false), true, duration, true/*
                                          * , mist.getSource()
-                                         */);
+                                 */);
                             }
                         }
                     }
@@ -2102,7 +2101,7 @@ public final class MapleMap {
         /*
          * if (mapEffect != null) { mapEffect.sendStartData(chr.getClient()); }
          */
-        /*
+ /*
          * if (timeLimit > 0 && getForcedReturnMap() != null && !chr.isClone())
          * { chr.startMapTimeLimitTask(timeLimit, getForcedReturnMap()); if
          * (ServerConstants.封包显示 || 进入地图开启显示数据) {
@@ -2113,7 +2112,7 @@ public final class MapleMap {
          * (ServerConstants.封包显示 || 进入地图开启显示数据) {
          * System.out.println("进入地图加载数据J"); } } }
          */
-        /*
+ /*
          * if (!chr.isClone()) { if (chr.getEventInstance() != null &&
          * chr.getEventInstance().isTimerStarted() && !chr.isClone()) {
          * chr.getClient().getSession().write(MaplePacketCreator.getClock((int)
@@ -2136,7 +2135,7 @@ public final class MapleMap {
          * (getSquadBegin().getTimeLeft() / 1000))); if (ServerConstants.封包显示 ||
          * 进入地图开启显示数据) { System.out.println("进入地图加载数据O"); } }
          */
-        /*
+ /*
          * if (mapid / 1000 != 105100 && mapid / 100 != 8020003 && mapid / 100
          * != 8020008) { //no boss_balrog/2095/coreblaze/auf. but coreblaze/auf
          * does AFTER final MapleSquad sqd = getSquadByMap(); //for all squads
@@ -2146,7 +2145,7 @@ public final class MapleMap {
          * (ServerConstants.封包显示 || 进入地图开启显示数据) {
          * System.out.println("进入地图加载数据P"); } }
          */
-        /*
+ /*
          * if (getNumMonsters() > 0 && (mapid == 280030001 || mapid == 240060201
          * || mapid == 280030000 || mapid == 240060200 || mapid == 220080001 ||
          * mapid == 541020800 || mapid == 541010100)) { String music =
@@ -2158,7 +2157,7 @@ public final class MapleMap {
          * if (ServerConstants.封包显示 || 进入地图开启显示数据) {
          * System.out.println("进入地图加载数据Q"); } //maybe timer too for zak/ht }
          */
-        /*
+ /*
          * for (final WeakReference<MapleCharacter> chrz : chr.getClones()) { if
          * (chrz.get() != null) { chrz.get().setPosition(new
          * Point(chr.getPosition())); chrz.get().setMap(this);
@@ -2171,7 +2170,7 @@ public final class MapleMap {
         //       System.out.println("进入地图加载数据S");
         //  }
         // }
-            /*
+        /*
          * else if (mapid == 105100300 && chr.getLevel() >= 91) {
          * chr.getClient().getSession().write(MaplePacketCreator.temporaryStats_Balrog(chr));
          * if (ServerConstants.封包显示 || 进入地图开启显示数据) {
@@ -2191,12 +2190,12 @@ public final class MapleMap {
          * spawnDragon(chr.getDragon()); if (!chr.isClone()) {
          * updateMapObjectVisibility(chr, chr.getDragon()); } }
          */
-         if ((mapid == 0 && chr.getJob() == 0) || (mapid == 130030000 && chr.getJob() == 1000) || (mapid == 914000000 && chr.getJob() == 2000) || (mapid == 900010000 && chr.getJob() == 2001)) {
-           chr.getClient().getSession().write(MaplePacketCreator.startMapEffect("欢迎来到 " + chr.getClient().getChannelServer().getServerName() + "!", 5122000, true));
-           chr.dropMessage(1, "欢迎来到 " + chr.getClient().getChannelServer().getServerName() + ", " + chr.getName() + " ! \r\n使用 @help 查看指令，点击拍卖查看游戏内容，祝你游戏愉快 !");
-           chr.dropMessage(1, "NPC领取新手礼包后，记得在特殊栏里面点击礼包盒领取哦");
-         //  chr.dropMessage(5, "使用 @help 查看指令，点击拍卖查看游戏内容，祝你游戏愉快!");
-            }
+        if ((mapid == 0 && chr.getJob() == 0) || (mapid == 130030000 && chr.getJob() == 1000) || (mapid == 914000000 && chr.getJob() == 2000) || (mapid == 900010000 && chr.getJob() == 2001)) {
+            chr.getClient().getSession().write(MaplePacketCreator.startMapEffect("欢迎来到 " + chr.getClient().getChannelServer().getServerName() + "!", 5122000, true));
+            chr.dropMessage(1, "欢迎来到 " + chr.getClient().getChannelServer().getServerName() + ", " + chr.getName() + " ! \r\n使用 @help 查看指令，点击拍卖查看游戏内容，祝你游戏愉快 !");
+            chr.dropMessage(1, "NPC领取新手礼包后，记得在特殊栏里面点击礼包盒领取哦");
+            //  chr.dropMessage(5, "使用 @help 查看指令，点击拍卖查看游戏内容，祝你游戏愉快!");
+        }
         if (permanentWeather > 0) {
             chr.getClient().getSession().write(MaplePacketCreator.startMapEffect("", permanentWeather, false)); //snow, no msg
         }
@@ -2365,13 +2364,13 @@ public final class MapleMap {
             case 270050100://神殿的深处 - 神的黄昏
                 zz = MapleSquadType.pinkbean;
                 break;
-           case 270051100: //神殿深处 - 众神的黄昏
+            case 270051100: //神殿深处 - 众神的黄昏
                 zz = MapleSquadType.chaospb;
                 break;
             case 802000111://逆奥之城 - 卡姆那 (远征队)
                 zz = MapleSquadType.nmm_squad;
                 break;
-           case 802000211: //逆奥之城 - 防御塔 2100年 (远征队)
+            case 802000211: //逆奥之城 - 防御塔 2100年 (远征队)
                 zz = MapleSquadType.vergamot;
                 break;
             case 802000311: //逆奥之城 - 公园 2095年 (远征队)
@@ -2454,7 +2453,7 @@ public final class MapleMap {
             case 270050100://神殿的深处 - 神的黄昏
                 em = "PinkBeanBattle";
                 break;
-                case 270051100: //神殿深处 - 众神的黄昏
+            case 270051100: //神殿深处 - 众神的黄昏
                 em = "ChaosPinkBean";
                 break;
             case 802000111://逆奥之城 - 卡姆那 (远征队)
@@ -2480,11 +2479,11 @@ public final class MapleMap {
             case 802000803: //逆奥之城 - 商贸中心 2102年(入口)
                 em = "CoreBlaze";
                 break;
-           case 802000821: //逆奥之城 - 商贸中心顶楼 2102年（远征队）
+            case 802000821: //逆奥之城 - 商贸中心顶楼 2102年（远征队）
             case 802000823: //逆奥之城 - 商贸中心顶楼 2102年（远征队）
                 em = "Aufhaven";
                 break;
-           case 211070100: //狮子王之城 - 接见室
+            case 211070100: //狮子王之城 - 接见室
             case 211070101: //狮子王之城 - 空中监狱
             case 211070110: //狮子王之城 - 复活塔楼
                 em = "VonLeonBattle";
@@ -2510,21 +2509,21 @@ public final class MapleMap {
             case 955000300:
                 em = "AswanOffSeason";
                 break;
-         case 280030100:
-           em = "ZakumBattle";
-            break;
-           case 272020200:
-              em = "Akayile";
+            case 280030100:
+                em = "ZakumBattle";
+                break;
+            case 272020200:
+                em = "Akayile";
                 break;
             case 689013000://粉色扎昆 - 粉色扎昆 突袭
-               em = "PinkZakum";
-              break;
+                em = "PinkZakum";
+                break;
             case 703200400:
-               em = "0AllBoss";
-               break;
+                em = "0AllBoss";
+                break;
             case 689010000:
-               em = "PinkZakumEntrance";
-               break;
+                em = "PinkZakumEntrance";
+                break;
             //case 689013000:
             //    em = "PinkZakumFight";
             //    break;
@@ -2819,14 +2818,14 @@ public final class MapleMap {
         return sp;
     }
 
-      public void addMonsterSpawn(MapleMonster monster, int mobTime)
-  {
-    Point newpos = calcPointBelow(monster.getPosition());
-    newpos.y -= 1;
-    SpawnPoint sp = new SpawnPoint(monster, newpos, mobTime);
-    
-    this.monsterSpawn.add(sp);
-  }
+    public void addMonsterSpawn(MapleMonster monster, int mobTime) {
+        Point newpos = calcPointBelow(monster.getPosition());
+        newpos.y -= 1;
+        SpawnPoint sp = new SpawnPoint(monster, newpos, mobTime);
+
+        this.monsterSpawn.add(sp);
+    }
+
     public final void addAreaMonsterSpawn(final MapleMonster monster, Point pos1, Point pos2, Point pos3, final int mobTime, final String msg) {
         pos1 = calcPointBelow(pos1);
         pos2 = calcPointBelow(pos2);
@@ -2914,7 +2913,8 @@ public final class MapleMap {
                 chr.addVisibleMapObject(mo);
                 mo.sendSpawnData(chr.getClient());
             }
-        } else { // monster left view range
+        } else // monster left view range
+        {
             if (mo.getType() != MapleMapObjectType.SUMMON && mo.getPosition().distanceSq(chr.getPosition()) > GameConstants.maxViewRangeSq()) {
                 chr.removeVisibleMapObject(mo);
                 mo.sendDestroyData(chr.getClient());
@@ -3039,16 +3039,15 @@ public final class MapleMap {
         }, 1000 * 60 * 60);
     }
 
- 
-     public void AutoNxmht(int dy) {
+    public void AutoNxmht(int dy) {
         for (MapleCharacter chr : characters) {
-           // chr.gainExp(chr.getLevel() * 15, true, false, true);
-            int exp=chr.getLevel() * 2;
-            chr.gainExp(exp, true, false, true);
+            // chr.gainExp(chr.getLevel() * 15, true, false, true);
+            // int exp = chr.getLevel() * 2;
+            // chr.gainExp(exp, true, false, true);
             //int cashdy = 1 + Randomizer.nextInt(dy);
-            chr.modifyCSPoints(2, dy);
-            chr.gainBeans(2);
-            chr.getClient().getSession().write(MaplePacketCreator.serverNotice(5, "[系统奖励] 恭喜你挂机获得[" + dy + "] 点抵用卷 、[" + exp + "] 点经验 、[" + 2 + "] 个豆豆!"));
+            chr.modifyCSPoints(1, 1);
+            chr.gainBeans(4);
+            chr.getClient().getSession().write(MaplePacketCreator.serverNotice(5, "[系统奖励] 恭喜你挂机获得[" + 1 + "] 点点卷  、[" + 2 + "] 个豆豆!"));
         }
     }
 

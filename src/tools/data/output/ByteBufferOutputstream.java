@@ -22,8 +22,6 @@ package tools.data.output;
 
 import org.apache.mina.core.buffer.IoBuffer;
 
-
-
 /**
  * Uses a bytebuffer as an underlying storage method to hold a stream of bytes.
  *

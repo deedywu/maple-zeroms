@@ -49,7 +49,8 @@ public class SpawnPoint extends Spawns {
         this.immobile = !monster.getStats().getMobile();
         this.nextPossibleSpawn = System.currentTimeMillis();
     }
-   public SpawnPoint(MapleMonster monster, Point pos, int mobTime) {
+
+    public SpawnPoint(MapleMonster monster, Point pos, int mobTime) {
         super();
         this.monster = monster;
         this.pos = new Point(pos);
@@ -57,6 +58,7 @@ public class SpawnPoint extends Spawns {
         this.immobile = !monster.getStats().getMobile();
         this.nextPossibleSpawn = System.currentTimeMillis();
     }
+
     public final void setLevel(int c) {
         this.level = c;
     }
@@ -103,7 +105,7 @@ public class SpawnPoint extends Spawns {
         final MapleMonster mob = new MapleMonster(monster);
         mob.setPosition(pos);
         mob.setCarnivalTeam(carnivalTeam);
-        if(level > -1){
+        if (level > -1) {
             mob.changeLevel(level, true);
         }
         spawnedMonsters.incrementAndGet();

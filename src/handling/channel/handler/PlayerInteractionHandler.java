@@ -172,7 +172,7 @@ public class PlayerInteractionHandler {
                              * GameConstants.getInventoryType(shop.getItemId()).getType()));
                              * }
                              */
-                            /*
+ /*
                              * chr.dropMessage(1, "請暫時用營業執照開店");
                              * c.getSession().write(MaplePacketCreator.enableActions());
                              */
@@ -232,47 +232,39 @@ public class PlayerInteractionHandler {
                                 merchant.removeAllVisitors((byte) 16, (byte) 0);
                                 chr.setPlayerShop(ips);
                                 c.getSession().write(PlayerShopPacket.getHiredMerch(chr, merchant, false));
+                            } else if (!merchant.isOpen() || !merchant.isAvailable()) {
+                                chr.dropMessage(1, "主人正在整理商店物品\r\n请稍后再度光临！");
+                            } else if (ips.getFreeSlot() == -1) {
+                                chr.dropMessage(1, "商店人数已经满了,请稍后再进入");
+                            } else if (merchant.isInBlackList(chr.getName())) {
+                                chr.dropMessage(1, "你被这家商店加入黑名单了,所以不能进入");
                             } else {
-                                if (!merchant.isOpen() || !merchant.isAvailable()) {
-                                    chr.dropMessage(1, "主人正在整理商店物品\r\n请稍后再度光临！");
-                                } else {
-                                    if (ips.getFreeSlot() == -1) {
-                                        chr.dropMessage(1, "商店人数已经满了,请稍后再进入");
-                                    } else if (merchant.isInBlackList(chr.getName())) {
-                                        chr.dropMessage(1, "你被这家商店加入黑名单了,所以不能进入");
-                                    } else {
-                                        chr.setPlayerShop(ips);
-                                        merchant.addVisitor(chr);
-                                        c.getSession().write(PlayerShopPacket.getHiredMerch(chr, merchant, false));
-                                    }
-                                }
+                                chr.setPlayerShop(ips);
+                                merchant.addVisitor(chr);
+                                c.getSession().write(PlayerShopPacket.getHiredMerch(chr, merchant, false));
                             }
+                        } else if (ips instanceof MaplePlayerShop && ((MaplePlayerShop) ips).isBanned(chr.getName())) {
+                            chr.dropMessage(1, "你被这家商店加入黑名单了,所以不能进入.");
+                            return;
+                        } else if (ips.getFreeSlot() < 0 || ips.getVisitorSlot(chr) > -1 || !ips.isOpen() || !ips.isAvailable()) {
+                            c.getSession().write(PlayerShopPacket.getMiniGameFull());
                         } else {
-                            if (ips instanceof MaplePlayerShop && ((MaplePlayerShop) ips).isBanned(chr.getName())) {
-                                chr.dropMessage(1, "你被这家商店加入黑名单了,所以不能进入.");
-                                return;
-                            } else {
-                                if (ips.getFreeSlot() < 0 || ips.getVisitorSlot(chr) > -1 || !ips.isOpen() || !ips.isAvailable()) {
-                                    c.getSession().write(PlayerShopPacket.getMiniGameFull());
-                                } else {
-                                    if (slea.available() > 0 && slea.readByte() > 0) { //a password has been entered
-                                        String pass = slea.readMapleAsciiString();
-                                        if (!pass.equals(ips.getPassword())) {
-                                            c.getPlayer().dropMessage(1, "你输入的密码错误.请从新在试一次.");
-                                            return;
-                                        }
-                                    } else if (ips.getPassword().length() > 0) {
-                                        c.getPlayer().dropMessage(1, "你输入的密码错误.请从新在试一次.");
-                                        return;
-                                    }
-                                    chr.setPlayerShop(ips);
-                                    ips.addVisitor(chr);
-                                    if (ips instanceof MapleMiniGame) {
-                                        ((MapleMiniGame) ips).send(c);
-                                    } else {
-                                        c.getSession().write(PlayerShopPacket.getPlayerStore(chr, false));
-                                    }
+                            if (slea.available() > 0 && slea.readByte() > 0) { //a password has been entered
+                                String pass = slea.readMapleAsciiString();
+                                if (!pass.equals(ips.getPassword())) {
+                                    c.getPlayer().dropMessage(1, "你输入的密码错误.请从新在试一次.");
+                                    return;
                                 }
+                            } else if (ips.getPassword().length() > 0) {
+                                c.getPlayer().dropMessage(1, "你输入的密码错误.请从新在试一次.");
+                                return;
+                            }
+                            chr.setPlayerShop(ips);
+                            ips.addVisitor(chr);
+                            if (ips instanceof MapleMiniGame) {
+                                ((MapleMiniGame) ips).send(c);
+                            } else {
+                                c.getSession().write(PlayerShopPacket.getPlayerStore(chr, false));
                             }
                         }
                     }
@@ -299,47 +291,39 @@ public class PlayerInteractionHandler {
                                 merchant.removeAllVisitors((byte) 16, (byte) 0);
                                 chr.setPlayerShop(ips);
                                 c.getSession().write(PlayerShopPacket.getHiredMerch(chr, merchant, false));
+                            } else if (!merchant.isOpen() || !merchant.isAvailable()) {
+                                chr.dropMessage(1, "这个商店正在整理或者是没有再贩卖东西");
+                            } else if (ips.getFreeSlot() == -1) {
+                                chr.dropMessage(1, "商店人数已经满了，请稍后在进入");
+                            } else if (merchant.isInBlackList(chr.getName())) {
+                                chr.dropMessage(1, "你已经被这家商店加入黑名单，所以不能进入");
                             } else {
-                                if (!merchant.isOpen() || !merchant.isAvailable()) {
-                                    chr.dropMessage(1, "这个商店正在整理或者是没有再贩卖东西");
-                                } else {
-                                    if (ips.getFreeSlot() == -1) {
-                                        chr.dropMessage(1, "商店人数已经满了，请稍后在进入");
-                                    } else if (merchant.isInBlackList(chr.getName())) {
-                                        chr.dropMessage(1, "你已经被这家商店加入黑名单，所以不能进入");
-                                    } else {
-                                        chr.setPlayerShop(ips);
-                                        merchant.addVisitor(chr);
-                                        c.getSession().write(PlayerShopPacket.getHiredMerch(chr, merchant, false));
-                                    }
-                                }
+                                chr.setPlayerShop(ips);
+                                merchant.addVisitor(chr);
+                                c.getSession().write(PlayerShopPacket.getHiredMerch(chr, merchant, false));
                             }
+                        } else if (ips instanceof MaplePlayerShop && ((MaplePlayerShop) ips).isBanned(chr.getName())) {
+                            chr.dropMessage(1, "你被这家商店加入黑名单了,所以不能进入.");
+                            return;
+                        } else if (ips.getFreeSlot() < 0 || ips.getVisitorSlot(chr) > -1 || !ips.isOpen() || !ips.isAvailable()) {
+                            c.getSession().write(PlayerShopPacket.getMiniGameFull());
                         } else {
-                            if (ips instanceof MaplePlayerShop && ((MaplePlayerShop) ips).isBanned(chr.getName())) {
-                                chr.dropMessage(1, "你被这家商店加入黑名单了,所以不能进入.");
-                                return;
-                            } else {
-                                if (ips.getFreeSlot() < 0 || ips.getVisitorSlot(chr) > -1 || !ips.isOpen() || !ips.isAvailable()) {
-                                    c.getSession().write(PlayerShopPacket.getMiniGameFull());
-                                } else {
-                                    if (slea.available() > 0 && slea.readByte() > 0) { //a password has been entered
-                                        String pass = slea.readMapleAsciiString();
-                                        if (!pass.equals(ips.getPassword())) {
-                                            c.getPlayer().dropMessage(1, "你输入的密码错误.请从新在试一次");
-                                            return;
-                                        }
-                                    } else if (ips.getPassword().length() > 0) {
-                                        c.getPlayer().dropMessage(1, "你输入的密码错误.请从新在试一次.");
-                                        return;
-                                    }
-                                    chr.setPlayerShop(ips);
-                                    ips.addVisitor(chr);
-                                    if (ips instanceof MapleMiniGame) {
-                                        ((MapleMiniGame) ips).send(c);
-                                    } else {
-                                        c.getSession().write(PlayerShopPacket.getPlayerStore(chr, false));
-                                    }
+                            if (slea.available() > 0 && slea.readByte() > 0) { //a password has been entered
+                                String pass = slea.readMapleAsciiString();
+                                if (!pass.equals(ips.getPassword())) {
+                                    c.getPlayer().dropMessage(1, "你输入的密码错误.请从新在试一次");
+                                    return;
                                 }
+                            } else if (ips.getPassword().length() > 0) {
+                                c.getPlayer().dropMessage(1, "你输入的密码错误.请从新在试一次.");
+                                return;
+                            }
+                            chr.setPlayerShop(ips);
+                            ips.addVisitor(chr);
+                            if (ips instanceof MapleMiniGame) {
+                                ((MapleMiniGame) ips).send(c);
+                            } else {
+                                c.getSession().write(PlayerShopPacket.getPlayerStore(chr, false));
                             }
                         }
                     }

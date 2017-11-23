@@ -34,6 +34,7 @@ public class OtherSettings {
             log.error("Could not configuration", e);
         }
     }
+
     public String[] getItempb_id() {
         return itempb_id;
     }
@@ -45,9 +46,11 @@ public class OtherSettings {
     public String[] getItemjy_id() {
         return itemjy_id;
     }
+
     public String[] getMappb_id() {
         return mappb_id;
     }
+
     public boolean isCANLOG() {
         return CANLOG;
     }

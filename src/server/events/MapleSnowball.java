@@ -143,7 +143,7 @@ public class MapleSnowball extends MapleEvent {
         public void broadcast(MapleMap map, int message) {
             for (MapleCharacter chr : map.getCharactersThreadsafe()) {
                 if ((team == 0 && chr.getPosition().y > -80) || (team == 1 && chr.getPosition().y <= -80)) {
-                chr.getClient().getSession().write(MaplePacketCreator.snowballMessage(team, message));
+                    chr.getClient().getSession().write(MaplePacketCreator.snowballMessage(team, message));
                 }
             }
         }

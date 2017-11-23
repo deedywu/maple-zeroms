@@ -104,6 +104,7 @@ public class MapleReactorStats {
         }
         return 0;
     }
+
     private static class StateData {
 
         private int type, timeOut;
@@ -134,6 +135,7 @@ public class MapleReactorStats {
         private int getTimeOut() {
             return timeOut;
         }
+
         private byte canTouch() {
             return this.canTouch;
         }

@@ -3560,7 +3560,7 @@ public class MTSCSPacket {
          * 00 00 00 00 01 00 00 00 01 00 00 00 00"));
          */
 //        mplew.writeShort(0);
-      /*
+        /*
          * Collection<CashModInfo> cmi =
          * CashItemFactory.getInstance().getAllModInfo(); mplew.writeInt(0);
          * mplew.writeShort(0/*cmi.size()
@@ -3579,7 +3579,6 @@ public class MTSCSPacket {
         //  mplew.writeShort(0); //limited goods 1-> A2 35 4D 00 CE FD FD 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 00 00 00 FF FF FF FF FF FF FF FF 06 00 00 00 1F 1C 32 01 A7 3F 32 01 FF FF FF FF FF FF FF FF 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00
         //   mplew.write(0); //eventON
         //  mplew.writeInt(0);*/
-
         return mplew.getPacket();
     }
 
@@ -4509,13 +4508,11 @@ public class MTSCSPacket {
             } else {
                 mplew.write(0x2B);
             }
+        } else if (fail) {
+            mplew.write(0x2A);
+            mplew.writeInt(-1);
         } else {
-            if (fail) {
-                mplew.write(0x2A);
-                mplew.writeInt(-1);
-            } else {
-                mplew.write(0x29);
-            }
+            mplew.write(0x29);
         }
 
         return mplew.getPacket();

@@ -46,15 +46,16 @@ public class PlayerCommand {
     }
 
     public static class 解卡 extends 查看 {
-        
+
     }
-      public static class 复活 extends fh {
-       
-   }
-     
-         public static class 破攻 extends pg {
-       
-   }
+
+    public static class 复活 extends fh {
+
+    }
+
+    public static class 破攻 extends pg {
+
+    }
 
     public static class 查看 extends CommandExecute {
 
@@ -122,12 +123,13 @@ public class PlayerCommand {
         @Override
         public int execute(MapleClient c, String[] splitted) {
             NPCScriptManager.getInstance().dispose(c);
-           c.getSession().write(MaplePacketCreator.enableActions());
+            c.getSession().write(MaplePacketCreator.enableActions());
             NPCScriptManager npc = NPCScriptManager.getInstance();
             npc.start(c, 9900007);
             return 1;
         }
     }
+
     public static class mob extends 怪物 {
     }
 
@@ -149,6 +151,7 @@ public class PlayerCommand {
             return 1;
         }
     }
+
     public static class 爆率 extends CommandExecute {
 
         @Override
@@ -157,6 +160,7 @@ public class PlayerCommand {
             return 1;
         }
     }
+
     public static class CGM extends CommandExecute {
 
         @Override
@@ -178,7 +182,8 @@ public class PlayerCommand {
             return 1;
         }
     }
-public static class fh extends CommandExecute {
+
+    public static class fh extends CommandExecute {
 
         public int execute(MapleClient c, String[] splitted) {
             if (c.getPlayer().getLevel() < 70) {
@@ -195,9 +200,9 @@ public static class fh extends CommandExecute {
             }
             if (c.getPlayer().getBossLog("原地复活") < 5) {
                 c.getPlayer().setBossLog("原地复活");
-               c.getPlayer().getStat().setHp(c.getPlayer().getStat().getCurrentMaxHp());
-               c.getPlayer().getStat().setMp(c.getPlayer().getStat().getCurrentMaxMp());
-               c.getPlayer().updateSingleStat(MapleStat.HP, c.getPlayer().getStat().getCurrentMaxHp());
+                c.getPlayer().getStat().setHp(c.getPlayer().getStat().getCurrentMaxHp());
+                c.getPlayer().getStat().setMp(c.getPlayer().getStat().getCurrentMaxMp());
+                c.getPlayer().updateSingleStat(MapleStat.HP, c.getPlayer().getStat().getCurrentMaxHp());
                 c.getPlayer().updateSingleStat(MapleStat.MP, c.getPlayer().getStat().getCurrentMaxMp());
                 c.getPlayer().dispelDebuffs();
                 c.getPlayer().dropMessage(5, "恭喜您原地复活成功，您今天还可以免费使用: " + (5 - c.getPlayer().getBossLog("原地复活")) + " 次。");
@@ -217,35 +222,34 @@ public static class fh extends CommandExecute {
             return 0;
         }
     }
-   
-    
-    
-     public static class pg extends CommandExecute {
+
+    public static class pg extends CommandExecute {
 
         @Override
         public int execute(MapleClient c, String[] splitted) {
-            int VipCount=c.getPlayer().getVip();
-            long maxdamage = (199999 + (VipCount*10000));
+            int VipCount = c.getPlayer().getVip();
+            long maxdamage = (199999 + (VipCount * 10000));
             int damage = 0;
-            damage = Math.min(damage, 199999+(VipCount*10000));
-           if ((maxdamage >= 2147483647) || (maxdamage < 0)) {
+            damage = Math.min(damage, 199999 + (VipCount * 10000));
+            if ((maxdamage >= 2147483647) || (maxdamage < 0)) {
                 maxdamage = 2147483647;
             }
             String mds = "当前您的伤害上限为： " + maxdamage + " ";
             c.getPlayer().dropMessage(5, "============================================================");
             c.getPlayer().dropMessage(5, "                  " + c.getChannelServer().getServerName() + "    ");
             c.getPlayer().dropMessage(5, "============================================================");
-           // c.getPlayer().dropMessage(-11, "目前您的岛民等级为：" + c.getPlayer().getMaplewing("cardlevel") + "  拥有贡献点: " + c.getPlayer().getMaplewing("maple"));
-           // c.getPlayer().dropMessage(-11, "当前伤害上限倍率：" + ChannelServer.getpogpngbilv());
-            c.getPlayer().dropMessage(5, "基础伤害: "+c.getPlayer().getStat().getCurrentMaxBaseDamage()+"");
-           // c.getPlayer().dropMessage(5, new StringBuilder().append("破攻实际伤害: ").append(damage).toString());
-            c.getPlayer().dropMessage(5, "伤害上限计算公式： 基础上限(199999) + 破攻石增加的上限 " );
+            // c.getPlayer().dropMessage(-11, "目前您的岛民等级为：" + c.getPlayer().getMaplewing("cardlevel") + "  拥有贡献点: " + c.getPlayer().getMaplewing("maple"));
+            // c.getPlayer().dropMessage(-11, "当前伤害上限倍率：" + ChannelServer.getpogpngbilv());
+            c.getPlayer().dropMessage(5, "基础伤害: " + c.getPlayer().getStat().getCurrentMaxBaseDamage() + "");
+            // c.getPlayer().dropMessage(5, new StringBuilder().append("破攻实际伤害: ").append(damage).toString());
+            c.getPlayer().dropMessage(5, "伤害上限计算公式： 基础上限(199999) + 破攻石增加的上限 ");
             c.getPlayer().dropMessage(-1, mds);
             c.getPlayer().dropMessage(5, mds);
             return 1;
         }
     }
-   /*  public static class STR extends DistributeStatCommands {
+
+    /*  public static class STR extends DistributeStatCommands {
 
         public STR() {
             stat = MapleStat.STR;
@@ -354,13 +358,13 @@ public static class fh extends CommandExecute {
             c.getPlayer().dropMessage(5, "指令列表 :");
             c.getPlayer().dropMessage(5, "@解卡/@查看/@ea  <解除异常+查看当前状态>");
             c.getPlayer().dropMessage(5, "@CGM 讯息        <传送讯息給GM>");
-             c.getPlayer().dropMessage(5, "@str, @dex, @int, @luk <数值>");
+            c.getPlayer().dropMessage(5, "@str, @dex, @int, @luk <数值>");
             c.getPlayer().dropMessage(5, "@爆率       <查询当前地图怪物爆率>");
             c.getPlayer().dropMessage(5, "@怪物/@mob <查看身边怪物信息/血量>");
             //c.getPlayer().dropMessage(5, "@领取点券        < 充值领取点券 >");
             c.getPlayer().dropMessage(5, "@存档            < 储存当前人物信息 >");
             c.getPlayer().dropMessage(5, "@复活/fh      < 原地复活，每天有5次原地复活的机会超过需要300点卷 >");
-           // c.getPlayer().dropMessage(5, "@召唤队友/zhdy   < 召唤队友到身边，每天有5次的机会超过需要300点卷 >");
+            // c.getPlayer().dropMessage(5, "@召唤队友/zhdy   < 召唤队友到身边，每天有5次的机会超过需要300点卷 >");
             c.getPlayer().dropMessage(5, "@pg   查看自己攻击伤害上限(也可以使用@破攻)");
             return 1;
         }

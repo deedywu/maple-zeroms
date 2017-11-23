@@ -160,17 +160,15 @@ public class Event_PyramidSubway {
     public final void onChangeMap(final MapleCharacter c, final int newmapid) {
         if ((newmapid == 910330001 && type == -1) || (newmapid == 926020001 + type && type != -1)) {
             succeed(c);
-        } else {
-            if (type == -1 && (newmapid < 910320100 || newmapid > 910320304)) {
-                dispose(c);
-                return;
-            } else if (type != -1 && (newmapid < 926010100 || newmapid > 926013504)) {
-                dispose(c);
-                return;
-            } else if (c.getParty() == null || c.getParty().getLeader().equals(new MaplePartyCharacter(c))) {
-                energybar = 100;
-                commenceTimerNextMap(c, newmapid % 1000 / 100);
-            }
+        } else if (type == -1 && (newmapid < 910320100 || newmapid > 910320304)) {
+            dispose(c);
+            return;
+        } else if (type != -1 && (newmapid < 926010100 || newmapid > 926013504)) {
+            dispose(c);
+            return;
+        } else if (c.getParty() == null || c.getParty().getLeader().equals(new MaplePartyCharacter(c))) {
+            energybar = 100;
+            commenceTimerNextMap(c, newmapid % 1000 / 100);
         }
     }
 
@@ -195,16 +193,14 @@ public class Event_PyramidSubway {
             } else if (tk >= 500 && tk <= 999) {
                 rank = 3;
             }
-        } else {
-            if (tk >= 3000) {
-                rank = 0;
-            } else if (tk >= 2000 && tk <= 2999) {
-                rank = 1;
-            } else if (tk >= 1500 && tk <= 1999) {
-                rank = 2;
-            } else if (tk >= 500 && tk <= 1499) {
-                rank = 3;
-            }
+        } else if (tk >= 3000) {
+            rank = 0;
+        } else if (tk >= 2000 && tk <= 2999) {
+            rank = 1;
+        } else if (tk >= 1500 && tk <= 1999) {
+            rank = 2;
+        } else if (tk >= 500 && tk <= 1499) {
+            rank = 3;
         }
 
         int pt = 0;

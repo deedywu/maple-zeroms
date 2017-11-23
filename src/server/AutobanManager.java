@@ -103,10 +103,8 @@ public class AutobanManager implements Runnable {
                 FileoutputUtil.logToFile_chr(c.getPlayer(), FileoutputUtil.ban_log, sb.toString());
                 c.getPlayer().ban(sb.toString(), false, true, false);
                 c.disconnect(true, false);
-            } else {
-                if (expiration > 0) {
-                    expirations.add(new ExpirationEntry(System.currentTimeMillis() + expiration, acc, points));
-                }
+            } else if (expiration > 0) {
+                expirations.add(new ExpirationEntry(System.currentTimeMillis() + expiration, acc, points));
             }
         } finally {
             lock.unlock();

@@ -390,13 +390,12 @@ public class MaplePacketCreator {
     }
 
     /**
-     * Possible values for
-     * <code>type</code>:<br> 1: You cannot move that channel. Please try again
-     * later.<br> 2: You cannot go into the cash shop. Please try again
-     * later.<br> 3: The Item-Trading shop is currently unavailable, please try
-     * again later.<br> 4: You cannot go into the trade shop, due to the
-     * limitation of user count.<br> 5: You do not meet the minimum level
-     * requirement to access the Trade Shop.<br>
+     * Possible values for <code>type</code>:<br> 1: You cannot move that
+     * channel. Please try again later.<br> 2: You cannot go into the cash shop.
+     * Please try again later.<br> 3: The Item-Trading shop is currently
+     * unavailable, please try again later.<br> 4: You cannot go into the trade
+     * shop, due to the limitation of user count.<br> 5: You do not meet the
+     * minimum level requirement to access the Trade Shop.<br>
      *
      * @param type The type
      * @return The "block" packet.
@@ -710,7 +709,7 @@ public class MaplePacketCreator {
         }
         return new ByteArrayMaplePacket(HexTool.getByteArrayFromHexString(hex));
     }
-    
+
     public static final MaplePacket GainEXP_Monster(final int gain, final boolean white, final int partyinc, final int Class_Bonus_EXP, final int Equipment_Bonus_EXP, final int Premium_Bonus_EXP, final int 结婚经验) {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -735,7 +734,6 @@ public class MaplePacketCreator {
 //        mplew.writeInt(0); //Rainbow Week Bonus EXP
         // mplew.writeInt(Class_Bonus_EXP); // Class bonus EXP
 //        mplew.write(0);
-
 
         return mplew.getPacket();
     }
@@ -769,7 +767,6 @@ public class MaplePacketCreator {
 //        mplew.writeInt(Premium_Bonus_EXP); // 网吧经验
 //        return mplew.getPacket();
 //    }
-
     public static final MaplePacket GainEXP_Others(final int gain, final boolean inChat, final boolean white) {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -983,7 +980,7 @@ public class MaplePacketCreator {
         //    fbuffmask |= MapleBuffStat.OWL_SPIRIT.getValue();
         //    buffvalue.add(new Pair<Integer, Boolean>(Integer.valueOf(chr.getBuffedValue(MapleBuffStat.OWL_SPIRIT).intValue()), false));
         //}
-       /*
+        /*
          * if (chr.getBuffedValue(MapleBuffStat.SOARING) != null) { fbuffmask |=
          * MapleBuffStat.SOARING.getValue(); } if
          * (chr.getBuffedValue(MapleBuffStat.MIRROR_IMAGE) != null) { fbuffmask
@@ -1009,7 +1006,7 @@ public class MaplePacketCreator {
          * mplew.write(-2); mplew.write(-1); // SEA V82 mplew.write(0);
          * mplew.write(0); // SEA V82 mplew.write(0);
          */
-        /*
+ /*
          * long buffmask = 0;
          *
          * if (chr.getBuffedValue(MapleBuffStat.DARKSIGHT) != null &&
@@ -1392,7 +1389,7 @@ public class MaplePacketCreator {
                 mplew.writeInt(oned.objectid);
                 mplew.write(-1/*
                          * 0x07
-                         */);
+                 */);
                 for (Pair<Integer, Boolean> eachd : oned.attack) {
                     // highest bit set = crit
                     if (eachd.right) {
@@ -2020,7 +2017,7 @@ public class MaplePacketCreator {
         mplew.writeMapleAsciiString(guildName);
         mplew.writeMapleAsciiString(allianceName); // Alliance
 //        mplew.write(isSelf ? 1 : 0);
-      /*
+        /*
          * mplew.writeMapleAsciiString(chr.getcharmessage()); // 角色訊息
          * mplew.write(chr.getexpression());// 表情
          * mplew.write(chr.getconstellation());// 星座
@@ -3075,7 +3072,6 @@ public class MaplePacketCreator {
 
     public static MaplePacket updateSkill(int skillid, int level, int masterlevel, long expiration) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
 
         if (ServerConstants.调试输出封包) {
             System.out.println("updateSkill--------------------");
@@ -6418,5 +6414,5 @@ public class MaplePacketCreator {
 
         return mplew.getPacket();
     }
-    
+
 }

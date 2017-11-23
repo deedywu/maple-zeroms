@@ -76,12 +76,10 @@ public class PartyHandler {
                     c.getPlayer().setParty(party);
                     c.getSession().write(MaplePacketCreator.partyCreated(party.getId()));
 
+                } else if (partyplayer.equals(party.getLeader()) && party.getMembers().size() == 1) { //only one, reupdate
+                    c.getSession().write(MaplePacketCreator.partyCreated(party.getId()));
                 } else {
-                    if (partyplayer.equals(party.getLeader()) && party.getMembers().size() == 1) { //only one, reupdate
-                        c.getSession().write(MaplePacketCreator.partyCreated(party.getId()));
-                    } else {
-                        c.getPlayer().dropMessage(5, "你不能创建一个组队,因为你已经存在一个队伍中");
-                    }
+                    c.getPlayer().dropMessage(5, "你不能创建一个组队,因为你已经存在一个队伍中");
                 }
                 break;
             case 2: // leave

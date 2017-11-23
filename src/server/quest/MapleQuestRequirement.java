@@ -153,15 +153,11 @@ public class MapleQuestRequirement implements Serializable {
                             if (c.getMasterLevel(skil) == 0) {
                                 return false;
                             }
-                        } else {
-                            if (c.getSkillLevel(skil) == 0) {
-                                return false;
-                            }
-                        }
-                    } else {
-                        if (c.getSkillLevel(skil) > 0 || c.getMasterLevel(skil) > 0) {
+                        } else if (c.getSkillLevel(skil) == 0) {
                             return false;
                         }
+                    } else if (c.getSkillLevel(skil) > 0 || c.getMasterLevel(skil) > 0) {
+                        return false;
                     }
                 }
                 return true;

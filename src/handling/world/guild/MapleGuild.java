@@ -773,7 +773,7 @@ public class MapleGuild implements java.io.Serializable {
         if (broadcast) {
             broadcast(UIPacket.getGPMsg(amount));
         }
-      //  writeGPToDB();
+        //  writeGPToDB();
     }
 
     public final void addMemberData(final MaplePacketLittleEndianWriter mplew) {

@@ -41,7 +41,7 @@ public class FamilyHandler {
         //95 00 
         //0C 00 D7 FE D7 FE D7 FE D7 FE B3 D0 C5 B5
         MapleCharacter chr = c.getChannelServer().getPlayerStorage().getCharacterByName(slea.readMapleAsciiString());
-        if (chr != null) { 
+        if (chr != null) {
             c.getSession().write(FamilyPacket.getFamilyPedigree(chr));
         }
     }
@@ -162,7 +162,7 @@ public class FamilyHandler {
             c.getPlayer().dropMessage(1, "您需要邀请比您低等级的玩家.");
         } else if (addChr.getLevel() < c.getPlayer().getLevel() - 20) {
             c.getPlayer().dropMessage(1, "您邀请的玩家等级必須相差20等级以内.");
-	//} else if (c.getPlayer().getFamilyId() != 0 && c.getPlayer().getFamily().getGens() >= 1000) {
+            //} else if (c.getPlayer().getFamilyId() != 0 && c.getPlayer().getFamily().getGens() >= 1000) {
             //	c.getPlayer().dropMessage(5, "Your family cannot extend more than 1000 generations from above and below.");
         } else if (addChr.getLevel() < 10) {
             c.getPlayer().dropMessage(1, "您必須邀请10級以上的玩家.");

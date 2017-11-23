@@ -94,6 +94,7 @@ public class MonsterCarnivalPacket {
 
         return mplew.getPacket();
     }
+
     public static MaplePacket playerSummoned1(String name, int tab, int number) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 

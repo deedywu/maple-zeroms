@@ -41,7 +41,7 @@ public class StringUtil {
      * @param length The length to pad to.
      * @return The padded string.
      */
-    public static final String getLeftPaddedStr( String in,  char padchar,  int length) {
+    public static final String getLeftPaddedStr(String in, char padchar, int length) {
         StringBuilder builder = new StringBuilder(length);
         for (int x = in.getBytes().length; x < length; x++) {
             builder.append(padchar);

@@ -682,7 +682,7 @@ public class PlayerStats implements Serializable {
         if (buff != null) {
             if (chra.getBuffSource(MapleBuffStat.EXPRATE) == 0) {
                 switch (chra.getMapId()) {
-                    
+
                 }
             } else {
                 expBuff *= buff.doubleValue() / 100.0;

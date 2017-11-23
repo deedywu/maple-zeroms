@@ -82,10 +82,10 @@ public class DamageParse {
             // 封锁区
             //if (ban && !player.isAdmin()) {
             //    player.ban(lastReason, false, true, false);//封号
-             //   FileoutputUtil.logToFile_chr(player, FileoutputUtil.ban_log, lastReason);// 输出文挡
-              //  World.Broadcast.broadcastMessage(MaplePacketCreator.serverNotice(6, "[封号系统]" + player.getName() + " 该玩家攻击异常被系统自动封号处理。").getBytes());//广播
-              //  return;
-           // }
+            //   FileoutputUtil.logToFile_chr(player, FileoutputUtil.ban_log, lastReason);// 输出文挡
+            //  World.Broadcast.broadcastMessage(MaplePacketCreator.serverNotice(6, "[封号系统]" + player.getName() + " 该玩家攻击异常被系统自动封号处理。").getBytes());//广播
+            //  return;
+            // }
             // 封锁区结束
             if (GameConstants.isMulungSkill(attack.skill)) {
                 if (player.getMapId() / 10000 != 92502) {
@@ -99,10 +99,8 @@ public class DamageParse {
                 if (player.getMapId() / 1000000 != 926) {
                     //AutobanManager.getInstance().autoban(player.getClient(), "Using Pyramid skill outside of pyramid maps.");
                     return;
-                } else {
-                    if (player.getPyramidSubway() == null || !player.getPyramidSubway().onSkillUse(player)) {
-                        return;
-                    }
+                } else if (player.getPyramidSubway() == null || !player.getPyramidSubway().onSkillUse(player)) {
+                    return;
                 }
             }
 
@@ -197,30 +195,26 @@ public class DamageParse {
                         } else {
                             eachd = fixeddmg;
                         }
-                    } else {
-                        if (monsterstats.getOnlyNoramlAttack()) {
-                            eachd = attack.skill != 0 ? 0 : Math.min(eachd, (int) maxDamagePerHit);  // Convert to server calculated damage
-                        } else if (!player.isGM()) {
-                            if (Tempest) { // Monster buffed with Tempest
-                                if (eachd > monster.getMobMaxHp()) {
-                                    eachd = (int) Math.min(monster.getMobMaxHp(), Integer.MAX_VALUE);
-                                    player.getCheatTracker().registerOffense(CheatingOffense.攻击力过高);
-                                }
-                            } else if (!monster.isBuffed(MonsterStatus.DAMAGE_IMMUNITY) && !monster.isBuffed(MonsterStatus.WEAPON_IMMUNITY) && !monster.isBuffed(MonsterStatus.WEAPON_DAMAGE_REFLECT)) {
-                                if (eachd > maxDamagePerHit) {
-                                    player.getCheatTracker().registerOffense(CheatingOffense.攻击力过高);
-                                    if (eachd > maxDamagePerHit * 2) {
-                                        FileoutputUtil.logToFile_chr(player, FileoutputUtil.fixdam_ph, " 技能 " + attack.skill + " 怪物 " + monster.getId() + " 预计伤害:" + (long) maxDamagePerHit + "  实际" + eachd);
-                                        eachd = (int) (maxDamagePerHit * 2); // Convert to server calculated damage
-                                        player.getCheatTracker().registerOffense(CheatingOffense.攻击过高2);
-                                    }
-                                }
-                            } else {
+                    } else if (monsterstats.getOnlyNoramlAttack()) {
+                        eachd = attack.skill != 0 ? 0 : Math.min(eachd, (int) maxDamagePerHit);  // Convert to server calculated damage
+                    } else if (!player.isGM()) {
+                        if (Tempest) { // Monster buffed with Tempest
+                            if (eachd > monster.getMobMaxHp()) {
+                                eachd = (int) Math.min(monster.getMobMaxHp(), Integer.MAX_VALUE);
+                                player.getCheatTracker().registerOffense(CheatingOffense.攻击力过高);
+                            }
+                        } else if (!monster.isBuffed(MonsterStatus.DAMAGE_IMMUNITY) && !monster.isBuffed(MonsterStatus.WEAPON_IMMUNITY) && !monster.isBuffed(MonsterStatus.WEAPON_DAMAGE_REFLECT)) {
+                            if (eachd > maxDamagePerHit) {
+                                player.getCheatTracker().registerOffense(CheatingOffense.攻击力过高);
                                 if (eachd > maxDamagePerHit * 2) {
                                     FileoutputUtil.logToFile_chr(player, FileoutputUtil.fixdam_ph, " 技能 " + attack.skill + " 怪物 " + monster.getId() + " 预计伤害:" + (long) maxDamagePerHit + "  实际" + eachd);
-                                    eachd = (int) (maxDamagePerHit);
+                                    eachd = (int) (maxDamagePerHit * 2); // Convert to server calculated damage
+                                    player.getCheatTracker().registerOffense(CheatingOffense.攻击过高2);
                                 }
                             }
+                        } else if (eachd > maxDamagePerHit * 2) {
+                            FileoutputUtil.logToFile_chr(player, FileoutputUtil.fixdam_ph, " 技能 " + attack.skill + " 怪物 " + monster.getId() + " 预计伤害:" + (long) maxDamagePerHit + "  实际" + eachd);
+                            eachd = (int) (maxDamagePerHit);
                         }
                     }
                     if (player == null) { // o_O
@@ -508,11 +502,11 @@ public class DamageParse {
         // 检测外挂区结束-------------
         // 封锁区
         //if (ban && !player.isAdmin()) {
-            //player.ban(lastReason, false, true, false);//封号
-           // FileoutputUtil.logToFile_chr(player, FileoutputUtil.ban_log, lastReason);// 输出文挡
-           // World.Broadcast.broadcastMessage(MaplePacketCreator.serverNotice(6, "[封号系统]" + player.getName() + " 该玩家攻击异常被系统自动封号处理。").getBytes());//广播
-           // return;
-       // }
+        //player.ban(lastReason, false, true, false);//封号
+        // FileoutputUtil.logToFile_chr(player, FileoutputUtil.ban_log, lastReason);// 输出文挡
+        // World.Broadcast.broadcastMessage(MaplePacketCreator.serverNotice(6, "[封号系统]" + player.getName() + " 该玩家攻击异常被系统自动封号处理。").getBytes());//广播
+        // return;
+        // }
         // 封锁区结束
         if (GameConstants.isMulungSkill(attack.skill)) {
             if (player.getMapId() / 10000 != 92502) {
@@ -526,10 +520,8 @@ public class DamageParse {
             if (player.getMapId() / 1000000 != 926) {
                 //AutobanManager.getInstance().autoban(player.getClient(), "Using Pyramid skill outside of pyramid maps.");
                 return;
-            } else {
-                if (player.getPyramidSubway() == null || !player.getPyramidSubway().onSkillUse(player)) {
-                    return;
-                }
+            } else if (player.getPyramidSubway() == null || !player.getPyramidSubway().onSkillUse(player)) {
+                return;
             }
         }
         final PlayerStats stats = player.getStat();
@@ -576,32 +568,28 @@ public class DamageParse {
                     overallAttackCount++;
                     if (fixeddmg != -1) {
                         eachd = monsterstats.getOnlyNoramlAttack() ? 0 : fixeddmg; // Magic is always not a normal attack
-                    } else {
-                        if (monsterstats.getOnlyNoramlAttack()) {
-                            eachd = 0; // Magic is always not a normal attack
-                        } else if (!player.isGM()) {
-                            if (Tempest) { // Buffed with Tempest
-                                // In special case such as Chain lightning, the damage will be reduced from the maxMP.
-                                if (eachd > monster.getMobMaxHp()) {
-                                    eachd = (int) Math.min(monster.getMobMaxHp(), Integer.MAX_VALUE);
-                                    player.getCheatTracker().registerOffense(CheatingOffense.魔法伤害过高);
-                                }
-                            } else if (!monster.isBuffed(MonsterStatus.DAMAGE_IMMUNITY) && !monster.isBuffed(MonsterStatus.MAGIC_IMMUNITY) && !monster.isBuffed(MonsterStatus.MAGIC_DAMAGE_REFLECT)) {
-                                if (eachd > maxDamagePerHit) {
-                                    player.getCheatTracker().registerOffense(CheatingOffense.魔法伤害过高);
-                                    if (eachd > MaxDamagePerHit * 2) {
+                    } else if (monsterstats.getOnlyNoramlAttack()) {
+                        eachd = 0; // Magic is always not a normal attack
+                    } else if (!player.isGM()) {
+                        if (Tempest) { // Buffed with Tempest
+                            // In special case such as Chain lightning, the damage will be reduced from the maxMP.
+                            if (eachd > monster.getMobMaxHp()) {
+                                eachd = (int) Math.min(monster.getMobMaxHp(), Integer.MAX_VALUE);
+                                player.getCheatTracker().registerOffense(CheatingOffense.魔法伤害过高);
+                            }
+                        } else if (!monster.isBuffed(MonsterStatus.DAMAGE_IMMUNITY) && !monster.isBuffed(MonsterStatus.MAGIC_IMMUNITY) && !monster.isBuffed(MonsterStatus.MAGIC_DAMAGE_REFLECT)) {
+                            if (eachd > maxDamagePerHit) {
+                                player.getCheatTracker().registerOffense(CheatingOffense.魔法伤害过高);
+                                if (eachd > MaxDamagePerHit * 2) {
 //				    System.out.println("EXCEED!!! Client damage : " + eachd + " Server : " + MaxDamagePerHit);
-                                        eachd = (int) (MaxDamagePerHit * 2); // Convert to server calculated damage
-                                        FileoutputUtil.logToFile_chr(player, FileoutputUtil.fixdam_ph, " 技能 " + attack.skill + " 怪物 " + monster.getId() + " 预计伤害:" + (long) MaxDamagePerHit + "  实际" + eachd);
-                                        player.getCheatTracker().registerOffense(CheatingOffense.魔法伤害过高2);
-                                    }
-                                }
-                            } else {
-                                if (eachd > maxDamagePerHit * 2) {
+                                    eachd = (int) (MaxDamagePerHit * 2); // Convert to server calculated damage
                                     FileoutputUtil.logToFile_chr(player, FileoutputUtil.fixdam_ph, " 技能 " + attack.skill + " 怪物 " + monster.getId() + " 预计伤害:" + (long) MaxDamagePerHit + "  实际" + eachd);
-                                    eachd = (int) (maxDamagePerHit);
+                                    player.getCheatTracker().registerOffense(CheatingOffense.魔法伤害过高2);
                                 }
                             }
+                        } else if (eachd > maxDamagePerHit * 2) {
+                            FileoutputUtil.logToFile_chr(player, FileoutputUtil.fixdam_ph, " 技能 " + attack.skill + " 怪物 " + monster.getId() + " 预计伤害:" + (long) MaxDamagePerHit + "  实际" + eachd);
+                            eachd = (int) (maxDamagePerHit);
                         }
                     }
                     totDamageToOneMonster += eachd;
@@ -1012,65 +1000,62 @@ public class DamageParse {
 //                } else {
 //                    damage = Damage_NoSkillPD(chr, damage);
 //                }
-             
+
                 int maxdamage;
-                maxdamage = (int) (199999 +  chr.getVip()*10000);
-                   double randomNum = Math.random() * 1.1D;
-                   randomNum = Math.max(randomNum, 0.9D);
-                   int tempDamage = 0;
+                maxdamage = (int) (199999 + chr.getVip() * 10000);
+                double randomNum = Math.random() * 1.1D;
+                randomNum = Math.max(randomNum, 0.9D);
+                int tempDamage = 0;
 
-                  for (IItem item : chr.getInventory(MapleInventoryType.EQUIPPED)) {
-                     int ak = 0;
-                     if ((item != null) && ((item instanceof Equip)))
-                     {
-                       ak = MapleItemInformationProvider.getInstance().getTotalStat((Equip)item);
-                     }
+                for (IItem item : chr.getInventory(MapleInventoryType.EQUIPPED)) {
+                    int ak = 0;
+                    if ((item != null) && ((item instanceof Equip))) {
+                        ak = MapleItemInformationProvider.getInstance().getTotalStat((Equip) item);
+                    }
 
-                     tempDamage += ak * 15;
-                   }
-                    if ((ret.skill != 14101006) && (damage >= 199999))
-                   {
-                     if (((chr.getJob() >= 100) && (chr.getJob() <= 132)) || ((chr.getJob() >= 1100) && (chr.getJob() <= 1111)) || ((chr.getJob() >= 2000) && (chr.getJob() <= 2112)) || ((chr.getJob() >= 3100) && (chr.getJob() <= 3112)) || ((chr.getJob() >= 5000) && (chr.getJob() <= 5112))) {
-                       tempDamage += (int)(chr.getStat().getStr() * 5.0D + (chr.getStat().getDex() + chr.getStat().getInt() + chr.getStat().getLuk()));
-                     }
+                    tempDamage += ak * 15;
+                }
+                if ((ret.skill != 14101006) && (damage >= 199999)) {
+                    if (((chr.getJob() >= 100) && (chr.getJob() <= 132)) || ((chr.getJob() >= 1100) && (chr.getJob() <= 1111)) || ((chr.getJob() >= 2000) && (chr.getJob() <= 2112)) || ((chr.getJob() >= 3100) && (chr.getJob() <= 3112)) || ((chr.getJob() >= 5000) && (chr.getJob() <= 5112))) {
+                        tempDamage += (int) (chr.getStat().getStr() * 5.0D + (chr.getStat().getDex() + chr.getStat().getInt() + chr.getStat().getLuk()));
+                    }
 
-                     if (((chr.getJob() >= 200) && (chr.getJob() <= 232)) || ((chr.getJob() >= 1200) && (chr.getJob() <= 1211)) || ((chr.getJob() >= 2001) && (chr.getJob() <= 2218)) || ((chr.getJob() >= 3200) && (chr.getJob() <= 3212))) {
-                       tempDamage += (int)(chr.getStat().getInt() * 5.0D + (chr.getStat().getStr() + chr.getStat().getDex() + chr.getStat().getLuk()));
-                     }
+                    if (((chr.getJob() >= 200) && (chr.getJob() <= 232)) || ((chr.getJob() >= 1200) && (chr.getJob() <= 1211)) || ((chr.getJob() >= 2001) && (chr.getJob() <= 2218)) || ((chr.getJob() >= 3200) && (chr.getJob() <= 3212))) {
+                        tempDamage += (int) (chr.getStat().getInt() * 5.0D + (chr.getStat().getStr() + chr.getStat().getDex() + chr.getStat().getLuk()));
+                    }
 
-                     if (((chr.getJob() >= 300) && (chr.getJob() <= 322)) || ((chr.getJob() >= 1300) && (chr.getJob() <= 1311)) || ((chr.getJob() >= 3300) && (chr.getJob() <= 3312)) || ((chr.getJob() >= 2300) && (chr.getJob() <= 2312)) || ((chr.getJob() >= 3500) && (chr.getJob() <= 3512))) {
-                       tempDamage += (int)(chr.getStat().getDex() * 5.0D + (chr.getStat().getStr() + chr.getStat().getInt() + chr.getStat().getLuk()));
-                     }
+                    if (((chr.getJob() >= 300) && (chr.getJob() <= 322)) || ((chr.getJob() >= 1300) && (chr.getJob() <= 1311)) || ((chr.getJob() >= 3300) && (chr.getJob() <= 3312)) || ((chr.getJob() >= 2300) && (chr.getJob() <= 2312)) || ((chr.getJob() >= 3500) && (chr.getJob() <= 3512))) {
+                        tempDamage += (int) (chr.getStat().getDex() * 5.0D + (chr.getStat().getStr() + chr.getStat().getInt() + chr.getStat().getLuk()));
+                    }
 
-                     if (((chr.getJob() >= 400) && (chr.getJob() <= 422)) || ((chr.getJob() >= 1400) && (chr.getJob() <= 1412)) || ((chr.getJob() >= 430) && (chr.getJob() <= 434)) || (chr.getJob() == 2003) || ((chr.getJob() >= 2400) && (chr.getJob() <= 2412))) {
-                       tempDamage += (int)(chr.getStat().getLuk() * 5.0D + (chr.getStat().getStr() + chr.getStat().getDex() + chr.getStat().getInt()));
-                     }
+                    if (((chr.getJob() >= 400) && (chr.getJob() <= 422)) || ((chr.getJob() >= 1400) && (chr.getJob() <= 1412)) || ((chr.getJob() >= 430) && (chr.getJob() <= 434)) || (chr.getJob() == 2003) || ((chr.getJob() >= 2400) && (chr.getJob() <= 2412))) {
+                        tempDamage += (int) (chr.getStat().getLuk() * 5.0D + (chr.getStat().getStr() + chr.getStat().getDex() + chr.getStat().getInt()));
+                    }
 
-                     if (((chr.getJob() >= 580) && (chr.getJob() <= 592)) || ((chr.getJob() >= 1500) && (chr.getJob() <= 1511)) || (chr.getJob() == 508) || ((chr.getJob() >= 570) && (chr.getJob() <= 572))) {
-                       tempDamage += (int)((chr.getStat().getStr() + chr.getStat().getDex()) / 2.0D * 2.0D + (chr.getStat().getInt() + chr.getStat().getLuk()));
-                     }
+                    if (((chr.getJob() >= 580) && (chr.getJob() <= 592)) || ((chr.getJob() >= 1500) && (chr.getJob() <= 1511)) || (chr.getJob() == 508) || ((chr.getJob() >= 570) && (chr.getJob() <= 572))) {
+                        tempDamage += (int) ((chr.getStat().getStr() + chr.getStat().getDex()) / 2.0D * 2.0D + (chr.getStat().getInt() + chr.getStat().getLuk()));
+                    }
 
-                     if ((chr.getJob() == 501) || ((chr.getJob() >= 530) && (chr.getJob() <= 532))) {
-                       tempDamage += (int)(chr.getStat().getStr() * 5.0D + (chr.getStat().getLuk() + chr.getStat().getDex() + chr.getStat().getInt()));
-                     }
-                   
+                    if ((chr.getJob() == 501) || ((chr.getJob() >= 530) && (chr.getJob() <= 532))) {
+                        tempDamage += (int) (chr.getStat().getStr() * 5.0D + (chr.getStat().getLuk() + chr.getStat().getDex() + chr.getStat().getInt()));
+                    }
 
-                    damage = (int)((tempDamage  + 199999) * randomNum);
+                    damage = (int) ((tempDamage + 199999) * randomNum);
 
-                    damage = Math.min(damage, 199999+(chr.getVip()*10000));
-                  
+                    damage = Math.min(damage, 199999 + (chr.getVip() * 10000));
+
                     chr.dropMessage(-1, new StringBuilder().append("破攻实际伤害: ").append(damage).toString());
                     chr.getClient().getSession().write(MaplePacketCreator.sendHint("#e[破攻伤害]:#r" + damage + "#b ", 250, 5));
-            }
-                    if (damage > maxdamage) {
-                      damage = maxdamage;
-                  }
+                }
+                if (damage > maxdamage) {
+                    damage = maxdamage;
+                }
 
-                  if ((damage >= 2000000) || (damage < 0)) {
+                if ((damage >= 2000000) || (damage < 0)) {
                     damage = 2000000;
-                  }
+                }
 
-                  tempDamage = 0;
+                tempDamage = 0;
                 allDamageNumbers.add(new Pair<Integer, Boolean>(Integer.valueOf(damage), false));
             }
             lea.skip(4); // CRC of monster [Wz Editing]
@@ -1141,63 +1126,60 @@ public class DamageParse {
 //                }
                 // System.out.println("Damage: " + damage);
                 int maxdamage;
-                maxdamage = (int) (199999 +  chr.getVip()*10000);
-                   double randomNum = Math.random() * 1.1D;
-                   randomNum = Math.max(randomNum, 0.9D);
-                   int tempDamage = 0;
+                maxdamage = (int) (199999 + chr.getVip() * 10000);
+                double randomNum = Math.random() * 1.1D;
+                randomNum = Math.max(randomNum, 0.9D);
+                int tempDamage = 0;
 
-                  for (IItem item : chr.getInventory(MapleInventoryType.EQUIPPED)) {
-                     int ak = 0;
-                     if ((item != null) && ((item instanceof Equip)))
-                     {
-                       ak = MapleItemInformationProvider.getInstance().getTotalStat((Equip)item);
-                     }
+                for (IItem item : chr.getInventory(MapleInventoryType.EQUIPPED)) {
+                    int ak = 0;
+                    if ((item != null) && ((item instanceof Equip))) {
+                        ak = MapleItemInformationProvider.getInstance().getTotalStat((Equip) item);
+                    }
 
-                     tempDamage += ak * 15;
-                   }
-                    if ((ret.skill != 14101006) && (damage >= 199999))
-                   {
-                     if (((chr.getJob() >= 100) && (chr.getJob() <= 132)) || ((chr.getJob() >= 1100) && (chr.getJob() <= 1111)) || ((chr.getJob() >= 2000) && (chr.getJob() <= 2112)) || ((chr.getJob() >= 3100) && (chr.getJob() <= 3112)) || ((chr.getJob() >= 5000) && (chr.getJob() <= 5112))) {
-                       tempDamage += (int)(chr.getStat().getStr() * 2.0D + (chr.getStat().getDex() + chr.getStat().getInt() + chr.getStat().getLuk()));
-                     }
+                    tempDamage += ak * 15;
+                }
+                if ((ret.skill != 14101006) && (damage >= 199999)) {
+                    if (((chr.getJob() >= 100) && (chr.getJob() <= 132)) || ((chr.getJob() >= 1100) && (chr.getJob() <= 1111)) || ((chr.getJob() >= 2000) && (chr.getJob() <= 2112)) || ((chr.getJob() >= 3100) && (chr.getJob() <= 3112)) || ((chr.getJob() >= 5000) && (chr.getJob() <= 5112))) {
+                        tempDamage += (int) (chr.getStat().getStr() * 2.0D + (chr.getStat().getDex() + chr.getStat().getInt() + chr.getStat().getLuk()));
+                    }
 
-                     if (((chr.getJob() >= 200) && (chr.getJob() <= 232)) || ((chr.getJob() >= 1200) && (chr.getJob() <= 1211)) || ((chr.getJob() >= 2001) && (chr.getJob() <= 2218)) || ((chr.getJob() >= 3200) && (chr.getJob() <= 3212))) {
-                       tempDamage += (int)(chr.getStat().getInt() * 2.0D + (chr.getStat().getStr() + chr.getStat().getDex() + chr.getStat().getLuk()));
-                     }
+                    if (((chr.getJob() >= 200) && (chr.getJob() <= 232)) || ((chr.getJob() >= 1200) && (chr.getJob() <= 1211)) || ((chr.getJob() >= 2001) && (chr.getJob() <= 2218)) || ((chr.getJob() >= 3200) && (chr.getJob() <= 3212))) {
+                        tempDamage += (int) (chr.getStat().getInt() * 2.0D + (chr.getStat().getStr() + chr.getStat().getDex() + chr.getStat().getLuk()));
+                    }
 
-                     if (((chr.getJob() >= 300) && (chr.getJob() <= 322)) || ((chr.getJob() >= 1300) && (chr.getJob() <= 1311)) || ((chr.getJob() >= 3300) && (chr.getJob() <= 3312)) || ((chr.getJob() >= 2300) && (chr.getJob() <= 2312)) || ((chr.getJob() >= 3500) && (chr.getJob() <= 3512))) {
-                       tempDamage += (int)(chr.getStat().getDex() * 2.0D + (chr.getStat().getStr() + chr.getStat().getInt() + chr.getStat().getLuk()));
-                     }
+                    if (((chr.getJob() >= 300) && (chr.getJob() <= 322)) || ((chr.getJob() >= 1300) && (chr.getJob() <= 1311)) || ((chr.getJob() >= 3300) && (chr.getJob() <= 3312)) || ((chr.getJob() >= 2300) && (chr.getJob() <= 2312)) || ((chr.getJob() >= 3500) && (chr.getJob() <= 3512))) {
+                        tempDamage += (int) (chr.getStat().getDex() * 2.0D + (chr.getStat().getStr() + chr.getStat().getInt() + chr.getStat().getLuk()));
+                    }
 
-                     if (((chr.getJob() >= 400) && (chr.getJob() <= 422)) || ((chr.getJob() >= 1400) && (chr.getJob() <= 1412)) || ((chr.getJob() >= 430) && (chr.getJob() <= 434)) || (chr.getJob() == 2003) || ((chr.getJob() >= 2400) && (chr.getJob() <= 2412))) {
-                       tempDamage += (int)(chr.getStat().getLuk() * 2.0D + (chr.getStat().getStr() + chr.getStat().getDex() + chr.getStat().getInt()));
-                     }
+                    if (((chr.getJob() >= 400) && (chr.getJob() <= 422)) || ((chr.getJob() >= 1400) && (chr.getJob() <= 1412)) || ((chr.getJob() >= 430) && (chr.getJob() <= 434)) || (chr.getJob() == 2003) || ((chr.getJob() >= 2400) && (chr.getJob() <= 2412))) {
+                        tempDamage += (int) (chr.getStat().getLuk() * 2.0D + (chr.getStat().getStr() + chr.getStat().getDex() + chr.getStat().getInt()));
+                    }
 
-                     if (((chr.getJob() >= 580) && (chr.getJob() <= 592)) || ((chr.getJob() >= 1500) && (chr.getJob() <= 1511)) || (chr.getJob() == 508) || ((chr.getJob() >= 570) && (chr.getJob() <= 572))) {
-                       tempDamage += (int)((chr.getStat().getStr() + chr.getStat().getDex()) / 2.0D * 2.0D + (chr.getStat().getInt() + chr.getStat().getLuk()));
-                     }
+                    if (((chr.getJob() >= 580) && (chr.getJob() <= 592)) || ((chr.getJob() >= 1500) && (chr.getJob() <= 1511)) || (chr.getJob() == 508) || ((chr.getJob() >= 570) && (chr.getJob() <= 572))) {
+                        tempDamage += (int) ((chr.getStat().getStr() + chr.getStat().getDex()) / 2.0D * 2.0D + (chr.getStat().getInt() + chr.getStat().getLuk()));
+                    }
 
-                     if ((chr.getJob() == 501) || ((chr.getJob() >= 530) && (chr.getJob() <= 532))) {
-                       tempDamage += (int)(chr.getStat().getStr() * 2.0D + (chr.getStat().getLuk() + chr.getStat().getDex() + chr.getStat().getInt()));
-                     }
-                   
+                    if ((chr.getJob() == 501) || ((chr.getJob() >= 530) && (chr.getJob() <= 532))) {
+                        tempDamage += (int) (chr.getStat().getStr() * 2.0D + (chr.getStat().getLuk() + chr.getStat().getDex() + chr.getStat().getInt()));
+                    }
 
-                    damage = (int)((tempDamage  + 199999) * randomNum);
+                    damage = (int) ((tempDamage + 199999) * randomNum);
 
-                    damage = Math.min(damage, 199999+(chr.getVip()*10000));
-                   // chr.getClient().getSession().write(MaplePacketCreator.sendHint(new StringBuilder().append("破攻实际伤害:#r").append(damage).toString(), 148, 5));
+                    damage = Math.min(damage, 199999 + (chr.getVip() * 10000));
+                    // chr.getClient().getSession().write(MaplePacketCreator.sendHint(new StringBuilder().append("破攻实际伤害:#r").append(damage).toString(), 148, 5));
                     chr.dropMessage(-1, new StringBuilder().append("破攻实际伤害: ").append(damage).toString());
                     chr.getClient().getSession().write(MaplePacketCreator.sendHint("#e[破攻伤害]:#r" + damage + "#b ", 250, 5));
-            }
-                    if (damage > maxdamage) {
-                      damage = maxdamage;
-                  }
+                }
+                if (damage > maxdamage) {
+                    damage = maxdamage;
+                }
 
-                  if ((damage >= 2000000) || (damage < 0)) {
+                if ((damage >= 2000000) || (damage < 0)) {
                     damage = 2000000;
-                  }
+                }
 
-                  tempDamage = 0;
+                tempDamage = 0;
                 allDamageNumbers.add(new Pair<Integer, Boolean>(Integer.valueOf(damage), false));
             }
             lea.skip(4); // CRC of monster [Wz Editing]
@@ -1206,7 +1188,6 @@ public class DamageParse {
         ret.position = lea.readPos();
         return ret;
     }
-
 
     public static final AttackInfo parseDmgR(final LittleEndianAccessor lea, final MapleCharacter chr) {
         //System.out.println(lea.toString()); //<-- packet needs revision
@@ -1258,63 +1239,60 @@ public class DamageParse {
             for (int j = 0; j < ret.hits; j++) {
                 damage = lea.readInt();
                 int maxdamage;
-                maxdamage = (int) (199999 +  chr.getVip()*10000);
-                   double randomNum = Math.random() * 1.1D;
-                   randomNum = Math.max(randomNum, 0.9D);
-                   int tempDamage = 0;
+                maxdamage = (int) (199999 + chr.getVip() * 10000);
+                double randomNum = Math.random() * 1.1D;
+                randomNum = Math.max(randomNum, 0.9D);
+                int tempDamage = 0;
 
-                  for (IItem item : chr.getInventory(MapleInventoryType.EQUIPPED)) {
-                     int ak = 0;
-                     if ((item != null) && ((item instanceof Equip)))
-                     {
-                       ak = MapleItemInformationProvider.getInstance().getTotalStat((Equip)item);
-                     }
+                for (IItem item : chr.getInventory(MapleInventoryType.EQUIPPED)) {
+                    int ak = 0;
+                    if ((item != null) && ((item instanceof Equip))) {
+                        ak = MapleItemInformationProvider.getInstance().getTotalStat((Equip) item);
+                    }
 
-                     tempDamage += ak * 15;
-                   }
-                    if ((ret.skill != 14101006) && (damage >= 199999))
-                   {
-                     if (((chr.getJob() >= 100) && (chr.getJob() <= 132)) || ((chr.getJob() >= 1100) && (chr.getJob() <= 1111)) || ((chr.getJob() >= 2000) && (chr.getJob() <= 2112)) || ((chr.getJob() >= 3100) && (chr.getJob() <= 3112)) || ((chr.getJob() >= 5000) && (chr.getJob() <= 5112))) {
-                       tempDamage += (int)(chr.getStat().getStr() * 2.0D + (chr.getStat().getDex() + chr.getStat().getInt() + chr.getStat().getLuk()));
-                     }
+                    tempDamage += ak * 15;
+                }
+                if ((ret.skill != 14101006) && (damage >= 199999)) {
+                    if (((chr.getJob() >= 100) && (chr.getJob() <= 132)) || ((chr.getJob() >= 1100) && (chr.getJob() <= 1111)) || ((chr.getJob() >= 2000) && (chr.getJob() <= 2112)) || ((chr.getJob() >= 3100) && (chr.getJob() <= 3112)) || ((chr.getJob() >= 5000) && (chr.getJob() <= 5112))) {
+                        tempDamage += (int) (chr.getStat().getStr() * 2.0D + (chr.getStat().getDex() + chr.getStat().getInt() + chr.getStat().getLuk()));
+                    }
 
-                     if (((chr.getJob() >= 200) && (chr.getJob() <= 232)) || ((chr.getJob() >= 1200) && (chr.getJob() <= 1211)) || ((chr.getJob() >= 2001) && (chr.getJob() <= 2218)) || ((chr.getJob() >= 3200) && (chr.getJob() <= 3212))) {
-                       tempDamage += (int)(chr.getStat().getInt() * 2.0D + (chr.getStat().getStr() + chr.getStat().getDex() + chr.getStat().getLuk()));
-                     }
+                    if (((chr.getJob() >= 200) && (chr.getJob() <= 232)) || ((chr.getJob() >= 1200) && (chr.getJob() <= 1211)) || ((chr.getJob() >= 2001) && (chr.getJob() <= 2218)) || ((chr.getJob() >= 3200) && (chr.getJob() <= 3212))) {
+                        tempDamage += (int) (chr.getStat().getInt() * 2.0D + (chr.getStat().getStr() + chr.getStat().getDex() + chr.getStat().getLuk()));
+                    }
 
-                     if (((chr.getJob() >= 300) && (chr.getJob() <= 322)) || ((chr.getJob() >= 1300) && (chr.getJob() <= 1311)) || ((chr.getJob() >= 3300) && (chr.getJob() <= 3312)) || ((chr.getJob() >= 2300) && (chr.getJob() <= 2312)) || ((chr.getJob() >= 3500) && (chr.getJob() <= 3512))) {
-                       tempDamage += (int)(chr.getStat().getDex() * 2.0D + (chr.getStat().getStr() + chr.getStat().getInt() + chr.getStat().getLuk()));
-                     }
+                    if (((chr.getJob() >= 300) && (chr.getJob() <= 322)) || ((chr.getJob() >= 1300) && (chr.getJob() <= 1311)) || ((chr.getJob() >= 3300) && (chr.getJob() <= 3312)) || ((chr.getJob() >= 2300) && (chr.getJob() <= 2312)) || ((chr.getJob() >= 3500) && (chr.getJob() <= 3512))) {
+                        tempDamage += (int) (chr.getStat().getDex() * 2.0D + (chr.getStat().getStr() + chr.getStat().getInt() + chr.getStat().getLuk()));
+                    }
 
-                     if (((chr.getJob() >= 400) && (chr.getJob() <= 422)) || ((chr.getJob() >= 1400) && (chr.getJob() <= 1412)) || ((chr.getJob() >= 430) && (chr.getJob() <= 434)) || (chr.getJob() == 2003) || ((chr.getJob() >= 2400) && (chr.getJob() <= 2412))) {
-                       tempDamage += (int)(chr.getStat().getLuk() * 2.0D + (chr.getStat().getStr() + chr.getStat().getDex() + chr.getStat().getInt()));
-                     }
+                    if (((chr.getJob() >= 400) && (chr.getJob() <= 422)) || ((chr.getJob() >= 1400) && (chr.getJob() <= 1412)) || ((chr.getJob() >= 430) && (chr.getJob() <= 434)) || (chr.getJob() == 2003) || ((chr.getJob() >= 2400) && (chr.getJob() <= 2412))) {
+                        tempDamage += (int) (chr.getStat().getLuk() * 2.0D + (chr.getStat().getStr() + chr.getStat().getDex() + chr.getStat().getInt()));
+                    }
 
-                     if (((chr.getJob() >= 580) && (chr.getJob() <= 592)) || ((chr.getJob() >= 1500) && (chr.getJob() <= 1511)) || (chr.getJob() == 508) || ((chr.getJob() >= 570) && (chr.getJob() <= 572))) {
-                       tempDamage += (int)((chr.getStat().getStr() + chr.getStat().getDex()) / 2.0D * 2.0D + (chr.getStat().getInt() + chr.getStat().getLuk()));
-                     }
+                    if (((chr.getJob() >= 580) && (chr.getJob() <= 592)) || ((chr.getJob() >= 1500) && (chr.getJob() <= 1511)) || (chr.getJob() == 508) || ((chr.getJob() >= 570) && (chr.getJob() <= 572))) {
+                        tempDamage += (int) ((chr.getStat().getStr() + chr.getStat().getDex()) / 2.0D * 2.0D + (chr.getStat().getInt() + chr.getStat().getLuk()));
+                    }
 
-                     if ((chr.getJob() == 501) || ((chr.getJob() >= 530) && (chr.getJob() <= 532))) {
-                       tempDamage += (int)(chr.getStat().getStr() * 2.0D + (chr.getStat().getLuk() + chr.getStat().getDex() + chr.getStat().getInt()));
-                     }
-                   
+                    if ((chr.getJob() == 501) || ((chr.getJob() >= 530) && (chr.getJob() <= 532))) {
+                        tempDamage += (int) (chr.getStat().getStr() * 2.0D + (chr.getStat().getLuk() + chr.getStat().getDex() + chr.getStat().getInt()));
+                    }
 
-                    damage = (int)((tempDamage  + 199999) * randomNum);
+                    damage = (int) ((tempDamage + 199999) * randomNum);
 
-                    damage = Math.min(damage, 199999+(chr.getVip()*10000));
-                   // chr.getClient().getSession().write(MaplePacketCreator.sendHint(new StringBuilder().append("破攻实际伤害:#r").append(damage).toString(), 148, 5));
+                    damage = Math.min(damage, 199999 + (chr.getVip() * 10000));
+                    // chr.getClient().getSession().write(MaplePacketCreator.sendHint(new StringBuilder().append("破攻实际伤害:#r").append(damage).toString(), 148, 5));
                     chr.dropMessage(-1, new StringBuilder().append("破攻实际伤害: ").append(damage).toString());
                     chr.getClient().getSession().write(MaplePacketCreator.sendHint("#e[破攻伤害]:#r" + damage + "#b ", 250, 5));
-                   }
-                    if (damage > maxdamage) {
-                      damage = maxdamage;
-                  }
+                }
+                if (damage > maxdamage) {
+                    damage = maxdamage;
+                }
 
-                  if ((damage >= 2000000) || (damage < 0)) {
+                if ((damage >= 2000000) || (damage < 0)) {
                     damage = 2000000;
-                  }
+                }
 
-                  tempDamage = 0;
+                tempDamage = 0;
 //                if (ret.skill > 0) {
 //                    damage = Damage_SkillPD(chr, damage, ret);
 //                } else {
@@ -1436,108 +1414,103 @@ public class DamageParse {
                         FileoutputUtil.packetLog("log\\全屏检测\\" + c.getName() + ".log", 全屏);
 
                     }
-                } else {
-                    if (c.getJob() >= 200 && c.getJob() < 300) {
-                        if (c.getPosition().y - monster.getPosition().y >= 800) {
-                            // c.dropMessage(1, "[技能范围检测-B]\r\n非法使用外挂或者修改WZ\r\n导致:技能范围扩大.\r\n攻击力无效！\r\n请勿再次使用后果自负！");
-                            //  damage = 1;
-                            String 全屏 = "等级E：" + c.getLevel()
-                                    + "\r\n" + "职业：" + c.getJob()
-                                    + "\r\n" + "地图：" + c.getMapId()
-                                    + "\r\n" + "人物坐标：X:" + c.getPosition().x + " Y:" + c.getPosition().y
-                                    + "\r\n" + "怪物坐标：" + monster.getPosition().x + " Y:" + monster.getPosition().y
-                                    + "\r\n" + "时间：" + FileoutputUtil.CurrentReadable_Time()
-                                    + "\r\n" + "IP：" + c.getClient().getSession().getRemoteAddress().toString().split(":")[0];
-                            FileoutputUtil.packetLog("log\\全屏检测\\" + c.getName() + ".log", 全屏);
+                } else if (c.getJob() >= 200 && c.getJob() < 300) {
+                    if (c.getPosition().y - monster.getPosition().y >= 800) {
+                        // c.dropMessage(1, "[技能范围检测-B]\r\n非法使用外挂或者修改WZ\r\n导致:技能范围扩大.\r\n攻击力无效！\r\n请勿再次使用后果自负！");
+                        //  damage = 1;
+                        String 全屏 = "等级E：" + c.getLevel()
+                                + "\r\n" + "职业：" + c.getJob()
+                                + "\r\n" + "地图：" + c.getMapId()
+                                + "\r\n" + "人物坐标：X:" + c.getPosition().x + " Y:" + c.getPosition().y
+                                + "\r\n" + "怪物坐标：" + monster.getPosition().x + " Y:" + monster.getPosition().y
+                                + "\r\n" + "时间：" + FileoutputUtil.CurrentReadable_Time()
+                                + "\r\n" + "IP：" + c.getClient().getSession().getRemoteAddress().toString().split(":")[0];
+                        FileoutputUtil.packetLog("log\\全屏检测\\" + c.getName() + ".log", 全屏);
 
-                        } else if (c.getPosition().y - monster.getPosition().y <= -800) {
-                            // c.dropMessage(1, "[技能范围检测-B]\r\n非法使用外挂或者修改WZ\r\n导致:技能范围扩大.\r\n攻击力无效！\r\n请勿再次使用后果自负！");
-                            //  damage = 1;
-                            String 全屏 = "等级F：" + c.getLevel()
-                                    + "\r\n" + "职业：" + c.getJob()
-                                    + "\r\n" + "地图：" + c.getMapId()
-                                    + "\r\n" + "人物坐标：X:" + c.getPosition().x + " Y:" + c.getPosition().y
-                                    + "\r\n" + "怪物坐标：" + monster.getPosition().x + " Y:" + monster.getPosition().y
-                                    + "\r\n" + "时间：" + FileoutputUtil.CurrentReadable_Time()
-                                    + "\r\n" + "IP：" + c.getClient().getSession().getRemoteAddress().toString().split(":")[0];
-                            FileoutputUtil.packetLog("log\\全屏检测\\" + c.getName() + ".log", 全屏);
+                    } else if (c.getPosition().y - monster.getPosition().y <= -800) {
+                        // c.dropMessage(1, "[技能范围检测-B]\r\n非法使用外挂或者修改WZ\r\n导致:技能范围扩大.\r\n攻击力无效！\r\n请勿再次使用后果自负！");
+                        //  damage = 1;
+                        String 全屏 = "等级F：" + c.getLevel()
+                                + "\r\n" + "职业：" + c.getJob()
+                                + "\r\n" + "地图：" + c.getMapId()
+                                + "\r\n" + "人物坐标：X:" + c.getPosition().x + " Y:" + c.getPosition().y
+                                + "\r\n" + "怪物坐标：" + monster.getPosition().x + " Y:" + monster.getPosition().y
+                                + "\r\n" + "时间：" + FileoutputUtil.CurrentReadable_Time()
+                                + "\r\n" + "IP：" + c.getClient().getSession().getRemoteAddress().toString().split(":")[0];
+                        FileoutputUtil.packetLog("log\\全屏检测\\" + c.getName() + ".log", 全屏);
 
-                        } else if (c.getPosition().x - monster.getPosition().x >= 550) {
-                            // c.dropMessage(1, "[技能范围检测-B]\r\n非法使用外挂或者修改WZ\r\n导致:技能范围扩大.\r\n攻击力无效！\r\n请勿再次使用后果自负！");
-                            // damage = 1;
-                            String 全屏 = "等级G：" + c.getLevel()
-                                    + "\r\n" + "职业：" + c.getJob()
-                                    + "\r\n" + "地图：" + c.getMapId()
-                                    + "\r\n" + "人物坐标：X:" + c.getPosition().x + " Y:" + c.getPosition().y
-                                    + "\r\n" + "怪物坐标：" + monster.getPosition().x + " Y:" + monster.getPosition().y
-                                    + "\r\n" + "时间：" + FileoutputUtil.CurrentReadable_Time()
-                                    + "\r\n" + "IP：" + c.getClient().getSession().getRemoteAddress().toString().split(":")[0];
-                            FileoutputUtil.packetLog("log\\全屏检测\\" + c.getName() + ".log", 全屏);
+                    } else if (c.getPosition().x - monster.getPosition().x >= 550) {
+                        // c.dropMessage(1, "[技能范围检测-B]\r\n非法使用外挂或者修改WZ\r\n导致:技能范围扩大.\r\n攻击力无效！\r\n请勿再次使用后果自负！");
+                        // damage = 1;
+                        String 全屏 = "等级G：" + c.getLevel()
+                                + "\r\n" + "职业：" + c.getJob()
+                                + "\r\n" + "地图：" + c.getMapId()
+                                + "\r\n" + "人物坐标：X:" + c.getPosition().x + " Y:" + c.getPosition().y
+                                + "\r\n" + "怪物坐标：" + monster.getPosition().x + " Y:" + monster.getPosition().y
+                                + "\r\n" + "时间：" + FileoutputUtil.CurrentReadable_Time()
+                                + "\r\n" + "IP：" + c.getClient().getSession().getRemoteAddress().toString().split(":")[0];
+                        FileoutputUtil.packetLog("log\\全屏检测\\" + c.getName() + ".log", 全屏);
 
-                        } else if (c.getPosition().x - monster.getPosition().x <= -550) {
-                            // c.dropMessage(1, "[技能范围检测-B]\r\n非法使用外挂或者修改WZ\r\n导致:技能范围扩大.\r\n攻击力无效！\r\n请勿再次使用后果自负！");
-                            //  damage = 1;
-                            String 全屏 = "等级H：" + c.getLevel()
-                                    + "\r\n" + "职业：" + c.getJob()
-                                    + "\r\n" + "地图：" + c.getMapId()
-                                    + "\r\n" + "人物坐标：X:" + c.getPosition().x + " Y:" + c.getPosition().y
-                                    + "\r\n" + "怪物坐标：" + monster.getPosition().x + " Y:" + monster.getPosition().y
-                                    + "\r\n" + "时间：" + FileoutputUtil.CurrentReadable_Time()
-                                    + "\r\n" + "IP：" + c.getClient().getSession().getRemoteAddress().toString().split(":")[0];
-                            FileoutputUtil.packetLog("log\\全屏检测\\" + c.getName() + ".log", 全屏);
+                    } else if (c.getPosition().x - monster.getPosition().x <= -550) {
+                        // c.dropMessage(1, "[技能范围检测-B]\r\n非法使用外挂或者修改WZ\r\n导致:技能范围扩大.\r\n攻击力无效！\r\n请勿再次使用后果自负！");
+                        //  damage = 1;
+                        String 全屏 = "等级H：" + c.getLevel()
+                                + "\r\n" + "职业：" + c.getJob()
+                                + "\r\n" + "地图：" + c.getMapId()
+                                + "\r\n" + "人物坐标：X:" + c.getPosition().x + " Y:" + c.getPosition().y
+                                + "\r\n" + "怪物坐标：" + monster.getPosition().x + " Y:" + monster.getPosition().y
+                                + "\r\n" + "时间：" + FileoutputUtil.CurrentReadable_Time()
+                                + "\r\n" + "IP：" + c.getClient().getSession().getRemoteAddress().toString().split(":")[0];
+                        FileoutputUtil.packetLog("log\\全屏检测\\" + c.getName() + ".log", 全屏);
 
-                        }
-                    } else {
-                        if (c.getPosition().y - monster.getPosition().y >= 350) {
-                            // c.dropMessage(1, "[技能范围检测-B]\r\n非法使用外挂或者修改WZ\r\n导致:技能范围扩大.\r\n攻击力无效！\r\n请勿再次使用后果自负！");
-                            // damage = 1;
-                            String 全屏 = "等级I：" + c.getLevel()
-                                    + "\r\n" + "职业：" + c.getJob()
-                                    + "\r\n" + "地图：" + c.getMapId()
-                                    + "\r\n" + "人物坐标：X:" + c.getPosition().x + " Y:" + c.getPosition().y
-                                    + "\r\n" + "怪物坐标：" + monster.getPosition().x + " Y:" + monster.getPosition().y
-                                    + "\r\n" + "时间：" + FileoutputUtil.CurrentReadable_Time()
-                                    + "\r\n" + "IP：" + c.getClient().getSession().getRemoteAddress().toString().split(":")[0];
-                            FileoutputUtil.packetLog("log\\全屏检测\\" + c.getName() + ".log", 全屏);
-
-                        } else if (c.getPosition().y - monster.getPosition().y <= -350) {
-                            // c.dropMessage(1, "[技能范围检测-B]\r\n非法使用外挂或者修改WZ\r\n导致:技能范围扩大.\r\n攻击力无效！\r\n请勿再次使用后果自负！");
-                            //  damage = 1;
-                            String 全屏 = "等级J：" + c.getLevel()
-                                    + "\r\n" + "职业：" + c.getJob()
-                                    + "\r\n" + "地图：" + c.getMapId()
-                                    + "\r\n" + "人物坐标：X:" + c.getPosition().x + " Y:" + c.getPosition().y
-                                    + "\r\n" + "怪物坐标：" + monster.getPosition().x + " Y:" + monster.getPosition().y
-                                    + "\r\n" + "时间：" + FileoutputUtil.CurrentReadable_Time()
-                                    + "\r\n" + "IP：" + c.getClient().getSession().getRemoteAddress().toString().split(":")[0];
-                            FileoutputUtil.packetLog("log\\全屏检测\\" + c.getName() + ".log", 全屏);
-
-                        } else if (c.getPosition().x - monster.getPosition().x >= 500) {
-                            // c.dropMessage(1, "[技能范围检测-B]\r\n非法使用外挂或者修改WZ\r\n导致:技能范围扩大.\r\n攻击力无效！\r\n请勿再次使用后果自负！");
-                            //  damage = 1;
-                            String 全屏 = "等级K：" + c.getLevel()
-                                    + "\r\n" + "职业：" + c.getJob()
-                                    + "\r\n" + "地图：" + c.getMapId()
-                                    + "\r\n" + "人物坐标：X:" + c.getPosition().x + " Y:" + c.getPosition().y
-                                    + "\r\n" + "怪物坐标：" + monster.getPosition().x + " Y:" + monster.getPosition().y
-                                    + "\r\n" + "时间：" + FileoutputUtil.CurrentReadable_Time()
-                                    + "\r\n" + "IP：" + c.getClient().getSession().getRemoteAddress().toString().split(":")[0];
-                            FileoutputUtil.packetLog("log\\全屏检测\\" + c.getName() + ".log", 全屏);
-
-                        } else if (c.getPosition().x - monster.getPosition().x <= -500) {
-                            // c.dropMessage(1, "[技能范围检测-B]\r\n非法使用外挂或者修改WZ\r\n导致:技能范围扩大.\r\n攻击力无效！\r\n请勿再次使用后果自负！");
-                            //  damage = 1;
-                            String 全屏 = "等级L：" + c.getLevel()
-                                    + "\r\n" + "职业：" + c.getJob()
-                                    + "\r\n" + "地图：" + c.getMapId()
-                                    + "\r\n" + "人物坐标：X:" + c.getPosition().x + " Y:" + c.getPosition().y
-                                    + "\r\n" + "怪物坐标：" + monster.getPosition().x + " Y:" + monster.getPosition().y
-                                    + "\r\n" + "时间：" + FileoutputUtil.CurrentReadable_Time()
-                                    + "\r\n" + "IP：" + c.getClient().getSession().getRemoteAddress().toString().split(":")[0];
-                            FileoutputUtil.packetLog("log\\全屏检测\\" + c.getName() + ".log", 全屏);
-
-                        }
                     }
+                } else if (c.getPosition().y - monster.getPosition().y >= 350) {
+                    // c.dropMessage(1, "[技能范围检测-B]\r\n非法使用外挂或者修改WZ\r\n导致:技能范围扩大.\r\n攻击力无效！\r\n请勿再次使用后果自负！");
+                    // damage = 1;
+                    String 全屏 = "等级I：" + c.getLevel()
+                            + "\r\n" + "职业：" + c.getJob()
+                            + "\r\n" + "地图：" + c.getMapId()
+                            + "\r\n" + "人物坐标：X:" + c.getPosition().x + " Y:" + c.getPosition().y
+                            + "\r\n" + "怪物坐标：" + monster.getPosition().x + " Y:" + monster.getPosition().y
+                            + "\r\n" + "时间：" + FileoutputUtil.CurrentReadable_Time()
+                            + "\r\n" + "IP：" + c.getClient().getSession().getRemoteAddress().toString().split(":")[0];
+                    FileoutputUtil.packetLog("log\\全屏检测\\" + c.getName() + ".log", 全屏);
+
+                } else if (c.getPosition().y - monster.getPosition().y <= -350) {
+                    // c.dropMessage(1, "[技能范围检测-B]\r\n非法使用外挂或者修改WZ\r\n导致:技能范围扩大.\r\n攻击力无效！\r\n请勿再次使用后果自负！");
+                    //  damage = 1;
+                    String 全屏 = "等级J：" + c.getLevel()
+                            + "\r\n" + "职业：" + c.getJob()
+                            + "\r\n" + "地图：" + c.getMapId()
+                            + "\r\n" + "人物坐标：X:" + c.getPosition().x + " Y:" + c.getPosition().y
+                            + "\r\n" + "怪物坐标：" + monster.getPosition().x + " Y:" + monster.getPosition().y
+                            + "\r\n" + "时间：" + FileoutputUtil.CurrentReadable_Time()
+                            + "\r\n" + "IP：" + c.getClient().getSession().getRemoteAddress().toString().split(":")[0];
+                    FileoutputUtil.packetLog("log\\全屏检测\\" + c.getName() + ".log", 全屏);
+
+                } else if (c.getPosition().x - monster.getPosition().x >= 500) {
+                    // c.dropMessage(1, "[技能范围检测-B]\r\n非法使用外挂或者修改WZ\r\n导致:技能范围扩大.\r\n攻击力无效！\r\n请勿再次使用后果自负！");
+                    //  damage = 1;
+                    String 全屏 = "等级K：" + c.getLevel()
+                            + "\r\n" + "职业：" + c.getJob()
+                            + "\r\n" + "地图：" + c.getMapId()
+                            + "\r\n" + "人物坐标：X:" + c.getPosition().x + " Y:" + c.getPosition().y
+                            + "\r\n" + "怪物坐标：" + monster.getPosition().x + " Y:" + monster.getPosition().y
+                            + "\r\n" + "时间：" + FileoutputUtil.CurrentReadable_Time()
+                            + "\r\n" + "IP：" + c.getClient().getSession().getRemoteAddress().toString().split(":")[0];
+                    FileoutputUtil.packetLog("log\\全屏检测\\" + c.getName() + ".log", 全屏);
+
+                } else if (c.getPosition().x - monster.getPosition().x <= -500) {
+                    // c.dropMessage(1, "[技能范围检测-B]\r\n非法使用外挂或者修改WZ\r\n导致:技能范围扩大.\r\n攻击力无效！\r\n请勿再次使用后果自负！");
+                    //  damage = 1;
+                    String 全屏 = "等级L：" + c.getLevel()
+                            + "\r\n" + "职业：" + c.getJob()
+                            + "\r\n" + "地图：" + c.getMapId()
+                            + "\r\n" + "人物坐标：X:" + c.getPosition().x + " Y:" + c.getPosition().y
+                            + "\r\n" + "怪物坐标：" + monster.getPosition().x + " Y:" + monster.getPosition().y
+                            + "\r\n" + "时间：" + FileoutputUtil.CurrentReadable_Time()
+                            + "\r\n" + "IP：" + c.getClient().getSession().getRemoteAddress().toString().split(":")[0];
+                    FileoutputUtil.packetLog("log\\全屏检测\\" + c.getName() + ".log", 全屏);
 
                 }
             }
@@ -1545,6 +1518,7 @@ public class DamageParse {
         } catch (Exception e) {
         }
     }
+
     /*
      * public static final int Damage_NoSkillPD(MapleCharacter c, int damage) {
      * if (c.getJob() == 1000 || c.getJob() == 0 || c.getJob() == 2000) { if
@@ -1870,7 +1844,7 @@ public class DamageParse {
 
     public static final String Damage_HighDamage(MapleCharacter player, MapleStatEffect effect, AttackInfo attack) {
         boolean BeginnerJob = player.getJob() == 0 || player.getJob() == 1000;
-      //  int VipCount=player.getVip();
+        //  int VipCount=player.getVip();
         String reason = "null";
         int check = 200000;
         if (player.getLevel() <= 15) {
@@ -1889,7 +1863,7 @@ public class DamageParse {
         for (final AttackPair oned : attack.allDamage) {
             if (player.getMap().getMonsterByOid(oned.objectid) != null) {
                 for (Pair<Integer, Boolean> eachde : oned.attack) {
-                    if (eachde.left >= 200000  ) {
+                    if (eachde.left >= 200000) {
                         reason = "技能 " + attack.skill + " 打怪伤害 " + eachde.left;
                     }
                     if (GameConstants.Novice_Skill(attack.skill) && eachde.left > 40) {
@@ -1899,10 +1873,8 @@ public class DamageParse {
                         if (eachde.left > 40) {
                             reason = "技能 " + attack.skill + " 打怪伤害 " + eachde.left;
                         }
-                    } else {
-                        if (eachde.left >= check) {
-                            reason = "技能 " + attack.skill + " 打怪伤害 " + eachde.left;
-                        }
+                    } else if (eachde.left >= check) {
+                        reason = "技能 " + attack.skill + " 打怪伤害 " + eachde.left;
                     }
                 }
             }
@@ -1920,70 +1892,68 @@ public class DamageParse {
         }
         return reason;
     }
-     //109dc  破攻专用
-  public static int maxDamage(MapleCharacter chr, AttackInfo ret, int damage) {
-   // int type = LoginServer.getMaxdamageType();
-    int maxdamage;
-   // damage = 199999;
-    int VipCount=chr.getVip();
-    maxdamage = (int) (199999 +  VipCount*10000);
-    double randomNum = Math.random() * 1.1D;
-    randomNum = Math.max(randomNum, 0.9D);
-    int tempDamage = 0;
-  
-   for (IItem item : chr.getInventory(MapleInventoryType.EQUIPPED)) {
-      int ak = 0;
-      if ((item != null) && ((item instanceof Equip)))
-      {
-        ak = MapleItemInformationProvider.getInstance().getTotalStat((Equip)item);
-      }
+    //109dc  破攻专用
 
-      tempDamage += ak * 15;
+    public static int maxDamage(MapleCharacter chr, AttackInfo ret, int damage) {
+        // int type = LoginServer.getMaxdamageType();
+        int maxdamage;
+        // damage = 199999;
+        int VipCount = chr.getVip();
+        maxdamage = (int) (199999 + VipCount * 10000);
+        double randomNum = Math.random() * 1.1D;
+        randomNum = Math.max(randomNum, 0.9D);
+        int tempDamage = 0;
+
+        for (IItem item : chr.getInventory(MapleInventoryType.EQUIPPED)) {
+            int ak = 0;
+            if ((item != null) && ((item instanceof Equip))) {
+                ak = MapleItemInformationProvider.getInstance().getTotalStat((Equip) item);
+            }
+
+            tempDamage += ak * 15;
+        }
+        if ((ret.skill != 14101006) && (damage >= 199999)) {
+            if (((chr.getJob() >= 100) && (chr.getJob() <= 132)) || ((chr.getJob() >= 1100) && (chr.getJob() <= 1111)) || ((chr.getJob() >= 2000) && (chr.getJob() <= 2112)) || ((chr.getJob() >= 3100) && (chr.getJob() <= 3112)) || ((chr.getJob() >= 5000) && (chr.getJob() <= 5112))) {
+                tempDamage += (int) (chr.getStat().getStr() * 2.0D + (chr.getStat().getDex() + chr.getStat().getInt() + chr.getStat().getLuk()));
+            }
+
+            if (((chr.getJob() >= 200) && (chr.getJob() <= 232)) || ((chr.getJob() >= 1200) && (chr.getJob() <= 1211)) || ((chr.getJob() >= 2001) && (chr.getJob() <= 2218)) || ((chr.getJob() >= 3200) && (chr.getJob() <= 3212))) {
+                tempDamage += (int) (chr.getStat().getInt() * 2.0D + (chr.getStat().getStr() + chr.getStat().getDex() + chr.getStat().getLuk()));
+            }
+
+            if (((chr.getJob() >= 300) && (chr.getJob() <= 322)) || ((chr.getJob() >= 1300) && (chr.getJob() <= 1311)) || ((chr.getJob() >= 3300) && (chr.getJob() <= 3312)) || ((chr.getJob() >= 2300) && (chr.getJob() <= 2312)) || ((chr.getJob() >= 3500) && (chr.getJob() <= 3512))) {
+                tempDamage += (int) (chr.getStat().getDex() * 2.0D + (chr.getStat().getStr() + chr.getStat().getInt() + chr.getStat().getLuk()));
+            }
+
+            if (((chr.getJob() >= 400) && (chr.getJob() <= 422)) || ((chr.getJob() >= 1400) && (chr.getJob() <= 1412)) || ((chr.getJob() >= 430) && (chr.getJob() <= 434)) || (chr.getJob() == 2003) || ((chr.getJob() >= 2400) && (chr.getJob() <= 2412))) {
+                tempDamage += (int) (chr.getStat().getLuk() * 2.0D + (chr.getStat().getStr() + chr.getStat().getDex() + chr.getStat().getInt()));
+            }
+
+            if (((chr.getJob() >= 580) && (chr.getJob() <= 592)) || ((chr.getJob() >= 1500) && (chr.getJob() <= 1511)) || (chr.getJob() == 508) || ((chr.getJob() >= 570) && (chr.getJob() <= 572))) {
+                tempDamage += (int) ((chr.getStat().getStr() + chr.getStat().getDex()) / 2.0D * 2.0D + (chr.getStat().getInt() + chr.getStat().getLuk()));
+            }
+
+            if ((chr.getJob() == 501) || ((chr.getJob() >= 530) && (chr.getJob() <= 532))) {
+                tempDamage += (int) (chr.getStat().getStr() * 2.0D + (chr.getStat().getLuk() + chr.getStat().getDex() + chr.getStat().getInt()));
+            }
+        }
+
+        damage = (int) ((tempDamage + 199999) * randomNum);
+
+        damage = Math.min(damage, 199999 + (VipCount * 10000));
+        // chr.getClient().getSession().write(MaplePacketCreator.sendHint(new StringBuilder().append("破攻实际伤害:#r").append(damage).toString(), 148, 5));
+        chr.dropMessage(-1, new StringBuilder().append("破攻实际伤害: ").append(damage).toString());
+        chr.getClient().getSession().write(MaplePacketCreator.sendHint("#e[破攻伤害]:#r" + damage + "#b ", 250, 5));
+
+        if (damage > maxdamage) {
+            damage = maxdamage;
+        }
+
+        if ((damage >= 2000000) || (damage < 0)) {
+            damage = 2000000;
+        }
+
+        tempDamage = 0;
+        return damage;
     }
-     if ((ret.skill != 14101006) && (damage >= 199999))
-    {
-      if (((chr.getJob() >= 100) && (chr.getJob() <= 132)) || ((chr.getJob() >= 1100) && (chr.getJob() <= 1111)) || ((chr.getJob() >= 2000) && (chr.getJob() <= 2112)) || ((chr.getJob() >= 3100) && (chr.getJob() <= 3112)) || ((chr.getJob() >= 5000) && (chr.getJob() <= 5112))) {
-        tempDamage += (int)(chr.getStat().getStr() * 2.0D + (chr.getStat().getDex() + chr.getStat().getInt() + chr.getStat().getLuk()));
-      }
-
-      if (((chr.getJob() >= 200) && (chr.getJob() <= 232)) || ((chr.getJob() >= 1200) && (chr.getJob() <= 1211)) || ((chr.getJob() >= 2001) && (chr.getJob() <= 2218)) || ((chr.getJob() >= 3200) && (chr.getJob() <= 3212))) {
-        tempDamage += (int)(chr.getStat().getInt() * 2.0D + (chr.getStat().getStr() + chr.getStat().getDex() + chr.getStat().getLuk()));
-      }
-
-      if (((chr.getJob() >= 300) && (chr.getJob() <= 322)) || ((chr.getJob() >= 1300) && (chr.getJob() <= 1311)) || ((chr.getJob() >= 3300) && (chr.getJob() <= 3312)) || ((chr.getJob() >= 2300) && (chr.getJob() <= 2312)) || ((chr.getJob() >= 3500) && (chr.getJob() <= 3512))) {
-        tempDamage += (int)(chr.getStat().getDex() * 2.0D + (chr.getStat().getStr() + chr.getStat().getInt() + chr.getStat().getLuk()));
-      }
-
-      if (((chr.getJob() >= 400) && (chr.getJob() <= 422)) || ((chr.getJob() >= 1400) && (chr.getJob() <= 1412)) || ((chr.getJob() >= 430) && (chr.getJob() <= 434)) || (chr.getJob() == 2003) || ((chr.getJob() >= 2400) && (chr.getJob() <= 2412))) {
-        tempDamage += (int)(chr.getStat().getLuk() * 2.0D + (chr.getStat().getStr() + chr.getStat().getDex() + chr.getStat().getInt()));
-      }
-
-      if (((chr.getJob() >= 580) && (chr.getJob() <= 592)) || ((chr.getJob() >= 1500) && (chr.getJob() <= 1511)) || (chr.getJob() == 508) || ((chr.getJob() >= 570) && (chr.getJob() <= 572))) {
-        tempDamage += (int)((chr.getStat().getStr() + chr.getStat().getDex()) / 2.0D * 2.0D + (chr.getStat().getInt() + chr.getStat().getLuk()));
-      }
-
-      if ((chr.getJob() == 501) || ((chr.getJob() >= 530) && (chr.getJob() <= 532))) {
-        tempDamage += (int)(chr.getStat().getStr() * 2.0D + (chr.getStat().getLuk() + chr.getStat().getDex() + chr.getStat().getInt()));
-      }
-    }
-    
-      damage = (int)((tempDamage  + 199999) * randomNum);
-      
-      damage = Math.min(damage, 199999+(VipCount*10000));
-     // chr.getClient().getSession().write(MaplePacketCreator.sendHint(new StringBuilder().append("破攻实际伤害:#r").append(damage).toString(), 148, 5));
-      chr.dropMessage(-1, new StringBuilder().append("破攻实际伤害: ").append(damage).toString());
-      chr.getClient().getSession().write(MaplePacketCreator.sendHint("#e[破攻伤害]:#r" + damage + "#b ", 250, 5));
-    
-   
-    if (damage > maxdamage) {
-        damage = maxdamage;
-    }
-    
-    if ((damage >= 2000000) || (damage < 0)) {
-      damage = 2000000;
-    }
-
-    tempDamage = 0;
-    return damage;
-  }
 }

@@ -180,10 +180,10 @@ public class CharLoginHandler {
         //c.getSession().write(MaplePacketCreator.getServerList(1, "Scania", LoginServer.getInstance().getChannels(), 1200));
         //c.getSession().write(MaplePacketCreator.getServerList(2, "Scania", LoginServer.getInstance().getChannels(), 1200));
         //c.getSession().write(MaplePacketCreator.getServerList(3, "Scania", LoginServer.getInstance().getChannels(), 1200));
-       
+
         c.getSession().write(LoginPacket.getEndOfServerList());
         c.getSession().write(LoginPacket.enableRecommended());
-         c.getSession().write(LoginPacket.sendRecommended(0, LoginServer.getEventMessage()));
+        c.getSession().write(LoginPacket.sendRecommended(0, LoginServer.getEventMessage()));
     }
 
     public static final void ServerStatusRequest(final MapleClient c) {
@@ -201,7 +201,7 @@ public class CharLoginHandler {
         }
     }
 
-  /*  public static final void LicenseRequest(final SeekableLittleEndianAccessor slea, final MapleClient c) {
+    /*  public static final void LicenseRequest(final SeekableLittleEndianAccessor slea, final MapleClient c) {
         if (slea.readByte() == 1) {
             c.getSession().write(MaplePacketCreator.licenseResult());
             c.updateLoginState(0);
@@ -209,27 +209,27 @@ public class CharLoginHandler {
             c.getSession().close();
         }
     }
-*/
+     */
     public static final void CharlistRequest(final SeekableLittleEndianAccessor slea, final MapleClient c) {
-       if (!c.isLoggedIn()) {
+        if (!c.isLoggedIn()) {
             c.getSession().close();
             return;
-        } 
-       // slea.readByte();
+        }
+        // slea.readByte();
         final int server = slea.readByte();
         final int channel = slea.readByte() + 1;
-       if (!World.isChannelAvailable(channel) || server != 0) { //TODOO: MULTI WORLDS
+        if (!World.isChannelAvailable(channel) || server != 0) { //TODOO: MULTI WORLDS
             c.getSession().write(LoginPacket.getLoginFailed(10)); //cannot process so many
             return;
         }
-         
-        slea.readInt();   
+
+        slea.readInt();
         //System.out.println("Client " + c.getSession().getRemoteAddress().toString().split(":")[0] + " is connecting to server " + server + " channel " + channel + "");
-       
+
         final List<MapleCharacter> chars = c.loadCharacters(server);
-         if (chars != null && ChannelServer.getInstance(channel) != null) {
+        if (chars != null && ChannelServer.getInstance(channel) != null) {
             c.setWorld(server);
-             c.setChannel(channel);
+            c.setChannel(channel);
             c.getSession().write(LoginPacket.getCharList(c.getSecondPassword() != null, chars, c.getCharacterSlots()));
         } else {
             c.getSession().close();
@@ -243,17 +243,17 @@ public class CharLoginHandler {
     public static final void CreateChar(final SeekableLittleEndianAccessor slea, final MapleClient c) {
         final String name = slea.readMapleAsciiString();
         final int JobType = slea.readInt(); // 1 = Adventurer, 0 = Cygnus, 2 = Aran
-         
-          
-         if (JobType == 0 ) {
-         c.getSession().write(MaplePacketCreator.serverNotice(1, "不能创建骑士团"));
-         return; }
+
+        if (JobType == 0) {
+            c.getSession().write(MaplePacketCreator.serverNotice(1, "不能创建骑士团"));
+            return;
+        }
         /*
          * if (JobType == 0 || JobType == 2) {
          * c.getSession().write(MaplePacketCreator.serverNotice(1, "只能创建冒险家喔"));
          * return; }
          */
-       /* if (JobType != 1) {
+ /* if (JobType != 1) {
             c.getSession().write(MaplePacketCreator.serverNotice(1, "只能创建冒险家！"));//开放职业
             return;
         }*/
@@ -383,11 +383,9 @@ public class CharLoginHandler {
             if (Secondpw_Client == null) { // Client's hacking
                 c.getSession().close();
                 return;
-            } else {
-                if (!c.CheckSecondPassword(Secondpw_Client)) { // Wrong Password
-                    //state = 12;
-                    state = 16;
-                }
+            } else if (!c.CheckSecondPassword(Secondpw_Client)) { // Wrong Password
+                //state = 12;
+                state = 16;
             }
         }
         // TODO, implement 13 digit Asiasoft passport too.

@@ -17,7 +17,7 @@ import server.CashItemInfo.CashModInfo;
 import tools.wztosql.AddCashItemToDB;
 
 public class CashItemFactory {
-    
+
     private final static CashItemFactory instance = new CashItemFactory();
     private final static int[] bestItems = new int[]{50100010, 50100010, 50100010, 50100010, 50100010};
     private boolean initialized = false;
@@ -28,14 +28,14 @@ public class CashItemFactory {
     //是这个目录把，嗯
     private final MapleDataProvider itemStringInfo = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/String.wz"));
     private Map<Integer, Integer> idLookup = new HashMap();
-    
+
     public static final CashItemFactory getInstance() {
         return instance;
     }
-    
+
     protected CashItemFactory() {
     }
-    
+
     public void initialize() {
         System.out.println("启动世界服务器-数据较大，请稍等···");//原来叫商城#
         final List<Integer> itemids = new ArrayList<Integer>();
@@ -48,8 +48,8 @@ public class CashItemFactory {
                     MapleDataTool.getIntConvert("Period", field, 0),
                     MapleDataTool.getIntConvert("Gender", field, 2),
                     MapleDataTool.getIntConvert("OnSale", field, 0) > 0);
-            
-         /*   String name = "";
+
+            /*   String name = "";
             MapleData nameData = null;
             int id = 0;
             for (MapleData Eqp : itemStringInfo.getData("Eqp.img").getChildByPath("Eqp").getChildren()) {
@@ -85,7 +85,7 @@ public class CashItemFactory {
                     name = (String) nameData.getData();
                 }
             }*/
-            /*try {
+ /*try {
                 AddCashItemToDB.addItem(stats.getId(), stats.getCount(), stats.getPrice(), stats.getSN(), stats.getExpire(), stats.getGender(), stats.getOnSale());
             } catch (Exception ex) {
                 Logger.getLogger(CashItemFactory.class.getName()).log(Level.SEVERE, null, ex);
@@ -94,7 +94,7 @@ public class CashItemFactory {
                 itemStats.put(SN, stats);
                 idLookup.put(itemId, SN);
             }
-            
+
             if (itemId > 0) {
                 itemids.add(itemId);
             }
@@ -108,7 +108,7 @@ public class CashItemFactory {
         }
         initialized = true;
     }
-    
+
     public final CashItemInfo getItem(int sn) {
         final CashItemInfo stats = itemStats.get(sn);
         // final CashItemInfo stats = itemStats.get(Integer.valueOf(sn));
@@ -122,15 +122,15 @@ public class CashItemFactory {
         //hmm
         return stats;
     }
-    
+
     public final List<CashItemInfo> getPackageItems(int itemId) {
         if (itemPackage.get(itemId) != null) {
             return itemPackage.get(itemId);
         }
         final List<CashItemInfo> packageItems = new ArrayList<CashItemInfo>();
-        
+
         final MapleData b = data.getData("CashPackage.img");
-   
+
         /*for (MapleData c : b.getChildren()) {
             if (c.getChildByPath("SN") == null) {
                 continue;
@@ -140,7 +140,6 @@ public class CashItemFactory {
             }
             itemPackage.put(itemId, packageItems);
         }*/
-
         if (b == null || b.getChildByPath(itemId + "/SN") == null) {
             return null;
         }
@@ -150,10 +149,10 @@ public class CashItemFactory {
         itemPackage.put(itemId, packageItems);
         return packageItems;
     }
-    
+
     public final CashModInfo getModInfo(int sn) {
         CashModInfo ret = itemMods.get(sn);
-      //  System.out.println(itemMods.toString());
+        //  System.out.println(itemMods.toString());
         if (ret == null) {
             if (initialized) {
                 return null;
@@ -175,21 +174,22 @@ public class CashItemFactory {
         }
         return ret;
     }
-    
+
     public final Collection<CashModInfo> getAllModInfo() {
         if (!initialized) {
             initialize();
         }
         return itemMods.values();
     }
-    
+
     public final int[] getBestItems() {
         return bestItems;
     }
-    
+
     public int getSnFromId(int itemId) {
         return idLookup.get(itemId);
     }
+
     public final void clearCashShop() {
         itemStats.clear();
         itemPackage.clear();

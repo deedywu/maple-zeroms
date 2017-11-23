@@ -310,10 +310,10 @@ public class CheatTracker {
             case 攻击范围过大:
             case 召唤兽攻击范围过大:
             case 伤害相同:
-                
+
             case 吸怪:
             case 怪物移动:
-                
+
             case 回避率过高:
                 String show = offense.name();
                 gm_message--;
@@ -328,7 +328,7 @@ public class CheatTracker {
 
                     // System.out.println(MapleCharacterUtil.makeMapleReadable(chrhardref.getName()) + "怀疑使用外挂");
                     // World.Broadcast.broadcastGMMessage(MaplePacketCreator.serverNotice(6, "[管理員訊息] 开挂玩家[" + MapleCharacterUtil.makeMapleReadable(chrhardref.getName()) + "] 地图ID[" + chrhardref.getMapId() + "] suspected of hacking! " + StringUtil.makeEnumHumanReadable(offense.name()) + (param == null ? "" : (" - " + param))).getBytes());
-                            /*
+                    /*
                      * String note = "时间：" +
                      * FileoutputUtil.CurrentReadable_Time() + " " + "|| 玩家名字："
                      * + chrhardref.getName() + "" + "|| 玩家地图：" +

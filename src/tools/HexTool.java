@@ -23,8 +23,6 @@ package tools;
 import java.io.ByteArrayOutputStream;
 import org.apache.mina.core.buffer.IoBuffer;
 
-
-
 /**
  * Provides a class for manipulating hexadecimal numbers.
  *

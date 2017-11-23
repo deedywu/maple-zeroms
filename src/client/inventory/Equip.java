@@ -1,4 +1,3 @@
-
 package client.inventory;
 
 import client.MapleClient;
@@ -19,9 +18,9 @@ public class Equip extends Item implements IEquip, Serializable {
     private byte itemLevel;
     private int socket1 = -1, socket2 = -1, socket3 = -1; //V.102新增 装备插槽
     private int limitBreak = 0; //武器装备的攻击突破上限附加数字
-    
+
     public Equip(int id, short position) {
-        super(id, position, (short) 1, (byte)0);
+        super(id, position, (short) 1, (byte) 0);
     }
 
     public Equip(int id, short position, byte flag) {
@@ -322,7 +321,7 @@ public class Equip extends Item implements IEquip, Serializable {
         }
         return expz;
     }
-    
+
     /**
      *
      * @return
@@ -331,6 +330,7 @@ public class Equip extends Item implements IEquip, Serializable {
     public int getExpPercentage() {
         return this.itemEXP;
     }
+
     /*@Override
     public int getExpPercentage() {
         if (getEquipLevels() < getBaseLevel() || getEquipLevels() > GameConstants.getMaxLevel(getItemId()) || GameConstants.getExpForLevel(getEquipLevels(), getItemId()) <= 0) {
@@ -441,29 +441,29 @@ public class Equip extends Item implements IEquip, Serializable {
 
     public void resetPotentialA() {
         final int rank = Randomizer.nextInt(100) < 4 ? -18 : Randomizer.nextInt(100) < 4 ? -19 : -17;
-        setPotential1((short)-18);
-        setPotential2((short)-18);
-        setPotential3((short)0);
-       // setPotential4((short)0);
-       // setPotential5((short)0);
+        setPotential1((short) -18);
+        setPotential2((short) -18);
+        setPotential3((short) 0);
+        // setPotential4((short)0);
+        // setPotential5((short)0);
     }
-    
+
     public void resetPotentialS() {
-     final int rank = Randomizer.nextInt(100) < 4 ? -18 : Randomizer.nextInt(100) < 4 ? -19 : -17;
-        setPotential1((short)-19);
-        setPotential2((short)-19);
-        setPotential3((short)0);
-       // setPotential4((short)0);
-       // setPotential5((short)0);
+        final int rank = Randomizer.nextInt(100) < 4 ? -18 : Randomizer.nextInt(100) < 4 ? -19 : -17;
+        setPotential1((short) -19);
+        setPotential2((short) -19);
+        setPotential3((short) 0);
+        // setPotential4((short)0);
+        // setPotential5((short)0);
     }
-    
+
     public void resetPotentialSS() {
         //int rank = Randomizer.nextInt(100) < 4 ? -18 : Randomizer.nextInt(100) < 4 ? -19 : -17;
-        setPotential1((short)-20);
-        setPotential2((short)-20);
-        setPotential3((short)0);
-       // setPotential4((short)0);
-       // setPotential5((short)0);
+        setPotential1((short) -20);
+        setPotential2((short) -20);
+        setPotential3((short) 0);
+        // setPotential4((short)0);
+        // setPotential5((short)0);
     }
 
     public void renewPotential() {
@@ -491,9 +491,11 @@ public class Equip extends Item implements IEquip, Serializable {
     public void setMpR(final short mp) {
         this.mpR = mp;
     }
-        public void gainItemLevel() {
-        this.itemLevel = (byte)(this.itemLevel + 1);
+
+    public void gainItemLevel() {
+        this.itemLevel = (byte) (this.itemLevel + 1);
     }
+
     public void gainItemExp(MapleClient c, int gain, boolean timeless) {
         this.itemEXP += gain;
         int expNeeded = 0;
@@ -503,12 +505,13 @@ public class Equip extends Item implements IEquip, Serializable {
             expNeeded = ExpTable.getReverseItemExpNeededForLevel(this.itemLevel + 1);
         }
         if (this.itemEXP >= expNeeded) {
-         // gainItemLevel();
+            // gainItemLevel();
             gainItemLevel(c, timeless);
             //gainLevel();
             c.getSession().write(MaplePacketCreator.showItemLevelup());
         }
     }
+
     public void gainItemLevel(MapleClient c, boolean timeless) {
         List<Pair<String, Integer>> stats = MapleItemInformationProvider.getInstance().getItemLevelupStats(getItemId(), itemLevel, timeless);
         for (Pair<String, Integer> stat : stats) {
@@ -545,14 +548,13 @@ public class Equip extends Item implements IEquip, Serializable {
         this.itemLevel++;
         c.getPlayer().getClient().getSession().write(MaplePacketCreator.showEquipmentLevelUp());
         c.getPlayer().getClient().getSession().write(MaplePacketCreator.updateSpecialItemUse(this, getType()));
-              c.getPlayer().getClient().getSession().write(MaplePacketCreator.getCharInfo(c.getPlayer()));
-          /*  c.getPlayer().getMap().removePlayer(c.getPlayer());
+        c.getPlayer().getClient().getSession().write(MaplePacketCreator.getCharInfo(c.getPlayer()));
+        /*  c.getPlayer().getMap().removePlayer(c.getPlayer());
             c.getPlayer().getMap().addPlayer(c.getPlayer());*/
         //c.getPlayer().getMap().broadcastMessage(c.getPlayer(), MaplePacketCreator.showForeignEffect(c.getPlayer().getId(), 17));
-       // c.getPlayer().forceUpdateItem(MapleInventoryType.EQUIPPED, this);
+        // c.getPlayer().forceUpdateItem(MapleInventoryType.EQUIPPED, this);
     }
 
-    
     @Override
     public void setEquipLevel(byte gf) {
         this.itemLevel = gf;
@@ -562,7 +564,8 @@ public class Equip extends Item implements IEquip, Serializable {
     public byte getEquipLevel() {
         return itemLevel;
     }
-     /*
+
+    /*
      * 武器装备的攻击突破上限附加数字
      * 5000000 = 500万
      * 上限设置为 21亿
@@ -574,6 +577,7 @@ public class Equip extends Item implements IEquip, Serializable {
     public void setLimitBreak(int lb) {
         this.limitBreak = lb;
     }
+
     public short getKarmaCount() {
         return karmaCount;
     }

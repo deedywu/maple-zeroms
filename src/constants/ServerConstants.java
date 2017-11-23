@@ -35,14 +35,14 @@ public class ServerConstants {
         return 自动注册 ? "开启" : "关闭";
     }
 
-    public void setPACKET_ERROR(String ERROR){
+    public void setPACKET_ERROR(String ERROR) {
         PACKET_ERROR = ERROR;
     }
 
     public String getPACKET_ERROR() {
         return PACKET_ERROR;
     }
-    
+
     public static final byte Class_Bonus_EXP(final int job) {
         switch (job) {
             case 3000: //whenever these arrive, they'll give bonus

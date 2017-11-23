@@ -1,8 +1,6 @@
 package server;
 
-import client.DebugWindow;
 import client.MapleCharacter;
-import client.MapleClient;
 import client.SkillFactory;
 import constants.ServerConstants;
 import handling.MapleServerHandler;
@@ -14,15 +12,10 @@ import handling.login.LoginInformationProvider;
 import handling.world.World;
 import java.sql.SQLException;
 import database.DatabaseConnection;
-import gui.ZeroMS;
 import handling.world.family.MapleFamilyBuff;
-import java.io.*;
 import java.sql.PreparedStatement;
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import server.Timer.*;
 import server.events.MapleOxQuizFactory;
 import server.life.MapleLifeFactory;

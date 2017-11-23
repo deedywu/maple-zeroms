@@ -47,7 +47,7 @@ public class LoginPacket {
         mplew.writeShort(13); // 13 = MSEA, 14 = GlobalMS, 15 = EMS
         mplew.writeShort(mapleVersion);
         mplew.write(new byte[]{0, 0});
-       // mplew.writeMapleAsciiString(ServerConstants.MAPLE_PATCH);
+        // mplew.writeMapleAsciiString(ServerConstants.MAPLE_PATCH);
         mplew.write(recvIv);
         mplew.write(sendIv);
         mplew.write(4); // 7 = MSEA, 8 = GlobalMS, 5 = Test Server
@@ -79,7 +79,8 @@ public class LoginPacket {
 
         return mplew.getPacket();
     }
-  public static MaplePacket genderNeeded(MapleClient c) {
+
+    public static MaplePacket genderNeeded(MapleClient c) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(3);
 
         if (ServerConstants.调试输出封包) {
@@ -90,33 +91,21 @@ public class LoginPacket {
 
         return mplew.getPacket();
     }
+
     public static final MaplePacket getLoginFailed(final int reason) {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(16);
 
         if (ServerConstants.调试输出封包) {
             System.out.println("getLoginFailed--------------------");
         }
-        /** * * * * 
- * 3：身份证被删除或被阻挡
-* 4：不正确的密码
-* 5：不是一个注册的身份证
-* 6：系统错误
-* 7：已登录
-* 8：系统错误
-* 9：系统错误
-* 10：不能处理这么多连接
-* 11：只有20岁以上的用户可以使用该频道
-* 13：无法登录此知识产权
-* 14：错误的网关或个人信息和奇怪的韩国按钮
-* 15：处理请求与韩国按钮！
-* 16：请通过电子邮件验证您的帐户…
-* 17：错误的网关或个人信息
-* 21：请通过电子邮件验证您的帐户…
-* 23：许可协议
-* 25：欧洲枫叶欧洲公告
-* 27：一些奇怪的完整的客户端通知，可能为试用版本
-* 32：知识产权封锁
-* 84：请重新通过网站--> 0x07 recv响应00 / 01 /*/
+        /**
+         * * * * *
+         * 3：身份证被删除或被阻挡 4：不正确的密码 5：不是一个注册的身份证 6：系统错误 7：已登录 8：系统错误 9：系统错误
+         * 10：不能处理这么多连接 11：只有20岁以上的用户可以使用该频道 13：无法登录此知识产权 14：错误的网关或个人信息和奇怪的韩国按钮
+         * 15：处理请求与韩国按钮！ 16：请通过电子邮件验证您的帐户… 17：错误的网关或个人信息 21：请通过电子邮件验证您的帐户…
+         * 23：许可协议 25：欧洲枫叶欧洲公告 27：一些奇怪的完整的客户端通知，可能为试用版本 32：知识产权封锁 84：请重新通过网站-->
+         * 0x07 recv响应00 / 01 /
+         */
         mplew.writeShort(SendPacketOpcode.LOGIN_STATUS.getValue());
         mplew.writeInt(reason);
         mplew.writeShort(0);
@@ -199,49 +188,51 @@ public class LoginPacket {
         mplew.writeMapleAsciiString(String.valueOf(client.getAccID()));
         mplew.writeMapleAsciiString(client.getAccountName());
         mplew.write(1);
-        
-       // mplew.writeLong(0);
-      //  mplew.writeLong(0);
-      //  mplew.writeLong(0);
+
+        // mplew.writeLong(0);
+        //  mplew.writeLong(0);
+        //  mplew.writeLong(0);
+        return mplew.getPacket();
+    }
+
+    public static MaplePacket sendRecommended(int world, String message) {
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+        mplew.writeShort(SendPacketOpcode.SEND_RECOMMENDED.getValue());
+        mplew.write(message != null ? 1 : 0);
+        if (message != null) {
+            mplew.writeInt(world);
+            mplew.writeMapleAsciiString(message);
+        }
+        return mplew.getPacket();
+    }
+
+    public static MaplePacket enableRecommended() {
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+        mplew.writeShort(SendPacketOpcode.ENABLE_RECOMMENDED.getValue());
+        mplew.writeInt(0);
+        return mplew.getPacket();
+    }
+
+    public static final MaplePacket getSecondAuthSuccess(MapleClient client) {
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+
+        mplew.writeShort(SendPacketOpcode.LOGIN_SECOND.getValue());
+        mplew.write(0);
+        mplew.writeInt(client.getAccID());
+        mplew.writeZeroBytes(5);
+        mplew.writeMapleAsciiString(client.getAccountName());
+        mplew.writeLong(2L);
+        mplew.writeZeroBytes(3);
+        mplew.writeInt(Randomizer.nextInt());
+        mplew.writeInt(Randomizer.nextInt());
+        mplew.writeInt(28);
+        mplew.writeInt(Randomizer.nextInt());
+        mplew.writeInt(Randomizer.nextInt());
+        mplew.write(1);
 
         return mplew.getPacket();
     }
 
-     public static MaplePacket sendRecommended(int world, String message) {
-     MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-     mplew.writeShort(SendPacketOpcode.SEND_RECOMMENDED.getValue());
-     mplew.write(message != null ? 1 : 0);
-     if (message != null) {
-       mplew.writeInt(world);
-      mplew.writeMapleAsciiString(message);
-     }
-     return mplew.getPacket();
-   }
-    public static MaplePacket enableRecommended() {
-     MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-     mplew.writeShort(SendPacketOpcode.ENABLE_RECOMMENDED.getValue());
-     mplew.writeInt(0);
-     return mplew.getPacket();
-   }
-    public static final MaplePacket getSecondAuthSuccess(MapleClient client) {
-    MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
- 
-    mplew.writeShort(SendPacketOpcode.LOGIN_SECOND.getValue());
-     mplew.write(0);
-     mplew.writeInt(client.getAccID());
-     mplew.writeZeroBytes(5);
-     mplew.writeMapleAsciiString(client.getAccountName());
-     mplew.writeLong(2L);
-     mplew.writeZeroBytes(3);
-     mplew.writeInt(Randomizer.nextInt());
-     mplew.writeInt(Randomizer.nextInt());
-     mplew.writeInt(28);
-     mplew.writeInt(Randomizer.nextInt());
-     mplew.writeInt(Randomizer.nextInt());
-     mplew.write(1);
-
-    return mplew.getPacket();
-  }
     public static final MaplePacket deleteCharResponse(final int cid, final int state) {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -311,19 +302,18 @@ public class LoginPacket {
         //mplew.writeShort(0);
 
         //System.err.println(HexTool.toString(mplew.getPacket().getBytes()));
-        
-             mplew.writeShort(GameConstants.getBalloons().size());
-             for (Balloon balloon : GameConstants.getBalloons()) {
-                 mplew.writeShort(balloon.nX);
-                 mplew.writeShort(balloon.nY);
-                 mplew.writeMapleAsciiString(balloon.sMessage);
-             }
+        mplew.writeShort(GameConstants.getBalloons().size());
+        for (Balloon balloon : GameConstants.getBalloons()) {
+            mplew.writeShort(balloon.nX);
+            mplew.writeShort(balloon.nY);
+            mplew.writeMapleAsciiString(balloon.sMessage);
+        }
         //System.err.println(HexTool.toString(mplew.getPacket().getBytes()));
         if (ServerConstants.PACKET_ERROR_OFF) {
             ServerConstants ERROR = new ServerConstants();
             ERROR.setPACKET_ERROR("getServerList-314" + "：\r\n" + mplew.getPacket() + "\r\n\r\n");
         }
-        
+
         return mplew.getPacket();
     }
 
@@ -411,7 +401,7 @@ public class LoginPacket {
             mplew.write(2);
             return;
         }
-       /* mplew.write(ranking ? 1 : 0);
+        /* mplew.write(ranking ? 1 : 0);
         if (ranking) {
             mplew.writeInt(chr.getRank());
             mplew.writeInt(chr.getRankMove());

@@ -11,7 +11,7 @@ package tools;
 class FilePrinter {
 
     static void printError(String cashShopDumpertxt, Exception ex) {
-    System.err.println(ex);
+        System.err.println(ex);
     }
-    
+
 }

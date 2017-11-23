@@ -77,17 +77,18 @@ public class MapleLifeFactory {
         }
     }
 
-     public static final List<Integer> getQuestCount(final int id) {
+    public static final List<Integer> getQuestCount(final int id) {
         return questCount.get(id);
     }
-   public static MapleMonster getMonster(int mobId) {
+
+    public static MapleMonster getMonster(int mobId) {
         MapleMonsterStats stats = getMonsterStats(mobId);
-		if (stats == null) {
-			return null;
+        if (stats == null) {
+            return null;
         }
         return new MapleMonster(mobId, stats);
     }
-	
+
     public static MapleMonsterStats getMonsterStats(int mobId) {
         MapleMonsterStats stats = monsterStats.get(Integer.valueOf(mobId));
 
@@ -96,7 +97,7 @@ public class MapleLifeFactory {
             if (monsterData == null) {
                 return null;
             }
-             MapleData monsterInfoData = monsterData.getChildByPath("info");
+            MapleData monsterInfoData = monsterData.getChildByPath("info");
             stats = new MapleMonsterStats(mobId);
 
             if (monsterInfoData.getChildByPath("maxHP").getData().toString().contains("?")) {
@@ -262,9 +263,9 @@ public class MapleLifeFactory {
             int link = MapleDataTool.getIntConvert("link", monsterInfoData, 0);
             stats.setLink(link);
             if (link != 0) {
-               
-                    monsterData = data.getData(StringUtil.getLeftPaddedStr(link + ".img", '0', 11));
-                
+
+                monsterData = data.getData(StringUtil.getLeftPaddedStr(link + ".img", '0', 11));
+
             }
 
             if (monsterData != null) {
@@ -349,7 +350,6 @@ public class MapleLifeFactory {
         return false;
     }
 
-    
     public static MapleNPC getNPC(final int nid) {
         String name = npcNames.get(nid);
         if (name == null) {
@@ -362,7 +362,7 @@ public class MapleLifeFactory {
         return new MapleNPC(nid, name);
     }
 
-   public static class loseItem {
+    public static class loseItem {
 
         private final int id;
         private final byte chance;

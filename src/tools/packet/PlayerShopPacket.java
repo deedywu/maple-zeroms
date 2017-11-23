@@ -461,7 +461,8 @@ public class PlayerShopPacket {
         mplew.write(slot);
         return mplew.getPacket();
     }
-        public static MaplePacket getMiniGameSkip1(int slot) {
+
+    public static MaplePacket getMiniGameSkip1(int slot) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         if (ServerConstants.调试输出封包) {
             System.out.println("getMiniGameSkip1--------------------");
@@ -482,7 +483,7 @@ public class PlayerShopPacket {
         mplew.write(0x30);
         return mplew.getPacket();
     }
-      
+
     public static MaplePacket getMiniGameRequestREDO() {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         if (ServerConstants.调试输出封包) {
@@ -493,7 +494,6 @@ public class PlayerShopPacket {
         return mplew.getPacket();
     }
 
-
     public static MaplePacket getMiniGameDenyTie() {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         if (ServerConstants.调试输出封包) {
@@ -503,8 +503,8 @@ public class PlayerShopPacket {
         mplew.write(0x31);
         return mplew.getPacket();
     }
-    
-       public static MaplePacket getMiniGameDenyREDO() {
+
+    public static MaplePacket getMiniGameDenyREDO() {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         if (ServerConstants.调试输出封包) {
             System.out.println("getMiniGameDenyREDO--------------------");
@@ -559,7 +559,7 @@ public class PlayerShopPacket {
         mplew.writeInt(game.getTies(chr));
         mplew.writeInt(game.getLosses(chr));
         mplew.writeInt(game.getScore(chr)); // points
-      //  mplew.writeInt(0); // 台版自己加的
+        //  mplew.writeInt(0); // 台版自己加的
     }
 
     public static MaplePacket getMiniGameClose(byte number) {

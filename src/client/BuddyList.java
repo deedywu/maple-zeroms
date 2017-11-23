@@ -38,7 +38,6 @@ public class BuddyList implements Serializable {
         BUDDYLIST_FULL, ALREADY_ON_LIST, OK
     }
 
-  
     /**
      * 儲存的好友
      */

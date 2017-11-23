@@ -233,7 +233,8 @@ class BytesEncodingDetect extends Encoding {
                 // asciichars++;  
             } else {
                 dbchars++;
-                if ((byte) 0xA1 <= rawtext[i] && rawtext[i] <= (byte) 0xF7 && // Original GB range  
+                if ((byte) 0xA1 <= rawtext[i] && rawtext[i] <= (byte) 0xF7
+                        && // Original GB range  
                         (byte) 0xA1 <= rawtext[i + 1] && rawtext[i + 1] <= (byte) 0xFE) {
                     gbchars++;
                     totalfreq += 500;
@@ -290,7 +291,8 @@ class BytesEncodingDetect extends Encoding {
                 // asciichars++;  
             } else {
                 dbchars++;
-                if ((byte) 0xA1 <= rawtext[i] && rawtext[i] <= (byte) 0xF7 && // Original GB range  
+                if ((byte) 0xA1 <= rawtext[i] && rawtext[i] <= (byte) 0xF7
+                        && // Original GB range  
                         i + 1 < rawtextlen && (byte) 0xA1 <= rawtext[i + 1] && rawtext[i + 1] <= (byte) 0xFE) {
                     gbchars++;
                     totalfreq += 500;
@@ -474,7 +476,8 @@ class BytesEncodingDetect extends Encoding {
                 // asciichars++;  
             } else {
                 dbchars++;
-                if (0xA1 <= rawtext[i] && rawtext[i] <= 0xF9 && // Original Big5 range  
+                if (0xA1 <= rawtext[i] && rawtext[i] <= 0xF9
+                        && // Original Big5 range  
                         ((0x40 <= rawtext[i + 1] && rawtext[i + 1] <= 0x7E) || (0xA1 <= rawtext[i + 1] && rawtext[i + 1] <= 0xFE))) {
                     bfchars++;
                     totalfreq += 500;
@@ -490,7 +493,8 @@ class BytesEncodingDetect extends Encoding {
                     } else if (3 <= row && row < 37) {
                         bffreq += 200;
                     }
-                } else if (0x81 <= rawtext[i] && rawtext[i] <= 0xFE && // Extended Big5 range  
+                } else if (0x81 <= rawtext[i] && rawtext[i] <= 0xFE
+                        && // Extended Big5 range  
                         ((0x40 <= rawtext[i + 1] && rawtext[i + 1] <= 0x7E) || (0x80 <= rawtext[i + 1] && rawtext[i + 1] <= 0xFE))) {
                     bfchars++;
                     totalfreq += 500;
@@ -540,7 +544,8 @@ class BytesEncodingDetect extends Encoding {
                     // System.out.println("plane 2 or above CNS char");  
                     // These are all less frequent chars so just ignore freq  
                     i += 3;
-                } else if ((byte) 0xA1 <= rawtext[i] && rawtext[i] <= (byte) 0xFE && // Plane 1  
+                } else if ((byte) 0xA1 <= rawtext[i] && rawtext[i] <= (byte) 0xFE
+                        && // Plane 1  
                         (byte) 0xA1 <= rawtext[i + 1] && rawtext[i + 1] <= (byte) 0xFE) {
                     cnschars++;
                     totalfreq += 500;
@@ -647,7 +652,8 @@ class BytesEncodingDetect extends Encoding {
             if ((rawtext[i] & (byte) 0x7F) == rawtext[i]) { // One byte  
                 asciibytes++;
                 // Ignore ASCII, can throw off count  
-            } else if (-64 <= rawtext[i] && rawtext[i] <= -33 && // Two bytes  
+            } else if (-64 <= rawtext[i] && rawtext[i] <= -33
+                    && // Two bytes  
                     i + 1 < rawtextlen && -128 <= rawtext[i + 1] && rawtext[i + 1] <= -65) {
                 goodbytes += 2;
                 i++;
@@ -685,7 +691,8 @@ class BytesEncodingDetect extends Encoding {
         // int score = 0;  
         // int i, rawtextlen = 0;  
         // int goodbytes = 0, asciibytes = 0;  
-        if (rawtext.length > 1 && ((byte) 0xFE == rawtext[0] && (byte) 0xFF == rawtext[1]) || // Big-endian  
+        if (rawtext.length > 1 && ((byte) 0xFE == rawtext[0] && (byte) 0xFF == rawtext[1])
+                || // Big-endian  
                 ((byte) 0xFF == rawtext[0] && (byte) 0xFE == rawtext[1])) { // Little-endian  
             return 100;
         }

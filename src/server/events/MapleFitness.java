@@ -114,7 +114,7 @@ public class MapleFitness extends MapleEvent {
         return time - (System.currentTimeMillis() - timeStarted);
     }
 
-   public void checkAndMessage() {
+    public void checkAndMessage() {
         msgSchedule = EventTimer.getInstance().register(new Runnable() {
 
             @Override

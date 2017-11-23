@@ -270,11 +270,10 @@ public enum SendPacketOpcode implements WritableIntValueHolder {
     FORCED_MAP_EQUIP,
     SHOW_PREDICT_CARD,
     BEANS_TIPS,
-    BEANS_GAME1,   
-    BEANS_GAME2, 
-    
-     LOGIN_SECOND,
-    ENABLE_RECOMMENDED, 
+    BEANS_GAME1,
+    BEANS_GAME2,
+    LOGIN_SECOND,
+    ENABLE_RECOMMENDED,
     SEND_RECOMMENDED;
     private short code = -2;
 
@@ -329,5 +328,4 @@ public enum SendPacketOpcode implements WritableIntValueHolder {
         }
     }
 
-    
 }

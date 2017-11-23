@@ -61,7 +61,7 @@ public class DueyHandler {
         switch (operation) {
             case 1: { // Start Duey, 13 digit AS
                 final String AS13Digit = slea.readMapleAsciiString();
-        //		int unk = slea.readInt(); // Theres an int here, value = 1
+                //		int unk = slea.readInt(); // Theres an int here, value = 1
                 //  9 = error
                 final int conv = c.getPlayer().getConversation();
 
@@ -132,16 +132,14 @@ public class DueyHandler {
                                 } else {
                                     c.getSession().write(MaplePacketCreator.sendDuey((byte) 17, null)); // Unsuccessfull
                                 }
-                            } else {
-                                if (addMesoToDB(mesos, c.getPlayer().getName(), accid, recipientOn)) {
-                                    c.getPlayer().gainMeso(-finalcost, false);
+                            } else if (addMesoToDB(mesos, c.getPlayer().getName(), accid, recipientOn)) {
+                                c.getPlayer().gainMeso(-finalcost, false);
 
-                                    c.getSession().write(MaplePacketCreator.sendDuey((byte) 19, null)); // Successfull
-                                } else {
-                                    c.getSession().write(MaplePacketCreator.sendDuey((byte) 17, null)); // Unsuccessfull
-                                }
+                                c.getSession().write(MaplePacketCreator.sendDuey((byte) 19, null)); // Successfull
+                            } else {
+                                c.getSession().write(MaplePacketCreator.sendDuey((byte) 17, null)); // Unsuccessfull
                             }
-        //                            if (recipientOn && rClient != null) {
+                            //                            if (recipientOn && rClient != null) {
                             //                              rClient.getSession().write(MaplePacketCreator.sendDueyMSG(Actions.PACKAGE_MSG.getCode()));
                             //                        }
                         } else {

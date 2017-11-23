@@ -331,7 +331,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         c.getSession().write(MaplePacketCreator.getNPCTalkStyle(npc, text, caid, styles));
         lastMsg = 7;
     }
-    
+
     public IItem lockitem(int slot, boolean lock) {
         byte set = 0;
         byte eqslot = (byte) slot;
@@ -352,25 +352,23 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         }
         return nEquip;
     }
-    
+
     public IItem itemqh(int slot, byte lock) {
         byte eqslot = (byte) slot;
         Equip nEquip = (Equip) c.getPlayer().getInventory(MapleInventoryType.EQUIP).getItem(eqslot);
         if (nEquip != null && nEquip.getLevel() + nEquip.getUpgradeSlots() + lock <= 127) {
             nEquip.setUpgradeSlots((byte) (nEquip.getUpgradeSlots() + lock));
             c.getPlayer().dropMessage("[系统信息] 物品位置 " + slot + " 强化次数成功");
-            if(c.getPlayer().isGM()){
-            c.getPlayer().dropMessage("剩余强化次数：" + (127 - (nEquip.getLevel() + nEquip.getUpgradeSlots())));
+            if (c.getPlayer().isGM()) {
+                c.getPlayer().dropMessage("剩余强化次数：" + (127 - (nEquip.getLevel() + nEquip.getUpgradeSlots())));
             }
             c.getSession().write(MaplePacketCreator.getCharInfo(c.getPlayer()));
             getMap().removePlayer(c.getPlayer());
             getMap().addPlayer(c.getPlayer());
-        } else {
-            if( nEquip.getLevel() + nEquip.getUpgradeSlots() + lock > 127){
+        } else if (nEquip.getLevel() + nEquip.getUpgradeSlots() + lock > 127) {
             c.getPlayer().dropMessage("[系统信息] 物品位置 " + slot + " 装备的强化次数已经满了.");
-            }else{
+        } else {
             c.getPlayer().dropMessage("[系统信息] 物品位置 " + slot + " 装备为空.");
-            }
         }
         return nEquip;
     }
@@ -752,12 +750,10 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         final MapleSquad squad = c.getChannelServer().getMapleSquad(type);
         if (squad == null) {
             return -1;
+        } else if (squad.getLeader() != null && squad.getLeader().getId() == c.getPlayer().getId()) {
+            return 1;
         } else {
-            if (squad.getLeader() != null && squad.getLeader().getId() == c.getPlayer().getId()) {
-                return 1;
-            } else {
-                return 0;
-            }
+            return 0;
         }
     }
 
@@ -802,14 +798,12 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         final MapleSquad squad = c.getChannelServer().getMapleSquad(type);
         if (squad == null) {
             return -1;
+        } else if (squad.getMembers().contains(c.getPlayer())) {
+            return 1;
+        } else if (squad.isBanned(c.getPlayer())) {
+            return 2;
         } else {
-            if (squad.getMembers().contains(c.getPlayer())) {
-                return 1;
-            } else if (squad.isBanned(c.getPlayer())) {
-                return 2;
-            } else {
-                return 0;
-            }
+            return 0;
         }
     }
 
@@ -842,22 +836,22 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         c.getPlayer().gainMeso(-2500000, true, false, true);
     }
 
-    
     public void 喇叭(int lx, String msg) throws RemoteException {
         switch (lx) {
             case 1:
                 World.Broadcast.broadcastSmega(MaplePacketCreator.serverNotice(11, c.getChannel(), new StringBuilder().append(c.getPlayer().getName()).append(" : ").append(msg).toString()).getBytes());
-               // World.Broadcast.broadcastSmega(MaplePacketCreator.serverNotice(11, this.c.getChannel(), msg).getBytes());
+                // World.Broadcast.broadcastSmega(MaplePacketCreator.serverNotice(11, this.c.getChannel(), msg).getBytes());
                 break;
             case 2:
                 World.Broadcast.broadcastSmega(MaplePacketCreator.serverNotice(12, c.getChannel(), new StringBuilder().append(c.getPlayer().getName()).append(" : ").append(msg).toString()).getBytes());
-               // World.Broadcast.broadcastSmega(MaplePacketCreator.serverNotice(12, this.c.getChannel(), msg).getBytes());
+                // World.Broadcast.broadcastSmega(MaplePacketCreator.serverNotice(12, this.c.getChannel(), msg).getBytes());
                 break;
             case 3:
                 World.Broadcast.broadcastSmega(MaplePacketCreator.serverNotice(3, c.getChannel(), new StringBuilder().append(c.getPlayer().getName()).append(" : ").append(msg).toString()).getBytes());
-              //  World.Broadcast.broadcastSmega(MaplePacketCreator.serverNotice(3, this.c.getChannel(), msg).getBytes());
+            //  World.Broadcast.broadcastSmega(MaplePacketCreator.serverNotice(3, this.c.getChannel(), msg).getBytes());
         }
-    } 
+    }
+
     public void displayGuildRanks() {
         c.getSession().write(MaplePacketCreator.showGuildRanks(npc, MapleGuildRanking.getInstance().getGuildRank()));
     }
@@ -1160,6 +1154,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     public final MapleCarnivalChallenge getNextCarnivalRequest() {
         return c.getPlayer().getNextCarnivalRequest();
     }
+
     public int getHour() {
         return Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
     }
@@ -1602,10 +1597,10 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
                         namez = new StringBuilder().append(de.Minimum * getClient().getChannelServer().getMesoRate()).append(" - ").append(de.Maximum * getClient().getChannelServer().getMesoRate()).append(" 的金币").toString();
                     }
                     ch = de.chance * rate;
-                     if (getPlayer().isAdmin()) {
-                    name.append(num + 1).append(") #v").append(itemId).append("#").append(namez).append(" - ").append(Integer.valueOf(ch >= 999999 ? 1000000 : ch).doubleValue() / 10000.0D).append("%的爆率. ").append((de.questid > 0) && (MapleQuest.getInstance(de.questid).getName().length() > 0) ? new StringBuilder().append("需要接受任务: ").append(MapleQuest.getInstance(de.questid).getName()).toString() : "").append("\r\n");
+                    if (getPlayer().isAdmin()) {
+                        name.append(num + 1).append(") #v").append(itemId).append("#").append(namez).append(" - ").append(Integer.valueOf(ch >= 999999 ? 1000000 : ch).doubleValue() / 10000.0D).append("%的爆率. ").append((de.questid > 0) && (MapleQuest.getInstance(de.questid).getName().length() > 0) ? new StringBuilder().append("需要接受任务: ").append(MapleQuest.getInstance(de.questid).getName()).toString() : "").append("\r\n");
                     } else {
-                      name.append(num + 1).append(") #v").append(itemId).append("#").append(namez).append((de.questid > 0) && (MapleQuest.getInstance(de.questid).getName().length() > 0) ? new StringBuilder().append("需要接受任务: ").append(MapleQuest.getInstance(de.questid).getName()).toString() : "").append("\r\n");
+                        name.append(num + 1).append(") #v").append(itemId).append("#").append(namez).append((de.questid > 0) && (MapleQuest.getInstance(de.questid).getName().length() > 0) ? new StringBuilder().append("需要接受任务: ").append(MapleQuest.getInstance(de.questid).getName()).toString() : "").append("\r\n");
                     }
                     num++;
                 }
@@ -1764,16 +1759,19 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     public void ShowMarrageEffect() {
         c.getPlayer().getMap().broadcastMessage((MaplePacketCreator.sendMarrageEffect()));
     }
-     public void setBossRankCount(String bossname,int points) {
-        getPlayer().setBossRankCount( bossname,points);
+
+    public void setBossRankCount(String bossname, int points) {
+        getPlayer().setBossRankCount(bossname, points);
     }
-     public int getBossRank(String bossname) {
+
+    public int getBossRank(String bossname) {
         return getPlayer().getBossRank(bossname);
     }
-     public void giveBuff( int skillid,int level) {
-        
-         SkillFactory.getSkill(skillid).getEffect(level);
-    } 
+
+    public void giveBuff(int skillid, int level) {
+
+        SkillFactory.getSkill(skillid).getEffect(level);
+    }
     /*  public int getlqjf() {
         return getPlayer().getlqjf();
     }

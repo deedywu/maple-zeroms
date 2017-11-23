@@ -474,7 +474,7 @@ public class MapleStatEffect implements Serializable {
                 case 1211002: // charged blow
                 //case 1111008: // shout  屏蔽虎咆哮 防止掉线
                 case 4211002: // assaulter
-               // case 3101005: // arrow bomb  屏蔽爆炸箭 防止掉线
+                // case 3101005: // arrow bomb  屏蔽爆炸箭 防止掉线
                 case 1111005: // coma: sword
                 case 1111006: // coma: axe
                 case 4221007: // boomerang step
@@ -511,10 +511,10 @@ public class MapleStatEffect implements Serializable {
                     monsterStatus.put(MonsterStatus.WDEF, ret.x);
                     break;
                 // case 2201004: // cold beam   屏蔽冰冻术 防止掉线
-               // case 2211002: // ice strike   屏蔽冰咆哮 防止掉线
+                // case 2211002: // ice strike   屏蔽冰咆哮 防止掉线
                 // case 3211003: // blizzard    屏蔽寒冰箭 防止掉线
                 case 2211006: // il elemental compo
-               // case 2221007: // Blizzard     屏蔽落霜冰破 防止掉线
+                // case 2221007: // Blizzard     屏蔽落霜冰破 防止掉线
                 case 5211005: // Ice Splitter
                 case 2121006: // Paralyze
                 case 21120006: // Tempest
@@ -532,7 +532,7 @@ public class MapleStatEffect implements Serializable {
                 case 2111006: // fp elemental compo
                 case 2121003: // ice demon
                 case 2221003: // fire demon
-              //  case 3111003: //inferno, new  烈火箭移除 防止掉线
+                //  case 3111003: //inferno, new  烈火箭移除 防止掉线
                 case 22161002: //phantom imprint
                     monsterStatus.put(MonsterStatus.POISON, 1);
                     break;
@@ -859,7 +859,7 @@ public class MapleStatEffect implements Serializable {
             applyBuffEffect(applyfrom, applyto, primary, newDuration);
         }
         if (skill) {
-           // removeMonsterBuff(applyfrom);
+            // removeMonsterBuff(applyfrom);
         }
         if (primary) {
             if ((overTime || isHeal()) && !isEnergyCharge()) {
@@ -1170,7 +1170,7 @@ public class MapleStatEffect implements Serializable {
 
     private final void applyBuffEffect(final MapleCharacter applyfrom, final MapleCharacter applyto, final boolean primary, final int newDuration) {
         int localDuration = newDuration;
-       // localDuration = 5000;
+        // localDuration = 5000;
         if (primary) {
             localDuration = alchemistModifyVal(applyfrom, localDuration, false);
             applyto.getMap().broadcastMessage(applyto, MaplePacketCreator.showBuffeffect(applyto.getId(), sourceid, 1), false);
@@ -1291,29 +1291,29 @@ public class MapleStatEffect implements Serializable {
                 if (isMorph() || isPirateMorph()) {
                     final List<Pair<MapleBuffStat, Integer>> stat = Collections.singletonList(new Pair<MapleBuffStat, Integer>(MapleBuffStat.MORPH, Integer.valueOf(getMorph(applyto))));
                     applyto.getMap().broadcastMessage(applyto, MaplePacketCreator.giveForeignBuff(applyto, applyto.getId(), stat, this), false);
-                } else if(isMonsterSkill()){
-                    if(applyto.getSkillzq() <= 0){
+                } else if (isMonsterSkill()) {
+                    if (applyto.getSkillzq() <= 0) {
                         return;
                     }
                     final int mountid = parseMountInfoA(applyto, sourceid, applyto.getSkillzq());
-                  //  final int mountid2 = parseMountInfo_Pure(applyto, sourceid);
+                    //  final int mountid2 = parseMountInfo_Pure(applyto, sourceid);
                     if (mountid != 0) {
                         final List<Pair<MapleBuffStat, Integer>> stat = Collections.singletonList(new Pair<MapleBuffStat, Integer>(MapleBuffStat.MONSTER_RIDING, 0));
                         //applyto.getClient().getSession().write(MaplePacketCreator.cancelBuff(null));
-                        applyto.getClient().getSession().write(MaplePacketCreator.giveMount(applyto,mountid, sourceid, stat));
+                        applyto.getClient().getSession().write(MaplePacketCreator.giveMount(applyto, mountid, sourceid, stat));
                         applyto.getMap().broadcastMessage(applyto, MaplePacketCreator.showMonsterRiding(applyto.getId(), stat, mountid, sourceid), false);
                     } else {
                         return;
                     }
                     normal = false;
-               /* } else if (isBattleShip()) {
+                    /* } else if (isBattleShip()) {
                     int ridingLevel = 1932000;
                         final List<Pair<MapleBuffStat, Integer>> stat = Collections.singletonList(new Pair<MapleBuffStat, Integer>(MapleBuffStat.MONSTER_RIDING, 0));
                         applyto.getClient().getSession().write(MaplePacketCreator.cancelBuff(null));
                         applyto.getClient().getSession().write(MaplePacketCreator.giveMount(applyto,ridingLevel, sourceid, stat));
                         applyto.getMap().broadcastMessage(applyto, MaplePacketCreator.showMonsterRiding(applyto.getId(), stat, ridingLevel, sourceid), false);
-                */              
-                }else if (isMonsterRiding()) {
+                     */
+                } else if (isMonsterRiding()) {
                     localDuration = 2100000000;
                     int mountid = parseMountInfo(applyto, sourceid);
                     int mountid2 = parseMountInfo_Pure(applyto, sourceid);
@@ -1400,7 +1400,8 @@ public class MapleStatEffect implements Serializable {
                 return GameConstants.getMountItem(skillid);
         }
     }
-     public static final int parseMountInfoA(final MapleCharacter player, final int skillid,int s) {
+
+    public static final int parseMountInfoA(final MapleCharacter player, final int skillid, int s) {
         switch (skillid) {
             case 1017: // Monster riding
             case 10001019:
@@ -1799,6 +1800,7 @@ public class MapleStatEffect implements Serializable {
     public final boolean isMonsterRiding() {
         return skill && (isMonsterRiding_() || GameConstants.getMountItem(sourceid) != 0);
     }
+
     public final boolean isMonsterSkill() {
         return skill && sourceid == 1017 || sourceid == 20001019 || sourceid == 10001019;
     }
@@ -1838,6 +1840,7 @@ public class MapleStatEffect implements Serializable {
         }
         return false;
     }
+
     /*
      * public boolean isPoison() { return skill && (sourceid == 2111003 ||
      * sourceid == 4221006 || sourceid == 12111005 || sourceid == 14111006 ||

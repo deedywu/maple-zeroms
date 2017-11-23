@@ -115,7 +115,7 @@ public class MapleItemInformationProvider {
          * itemz.items.put(Integer.parseInt(level.getName()), itez); }
          * setItems.put(itemz.setItemID, itemz); }
          */
-        /*
+ /*
          * final MapleData potsData = itemData.getData("ItemOption.img");
          * StructPotentialItem item; List<StructPotentialItem> items; for
          * (MapleData dat : potsData) { items = new
@@ -188,7 +188,6 @@ public class MapleItemInformationProvider {
          */
     }
 
-    
     public final List<StructPotentialItem> getPotentialInfo(final int potId) {
         return potentialCache.get(potId);
     }
@@ -675,33 +674,31 @@ public class MapleItemInformationProvider {
 
     public int getScrollSuccess(int itemId, int def) {
         return getEquipStats(itemId).get("success");
-       
+
     }
 
     public int getScrollCursed(int itemId) {
         return getEquipStats(itemId).get("cursed");
     }
 
-
-    
     public final IItem scrollEquipWithId(final IItem equip, final IItem scrollId, final boolean ws, final MapleCharacter chr, final int vegas, boolean checkIfGM) {
         if (equip.getType() == 1) { // See IItem.java
-            
+
             final Equip nEquip = (Equip) equip;
             final Map<String, Integer> stats = getEquipStats(scrollId.getItemId());
             final Map<String, Integer> eqstats = getEquipStats(equip.getItemId());
             final int succ = (GameConstants.isTablet(scrollId.getItemId()) ? GameConstants.getSuccessTablet(scrollId.getItemId(), nEquip.getLevel()) : ((GameConstants.isEquipScroll(scrollId.getItemId()) || GameConstants.isPotentialScroll(scrollId.getItemId()) ? 0 : stats.get("success"))));
             final int curse = (GameConstants.isTablet(scrollId.getItemId()) ? GameConstants.getCurseTablet(scrollId.getItemId(), nEquip.getLevel()) : ((GameConstants.isEquipScroll(scrollId.getItemId()) || GameConstants.isPotentialScroll(scrollId.getItemId()) ? 0 : stats.get("cursed"))));
-         //  final int added = (ItemFlag.幸运卷轴.check(equip.getFlag()) ? 10 : 0) + (chr.getTrait(MapleTrait.MapleTraitType.craft).getLevel() / 10); 
-           //int craft = GameConstants.is白医卷轴(scrollId.getItemId()) ? 0 : chr.getTrait(MapleTraitType.craft).getLevel() / 10;
+            //  final int added = (ItemFlag.幸运卷轴.check(equip.getFlag()) ? 10 : 0) + (chr.getTrait(MapleTrait.MapleTraitType.craft).getLevel() / 10); 
+            //int craft = GameConstants.is白医卷轴(scrollId.getItemId()) ? 0 : chr.getTrait(MapleTraitType.craft).getLevel() / 10;
             //lucksKey--辛运日加成
             int lucksKey = ItemFlag.幸运卷轴.check(equip.getFlag()) ? 10 : 0;
             //added -- 额外成功率
-         //   int added = (GameConstants.is潜能卷轴(scrollId.getItemId())) || (GameConstants.is强化卷轴(scrollId.getItemId())) ? 0 : lucksKey + craft;
+            //   int added = (GameConstants.is潜能卷轴(scrollId.getItemId())) || (GameConstants.is强化卷轴(scrollId.getItemId())) ? 0 : lucksKey + craft;
             //success--总成功概率
             int success = succ + (vegas == 5610000 && succ == 10 ? 20 : (vegas == 5610001 && succ == 60 ? 30 : 0));
             //使用卷轴后如果有幸运日效果则减去
-         /*   if ((ItemFlag.幸运卷轴.check(equip.getFlag())) && (!GameConstants.is潜能卷轴(scrollId.getItemId())) && (!GameConstants.is强化卷轴(scrollId.getItemId())) && (!GameConstants.is特殊卷轴(scrollId.getItemId()))) {
+            /*   if ((ItemFlag.幸运卷轴.check(equip.getFlag())) && (!GameConstants.is潜能卷轴(scrollId.getItemId())) && (!GameConstants.is强化卷轴(scrollId.getItemId())) && (!GameConstants.is特殊卷轴(scrollId.getItemId()))) {
                 equip.setFlag((byte) (equip.getFlag() - ItemFlag.幸运卷轴.getValue()));
             }*/
             if (GameConstants.isPotentialScroll(scrollId.getItemId()) || GameConstants.isEquipScroll(scrollId.getItemId()) || Randomizer.nextInt(100) <= success || checkIfGM == true) {
@@ -739,22 +736,19 @@ public class MapleItemInformationProvider {
                         nEquip.setFlag(flag);
                         break;
                     }
-                 case 2530000:
-                         {
+                    case 2530000: {
                         byte flag = nEquip.getFlag();
                         flag |= ItemFlag.幸运卷轴.getValue();
                         nEquip.setFlag(flag);
                         break;
                     }
-                    case 2530001:
-                         {
+                    case 2530001: {
                         byte flag = nEquip.getFlag();
                         flag = (byte) (flag | ItemFlag.幸运卷轴.getValue());
                         nEquip.setFlag(flag);
                         break;
                     }
-                    case 2530002:
-                         {
+                    case 2530002: {
                         byte flag = nEquip.getFlag();
                         flag = (byte) (flag | ItemFlag.幸运卷轴.getValue());
                         nEquip.setFlag(flag);
@@ -785,7 +779,7 @@ public class MapleItemInformationProvider {
                         nEquip.setFlag(flag);
                         break;
                     }
-                    default:{
+                    default: {
                         if (ItemConstants.isChaosForGoodness(scrollId.getItemId())) {//正向混沌
                             final int z = GameConstants.getChaosNumber(scrollId.getItemId());
                             if (nEquip.getStr() > 0) {
@@ -831,8 +825,7 @@ public class MapleItemInformationProvider {
                                 nEquip.setMp((short) (nEquip.getMp() + Randomizer.nextInt(z)));
                             }
                             break;
-                             }
-                        else if (GameConstants.isChaosScroll(scrollId.getItemId())) {//枫叶卷轴
+                        } else if (GameConstants.isChaosScroll(scrollId.getItemId())) {//枫叶卷轴
                             final int z = GameConstants.getChaosNumber(scrollId.getItemId());
                             if (nEquip.getStr() > 0) {
                                 nEquip.setStr((short) (nEquip.getStr() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
@@ -877,16 +870,14 @@ public class MapleItemInformationProvider {
                                 nEquip.setMp((short) (nEquip.getMp() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
                             }
                             break;
-                             }
-                           else if (GameConstants.is周年庆卷轴(scrollId.getItemId())) {
-                            
-                          //  int 成功率 = GameConstants.is周年庆卷轴成功率(scrollId.getItemId()) + added;
-                            
+                        } else if (GameConstants.is周年庆卷轴(scrollId.getItemId())) {
+
+                            //  int 成功率 = GameConstants.is周年庆卷轴成功率(scrollId.getItemId()) + added;
                             //下面这句 是 使用卷轴失败
                             if (Randomizer.nextInt(100) <= succ) {
                                 return null;
                             }
-                            
+
                             switch (scrollId.getItemId()) {
                                 //+7 物攻
                                 case 2046006:
@@ -900,8 +891,8 @@ public class MapleItemInformationProvider {
                                         nEquip.setWatk((short) (nEquip.getWatk() + 7));
                                     }
                                     break;
-                            
-                                    // +7 魔攻
+
+                                // +7 魔攻
                                 case 2046007:
                                 case 2046026:
                                 case 2046107:
@@ -910,16 +901,16 @@ public class MapleItemInformationProvider {
                                         nEquip.setMatk((short) (nEquip.getMatk() + 7));
                                     }
                                     break;
-                                    //最大HP+200，最大MP+200
+                                //最大HP+200，最大MP+200
                                 case 2046213://周年庆防具强化卷轴
                                 case 2046308://周年庆饰品强化卷轴
                                     if ((nEquip.getHp() >= 0) || (nEquip.getMp() >= 0)) {
                                         nEquip.setHp((short) (nEquip.getHp() + 200));
                                         nEquip.setMp((short) (nEquip.getMp() + 200));
-                                       
+
                                     }
                                     break;
-                                    //力量+2，智力+2，敏捷+2，运气+2
+                                //力量+2，智力+2，敏捷+2，运气+2
                                 case 2046214:
                                 case 2046222:
                                 case 2046309:
@@ -929,10 +920,10 @@ public class MapleItemInformationProvider {
                                         nEquip.setDex((short) (nEquip.getDex() + 2));
                                         nEquip.setInt((short) (nEquip.getInt() + 2));
                                         nEquip.setLuk((short) (nEquip.getLuk() + 2));
-                                       
+
                                     }
                                     break;
-                                    //MaxHP +70, MaxMP +70
+                                //MaxHP +70, MaxMP +70
                                 case 2046219:
                                 case 2046221:
                                 case 2046310:
@@ -940,7 +931,7 @@ public class MapleItemInformationProvider {
                                     if ((nEquip.getHp() >= 0) || (nEquip.getMp() >= 0)) {
                                         nEquip.setHp((short) (nEquip.getHp() + 70));
                                         nEquip.setMp((short) (nEquip.getMp() + 70));
-                                       
+
                                     }
                                     break;
                                 case 2043108://【周年庆】单手斧攻击卷轴   物理攻击力+3,力量+2\
@@ -956,7 +947,7 @@ public class MapleItemInformationProvider {
                                         nEquip.setStr((short) (nEquip.getStr() + 2));
                                     }
                                     break;
-                                    
+
                                 case 2043308://【周年庆】短剑攻击卷轴  物理攻击力+3,运气+2\
                                 case 2043405://【周年庆】刀攻击力卷轴
                                     if ((nEquip.getWatk() >= 0) || nEquip.getLuk() >= 0) {
@@ -964,7 +955,7 @@ public class MapleItemInformationProvider {
                                         nEquip.setLuk((short) (nEquip.getLuk() + 2));
                                     }
                                     break;
-                                    
+
                                 case 2043708://【周年庆】短杖魔力卷轴  
                                 case 2043808://【周年庆】长杖魔力卷轴   魔法攻击力+3，智力+2
                                     if ((nEquip.getMatk() >= 0) || nEquip.getInt() >= 0) {
@@ -972,14 +963,14 @@ public class MapleItemInformationProvider {
                                         nEquip.setInt((short) (nEquip.getInt() + 2));
                                     }
                                     break;
-                                    
+
                                 case 2044508://【周年庆】弓攻击卷轴  命中值+20
                                     if ((nEquip.getWatk() >= 0) || nEquip.getAcc() >= 0) {
                                         nEquip.setWatk((short) (nEquip.getWatk() + 3));
                                         nEquip.setAcc((short) (nEquip.getAcc() + 20));
                                     }
                                     break;
-                                    
+
                                 case 2044608://【周年庆】弩攻击卷轴  命中值+40
                                 case 2044708://【周年庆】拳套攻击卷轴
                                 case 2044905://【周年庆】短枪攻击卷轴40%
@@ -988,9 +979,9 @@ public class MapleItemInformationProvider {
                                         nEquip.setAcc((short) (nEquip.getAcc() + 40));
                                     }
                                     break;
-                                
+
                             }
-                            
+
                         } else if (GameConstants.isChaosScroll(scrollId.getItemId())) {
                             final int z = GameConstants.getChaosNumber(scrollId.getItemId());
                             if (nEquip.getStr() > 0) {
@@ -1037,7 +1028,7 @@ public class MapleItemInformationProvider {
                             }
                             break;
                         } else if (GameConstants.isEquipScroll(scrollId.getItemId())) {
-                            final int chanc = Math.max((scrollId.getItemId() == 2049300 || scrollId.getItemId() == 2049303 || scrollId.getItemId() == 2049306 ? 100 : (scrollId.getItemId() == 2049308 ? 50 : scrollId.getItemId() == 2049305 ? 60 : 80)) - (nEquip.getEnhance() * 10), 10) ;
+                            final int chanc = Math.max((scrollId.getItemId() == 2049300 || scrollId.getItemId() == 2049303 || scrollId.getItemId() == 2049306 ? 100 : (scrollId.getItemId() == 2049308 ? 50 : scrollId.getItemId() == 2049305 ? 60 : 80)) - (nEquip.getEnhance() * 10), 10);
                             if (Randomizer.nextInt(100) > chanc) {
                                 return null; //destroyed, nib
                             }
@@ -1047,19 +1038,19 @@ public class MapleItemInformationProvider {
                                 }
                                 if (nEquip.getStr() > 0 && (GameConstants.isTyrant(nEquip.getItemId()) || Randomizer.nextInt(1) == 1)) {
                                     nEquip.setStr((short) (nEquip.getStr() + 22));
-                                }     
+                                }
                                 if (nEquip.getStr() > 0 && (GameConstants.isNovaGear(nEquip.getItemId()) || Randomizer.nextInt(1) == 1)) {
                                     nEquip.setStr((short) (nEquip.getStr() + 12));
-                                }                              
+                                }
                                 if (nEquip.getDex() > 0 || Randomizer.nextInt(50) == 1) { //1/50
                                     nEquip.setDex((short) (nEquip.getDex() + Randomizer.nextInt(5)));
                                 }
                                 if (nEquip.getDex() > 0 && (GameConstants.isTyrant(nEquip.getItemId()) || Randomizer.nextInt(1) == 1)) {
                                     nEquip.setDex((short) (nEquip.getDex() + 22));
-                                } 
+                                }
                                 if (nEquip.getDex() > 0 && (GameConstants.isNovaGear(nEquip.getItemId()) || Randomizer.nextInt(1) == 1)) {
                                     nEquip.setDex((short) (nEquip.getDex() + 12));
-                                }                               
+                                }
                                 if (nEquip.getInt() > 0 || Randomizer.nextInt(50) == 1) { //1/50
                                     nEquip.setInt((short) (nEquip.getInt() + Randomizer.nextInt(5)));
                                 }
@@ -1086,10 +1077,10 @@ public class MapleItemInformationProvider {
                                 }
                                 if (nEquip.getWatk() > 0 && GameConstants.isTyrant(nEquip.getItemId()) && nEquip.getEnhance() > 3) {
                                     nEquip.setWatk((short) (nEquip.getWatk() + 5));
-                                } 
+                                }
                                 if (nEquip.getWatk() > 0 && GameConstants.isNovaGear(nEquip.getItemId()) && nEquip.getEnhance() > 5) {
                                     nEquip.setWatk((short) (nEquip.getWatk() + 2));
-                                }                                 
+                                }
                                 if (nEquip.getWdef() > 0 || Randomizer.nextInt(40) == 1) { //1/40
                                     nEquip.setWdef((short) (nEquip.getWdef() + Randomizer.nextInt(5)));
                                 }
@@ -1098,10 +1089,10 @@ public class MapleItemInformationProvider {
                                 }
                                 if (nEquip.getMatk() > 0 && GameConstants.isTyrant(nEquip.getItemId()) && nEquip.getEnhance() > 3) {
                                     nEquip.setMatk((short) (nEquip.getMatk() + 5));
-                                } 
+                                }
                                 if (nEquip.getMatk() > 0 && GameConstants.isNovaGear(nEquip.getItemId()) && nEquip.getEnhance() > 5) {
                                     nEquip.setMatk((short) (nEquip.getMatk() + 2));
-                                }                                 
+                                }
                                 if (nEquip.getMdef() > 0 || Randomizer.nextInt(40) == 1) { //1/40
                                     nEquip.setMdef((short) (nEquip.getMdef() + Randomizer.nextInt(5)));
                                 }
@@ -1218,7 +1209,7 @@ public class MapleItemInformationProvider {
             chr.dropMessage(0x0B, "涅槃火焰 - 默认几率: " + succe + "% 倾向加成: " + craft + "% 幸运卷轴状态加成: " + lucksKey + "% 最终几率: " + success + "% 失败消失几率: " + curse + "%");
         }
         if (Randomizer.nextInt(100) <= success) {
-         //   NirvanaFlame.Companion.randomState(nEquip, scrollId);
+            //   NirvanaFlame.Companion.randomState(nEquip, scrollId);
             short flag = equip.getFlag();
             if (!ItemFlag.UNTRADEABLE.check(flag) && !isAccountShared(equip.getItemId())) {
                 nEquip.setKarmaCount((short) 10);
@@ -1228,6 +1219,7 @@ public class MapleItemInformationProvider {
         }
         return nEquip;
     }
+
     public final IItem getEquipById(final int equipId) {
         return getEquipById(equipId, -1);
     }
@@ -1296,14 +1288,15 @@ public class MapleItemInformationProvider {
         return (short) ((defaultValue - lMaxRange) + Math.floor(Math.random() * (lMaxRange * 2 + 1)));
     }
 
-     protected short getRandStatAbove(short defaultValue, int maxRange) {
+    protected short getRandStatAbove(short defaultValue, int maxRange) {
         if (defaultValue <= 0) {
             return 0;
         }
         int lMaxRange = (int) Math.min(Math.ceil(defaultValue * 0.1D), maxRange);
         return (short) (defaultValue + Randomizer.nextInt(lMaxRange + 1));
     }
-      protected short getRandStatFusion(short defaultValue, int value1, int value2) {
+
+    protected short getRandStatFusion(short defaultValue, int value1, int value2) {
         if (defaultValue == 0) {
             return 0;
         }
@@ -1311,6 +1304,7 @@ public class MapleItemInformationProvider {
         int rand = Randomizer.nextInt(Math.abs(range) + 1);
         return (short) (defaultValue + (range < 0 ? -rand : rand));
     }
+
     public final Equip randomizeStats(final Equip equip) {
         equip.setStr(getRandStat(equip.getStr(), 5));
         equip.setDex(getRandStat(equip.getDex(), 5));
@@ -1330,7 +1324,7 @@ public class MapleItemInformationProvider {
         return equip;
     }
 
-     public Equip randomizeStats_Above(Equip equip) {
+    public Equip randomizeStats_Above(Equip equip) {
         equip.setStr(getRandStatAbove(equip.getStr(), 5));
         equip.setDex(getRandStatAbove(equip.getDex(), 5));
         equip.setInt(getRandStatAbove(equip.getInt(), 5));
@@ -1348,7 +1342,8 @@ public class MapleItemInformationProvider {
         equip.setMp(getRandStatAbove(equip.getMp(), 10));
         return equip;
     }
-     public Equip fuse(Equip equip1, Equip equip2) {
+
+    public Equip fuse(Equip equip1, Equip equip2) {
         if (equip1.getItemId() != equip2.getItemId()) {
             return equip1;
         }
@@ -1370,7 +1365,7 @@ public class MapleItemInformationProvider {
         equip.setMp(getRandStatFusion(equip.getMp(), equip1.getMp(), equip2.getMp()));
         return equip;
     }
-    
+
     public final MapleStatEffect getItemEffect(final int itemId) {
         MapleStatEffect ret = itemEffects.get(Integer.valueOf(itemId));
         if (ret == null) {
@@ -1814,7 +1809,7 @@ public class MapleItemInformationProvider {
         return flag;
     }
 
-     /**
+    /**
      * 宠物触发的套装ID
      */
     public int getPetSetItemID(int itemId) {
@@ -1826,14 +1821,16 @@ public class MapleItemInformationProvider {
 
     /**
      * 装备加百分百HP
+     *
      * @param itemId
      */
     public int getItemIncMHPr(int itemId) {
-        return getEquipStats(itemId).get( "info/MHPr");
+        return getEquipStats(itemId).get("info/MHPr");
     }
 
     /**
      * 装备加百分百MP
+     *
      * @param itemId
      */
     public int getItemIncMMPr(int itemId) {
@@ -1841,17 +1838,16 @@ public class MapleItemInformationProvider {
     }
 
     /**
-     * 卷轴成功几率
-     * 几个特殊的卷
-     * 2046006 - 周年庆单手武器攻击力卷轴 - 提高单手武器的功能物理攻击力属性。
+     * 卷轴成功几率 几个特殊的卷 2046006 - 周年庆单手武器攻击力卷轴 - 提高单手武器的功能物理攻击力属性。
+     *
      * @param itemId
-     * @return 
+     * @return
      */
     public int getSuccessRates(int itemId) {
         if ((itemId / 10000) != 204) {
             return 0;
         }
-        return getEquipStats(itemId).get( "info/successRates/0");
+        return getEquipStats(itemId).get("info/successRates/0");
     }
 
     /**
@@ -1863,8 +1859,8 @@ public class MapleItemInformationProvider {
         }
         return getEquipStats(itemId).get("info/forceUpgrade");
     }
- 
-     /**
+
+    /**
      * 卷轴失败不装备不损坏的卷轴
      */
     public boolean isNoCursedScroll(int itemId) {
@@ -1875,14 +1871,13 @@ public class MapleItemInformationProvider {
      * 正向卷轴 不减少道具属性
      */
     public boolean isNegativeScroll(int itemId) {
-        return itemId / 10000 == 204 && getEquipStats(itemId).get( "info/noNegative") == 1;
+        return itemId / 10000 == 204 && getEquipStats(itemId).get("info/noNegative") == 1;
     }
 
     public int getRecover(int itemId) {
         return getEquipStats(itemId).get("info/recover");
     }
 
-   
     public boolean isKarmaAble(int itemId) {
         if (this.karmaCache.containsKey(Integer.valueOf(itemId))) {
             return ((Boolean) this.karmaCache.get(Integer.valueOf(itemId))).booleanValue();
@@ -1977,7 +1972,8 @@ public class MapleItemInformationProvider {
         getExpCache.put(Integer.valueOf(itemId), Integer.valueOf(pEntry));
         return pEntry;
     }
-      public int getTotalStat(Equip equip) {
+
+    public int getTotalStat(Equip equip) {
         return equip.getStr() + equip.getDex() + equip.getInt() + equip.getLuk() + equip.getMatk() + equip.getWatk() + equip.getAcc() + equip.getAvoid() + equip.getJump() + equip.getHands() + equip.getSpeed() + equip.getHp() + equip.getMp() + equip.getWdef() + equip.getMdef();
     }
 }

@@ -1004,7 +1004,7 @@ public class ZeroMS extends javax.swing.JFrame {
         // TODO add your handling code here:
         boolean status = checkbox1.getState();
         ServerConstants.Super_password = status;
-        if(!status){
+        if (!status) {
             ServerConstants.superpw = "";
         } else {
             ServerConstants.superpw = jTextField26.getText();
@@ -1263,7 +1263,7 @@ public class ZeroMS extends javax.swing.JFrame {
             } else {
                 魔法防御 = Integer.parseInt(jTextField19.getText());
             }
-            
+
             int 回避;
             if ("回避".equals(jTextField33.getText())) {
                 回避 = 0;
@@ -1276,25 +1276,25 @@ public class ZeroMS extends javax.swing.JFrame {
             } else {
                 命中 = Integer.parseInt(jTextField32.getText());
             }
-             int 移动速度;
+            int 移动速度;
             if ("移动速度".equals(jTextField34.getText())) {
                 移动速度 = 0;
             } else {
                 移动速度 = Integer.parseInt(jTextField34.getText());
             }
-             int 跳跃力;
+            int 跳跃力;
             if ("跳跃力".equals(jTextField35.getText())) {
                 跳跃力 = 0;
             } else {
                 跳跃力 = Integer.parseInt(jTextField35.getText());
             }
-              int 已升级次数;
+            int 已升级次数;
             if ("已升级次数".equals(jTextField27.getText())) {
                 已升级次数 = 0;
             } else {
                 已升级次数 = Integer.parseInt(jTextField27.getText());
             }
-            
+
             MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
             MapleInventoryType type = GameConstants.getInventoryType(物品ID);
             String 输出A = "";
@@ -1314,12 +1314,12 @@ public class ZeroMS extends javax.swing.JFrame {
                     + " 攻击力:" + 攻击力
                     + " 魔法力:" + 魔法力
                     + " 物理防御:" + 物理防御
-                    + " 魔法防御:" + 魔法防御 
-                    + " 回避:" + 回避 
-                    + " 命中:" + 命中 
-                    + " 移动速度:" + 移动速度 
-                    + " 跳跃力:" + 跳跃力 
-                    + " 已升级次数:" + 已升级次数 
+                    + " 魔法防御:" + 魔法防御
+                    + " 回避:" + 回避
+                    + " 命中:" + 命中
+                    + " 移动速度:" + 移动速度
+                    + " 跳跃力:" + 跳跃力
+                    + " 已升级次数:" + 已升级次数
                     + "\r\n";
             for (ChannelServer cserv1 : ChannelServer.getAllInstances()) {
                 for (MapleCharacter mch : cserv1.getPlayerStorage().getAllCharacters()) {
@@ -1358,16 +1358,16 @@ public class ZeroMS extends javax.swing.JFrame {
                                 if (魔法防御 > 0 && 魔法防御 <= 32767) {
                                     item.setMdef((short) (魔法防御));
                                 }
-                                 if (命中 > 0 && 命中 <= 32767) {
+                                if (命中 > 0 && 命中 <= 32767) {
                                     item.setAcc((short) (命中));
                                 }
                                 if (回避 > 0 && 回避 <= 32767) {
                                     item.setAvoid((short) (回避));
                                 }
-                                 if (移动速度 > 0 && 移动速度 <= 32767) {
+                                if (移动速度 > 0 && 移动速度 <= 32767) {
                                     item.setSpeed((short) (移动速度));
                                 }
-                                 if (跳跃力 > 0 && 跳跃力 <= 32767) {
+                                if (跳跃力 > 0 && 跳跃力 <= 32767) {
                                     item.setJump((short) (跳跃力));
                                 }
                                 if (HP > 0 && HP <= 30000) {
@@ -1391,7 +1391,7 @@ public class ZeroMS extends javax.swing.JFrame {
                                 if (可升级次数 > 0) {
                                     item.setUpgradeSlots((byte) (可升级次数));
                                 }
-                                 if (已升级次数 > 0) {
+                                if (已升级次数 > 0) {
                                     item.setLevel((byte) (已升级次数));
                                 }
                                 if (制作人名字 != null) {
@@ -1432,11 +1432,11 @@ public class ZeroMS extends javax.swing.JFrame {
             jTextField17.setText("魔法力");
             jTextField18.setText("物理防御");
             jTextField19.setText("魔法防御");
-             jTextField27.setText("已升级次数");
-              jTextField32.setText("命中");
-                jTextField33.setText("回避");
-                   jTextField34.setText("移动速度");
-                  jTextField35.setText("跳跃力");
+            jTextField27.setText("已升级次数");
+            jTextField32.setText("命中");
+            jTextField33.setText("回避");
+            jTextField34.setText("移动速度");
+            jTextField35.setText("跳跃力");
             printChatLog(输出A);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "错误!\r\n" + e);

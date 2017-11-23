@@ -18,8 +18,8 @@ public enum Element {
                 return HOLY;
             case 'P':
                 return NEUTRAL;
-              //  return PHYSICAL;
-           case 'D': // Added on v.92 MSEA
+            //  return PHYSICAL;
+            case 'D': // Added on v.92 MSEA
                 return DARKNESS;
             case 'G':
             case 'J':

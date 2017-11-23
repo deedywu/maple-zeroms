@@ -18,10 +18,10 @@ import java.util.List;
 public class CharacterTransfer implements Externalizable {
 
     public int characterid, accountid, exp,
-            beans, meso, hair, face, mapid, guildid,modid,modsl,lqjf,jf,bossjf,cjjf,
+            beans, meso, hair, face, mapid, guildid, modid, modsl, lqjf, jf, bossjf, cjjf,
             partyid, messengerid, mBookCover, dojo, ACash, MaplePoints,
             mount_itemid, mount_exp, points, vpoints, marriageId,
-            familyid, seniorid, junior1, junior2, currentrep, totalrep, expression, constellation, blood, month, day, battleshipHP, prefix, mount_id,vip,skillzq;
+            familyid, seniorid, junior1, junior2, currentrep, totalrep, expression, constellation, blood, month, day, battleshipHP, prefix, mount_id, vip, skillzq;
     public byte channel, dojoRecord, gender, gmLevel, guildrank, alliancerank, clonez, fairyExp, buddysize, world, initialSpawnPoint, skinColor, mount_level, mount_Fatigue, subcategory;
     public long lastfametime, TranferTime, lastGainHM;
     public String tempIP;
@@ -70,12 +70,12 @@ public class CharacterTransfer implements Externalizable {
         this.remainingAp = chr.getRemainingAp();
         this.remainingSp = chr.getRemainingSps();
         this.beans = chr.getBeans();
-         this.modid = chr.getmodid();
-          this.modsl = chr.getmodsl();
-           this.lqjf = chr.getlqjf();
-            this.jf = chr.getjf();
-             this.bossjf = chr.getbossjf();
-            this.cjjf = chr.getcjjf();
+        this.modid = chr.getmodid();
+        this.modsl = chr.getmodsl();
+        this.lqjf = chr.getlqjf();
+        this.jf = chr.getjf();
+        this.bossjf = chr.getbossjf();
+        this.cjjf = chr.getcjjf();
         this.meso = chr.getMeso();
         this.skinColor = chr.getSkinColor();
         this.job = chr.getJob();
@@ -214,7 +214,7 @@ public class CharacterTransfer implements Externalizable {
             this.remainingSp[i] = in.readInt();
         }
         this.beans = in.readInt();
-         this.modid = in.readInt();
+        this.modid = in.readInt();
         this.modsl = in.readInt();
         this.lqjf = in.readInt();
         this.jf = in.readInt();
@@ -381,11 +381,11 @@ public class CharacterTransfer implements Externalizable {
         }
         out.writeInt(this.beans);
         out.writeInt(this.modid);
-          out.writeInt(this.modsl);
-           out.writeInt(this.lqjf);
-            out.writeInt(this.jf);
-            out.writeInt(this.bossjf);
-            out.writeInt(this.cjjf);
+        out.writeInt(this.modsl);
+        out.writeInt(this.lqjf);
+        out.writeInt(this.jf);
+        out.writeInt(this.bossjf);
+        out.writeInt(this.cjjf);
         out.writeInt(this.meso);
         out.writeByte(this.skinColor);
         out.writeShort(this.job);

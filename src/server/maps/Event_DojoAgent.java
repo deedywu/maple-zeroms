@@ -64,7 +64,7 @@ public class Event_DojoAgent {
         }
         if (!fromResting) {
             clearMap(map, true);
-           // c.modifyCSPoints(1, 40, true);
+            // c.modifyCSPoints(1, 40, true);
         }
         final ChannelServer ch = c.getClient().getChannelServer();
         if (currentmap >= 970032700 && currentmap <= 970032800) {
@@ -150,14 +150,14 @@ public class Event_DojoAgent {
                         MapleCharacter chr = currentmap.getCharacterById(mem.getId());
                         if (chr != null) {
                             final int point = (points * 3);
-                         //   chr.modifyCSPoints(1, point * 4, true);
+                            //   chr.modifyCSPoints(1, point * 4, true);
                             chr.setDojo(chr.getDojo() + point);
                             chr.getClient().getSession().write(MaplePacketCreator.Mulung_Pts(point, chr.getDojo()));
                         }
                     }
                 } else {
                     final int point = ((points + 1) * 3);
-                   // c.modifyCSPoints(1, point * 4, true);
+                    // c.modifyCSPoints(1, point * 4, true);
                     c.setDojo(c.getDojo() + point);
                     c.getClient().getSession().write(MaplePacketCreator.Mulung_Pts(point, c.getDojo()));
                 }
@@ -171,11 +171,11 @@ public class Event_DojoAgent {
                         MapleCharacter chr = currentmap.getCharacterById(mem.getId());
                         if (chr != null) {
                             chr.changeMap(map, map.getPortal(1));
-                      //      chr.modifyCSPoints(1, 5000, true);
+                            //      chr.modifyCSPoints(1, 5000, true);
                         }
                     }
                 } else {
-                   // c.modifyCSPoints(1, 5000, true);
+                    // c.modifyCSPoints(1, 5000, true);
                     c.changeMap(map, map.getPortal(1));
                 }
                 return true;

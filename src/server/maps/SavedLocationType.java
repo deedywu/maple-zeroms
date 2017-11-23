@@ -39,7 +39,7 @@ public enum SavedLocationType {
     Pachinko_port(14),
     DOJO(15),
     CYGNUSINTRO(16),
-    ENGLISH(17), 
+    ENGLISH(17),
     SLEEP(18),
     ARIANT(19),
     ARIANT_PQ(20),

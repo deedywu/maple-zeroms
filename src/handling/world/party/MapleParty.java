@@ -267,7 +267,7 @@ public class MapleParty implements Serializable {
         return -1;
     }
 
- /*   public void cancelAllPartyBuffsByChr(int n2) {
+    /*   public void cancelAllPartyBuffsByChr(int n2) {
         if (partybuffs.isEmpty()) {
             return;
         }
@@ -300,5 +300,5 @@ public class MapleParty implements Serializable {
             // empty catch block
         }
     }
-*/
+     */
 }

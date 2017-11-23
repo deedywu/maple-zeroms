@@ -1,7 +1,6 @@
 package handling.world.party;
 
 //import handling.world.WorldPartyService;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +38,7 @@ public class MapleExpedition {
         return id;
     }
 
-  /*  public int getAllMembers() {
+    /*  public int getAllMembers() {
         int ret = 0;
         for (int i = 0; i < parties.size(); i++) {
             MapleParty pp = WorldPartyService.getInstance().getParty(parties.get(i));
@@ -66,7 +65,7 @@ public class MapleExpedition {
         }
         return -1;
     }
-*/
+     */
     public int getIndex(int partyId) {
         for (int i = 0; i < parties.size(); i++) {
             if (parties.get(i) == partyId) {

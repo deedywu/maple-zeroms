@@ -24,23 +24,23 @@ public class MapleSquad {
     public static enum MapleSquadType {
 
         bossbalrog(2),
-        zak(1), 
-        chaoszak(2), 
-         pinkzak(2),
-        horntail(2), 
-        chaosht(2), 
-        pinkbean(2), 
-        nmm_squad(2), 
-        vergamot(2), 
-        dunas(2), 
+        zak(1),
+        chaoszak(2),
+        pinkzak(2),
+        horntail(2),
+        chaosht(2),
+        pinkbean(2),
+        nmm_squad(2),
+        vergamot(2),
+        dunas(2),
         nibergen_squad(2),
-        dunas2(2), 
-        core_blaze(2), 
-        aufheben(2), 
-        cwkpq(10), 
+        dunas2(2),
+        core_blaze(2),
+        aufheben(2),
+        cwkpq(10),
         tokyo_2095(2),
-        vonleon(1), 
-        scartar(2), 
+        vonleon(1),
+        scartar(2),
         ARIANT1(3),
         ARIANT2(4),
         ARIANT3(5),
@@ -250,9 +250,9 @@ public class MapleSquad {
     }
 
     public int addMember(MapleCharacter member, boolean join) {
-	if (getLeader() == null) {
-	    return -1;
-	}
+        if (getLeader() == null) {
+            return -1;
+        }
         final String job = MapleCarnivalChallenge.getJobBasicNameById(member.getJob());
         if (join) {
             if (!containsMember(member) && !getAllNextPlayer().contains(member.getName())) {

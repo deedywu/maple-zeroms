@@ -1,4 +1,3 @@
-
 package client.inventory;
 
 import constants.GameConstants;

@@ -20,7 +20,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
+ /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -48,7 +48,7 @@ public class MapleDragon extends AbstractAnimatedMapleMapObject {
 
     @Override
     public void sendSpawnData(MapleClient client) {
-       // client.getSession().write(MaplePacketCreator.spawnDragon(this));
+        // client.getSession().write(MaplePacketCreator.spawnDragon(this));
     }
 
     @Override

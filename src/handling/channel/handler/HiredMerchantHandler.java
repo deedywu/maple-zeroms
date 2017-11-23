@@ -104,8 +104,8 @@ public class HiredMerchantHandler {
         if (c.getPlayer() == null) {
             return;
         }
-      final byte operation = slea.readByte();
-     /*     if (operation == 20 || operation == 26) {
+        final byte operation = slea.readByte();
+        /*     if (operation == 20 || operation == 26) {
             if (c.getPlayer().getLastHM() + 24 * 60 * 60 * 1000 > System.currentTimeMillis()) {
                 c.getPlayer().dropMessage(1, "24小时内无法进行操作，\r\n请24小时之后再进行操作。\r\n");
                 c.getSession().write(MaplePacketCreator.enableActions());
@@ -139,7 +139,7 @@ public class HiredMerchantHandler {
                             c.getPlayer().setConversation(0);
                             c.getPlayer().dropMessage("领取金币" + pack.getMesos());
                             //     c.getSession().write(PlayerShopPacket.merchItem_Message((byte) 0x1d));
-                      //      c.getPlayer().setLastHM(System.currentTimeMillis());
+                            //      c.getPlayer().setLastHM(System.currentTimeMillis());
                         } else {
                             c.getPlayer().dropMessage(1, "发生未知错误。");
                         }
@@ -188,7 +188,7 @@ public class HiredMerchantHandler {
                     }
                     FileoutputUtil.logToFile_chr(c.getPlayer(), "Logs/Log_雇佣领取记录.txt", " 领回金币 " + pack.getMesos() + " 领回道具数量 " + pack.getItems().size() + " 道具 " + item_id);
                     FileoutputUtil.logToFile_chr(c.getPlayer(), "Logs/Log_雇佣领取记录2.txt", " 领回金币 " + pack.getMesos() + " 领回道具数量 " + pack.getItems().size() + " 道具 " + item_name);
-                //    c.getPlayer().setLastHM(System.currentTimeMillis());
+                    //    c.getPlayer().setLastHM(System.currentTimeMillis());
                 } else {
                     c.getPlayer().dropMessage(1, "发生未知错误.");
                 }

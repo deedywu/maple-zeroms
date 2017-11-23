@@ -49,7 +49,7 @@ public interface IItem extends Comparable<IItem> {
     void setFlag(byte flag);
 
     void setLocked(byte flag);
-    
+
     void setUniqueId(int id);
 
     void setPosition(short position);

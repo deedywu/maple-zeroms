@@ -96,12 +96,13 @@ public class World {
         return Find.findChannel(charName) > 0;
     }
 
-     public static boolean isChannelAvailable(final int ch) {
+    public static boolean isChannelAvailable(final int ch) {
         if (ChannelServer.getInstance(ch) == null || ChannelServer.getInstance(ch).getPlayerStorage() == null) {
             return false;
         }
         return ChannelServer.getInstance(ch).getPlayerStorage().getConnectedClients() < (ch == 1 ? 600 : 400);
     }
+
     public static void toggleMegaphoneMuteState() {
         for (ChannelServer cs : ChannelServer.getAllInstances()) {
             cs.toggleMegaphoneMuteState();
@@ -324,10 +325,8 @@ public class World {
                     }
                     if (!buddylist.contains(cidFrom)) {
                         buddylist.addBuddyRequest(addChar.getClient(), cidFrom, nameFrom, channelFrom, levelFrom, jobFrom);
-                    } else {
-                        if (buddylist.containsVisible(cidFrom)) {
-                            return BuddyAddResult.ALREADY_ON_LIST;
-                        }
+                    } else if (buddylist.containsVisible(cidFrom)) {
+                        return BuddyAddResult.ALREADY_ON_LIST;
                     }
                 }
             }

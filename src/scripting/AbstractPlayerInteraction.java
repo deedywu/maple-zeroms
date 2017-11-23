@@ -547,7 +547,7 @@ public abstract class AbstractPlayerInteraction {
                 final Equip item = (Equip) (randomStats ? ii.randomizeStats((Equip) ii.getEquipById(id)) : ii.getEquipById(id));
                 if (period > 0) {
                     //item.setExpiration(System.currentTimeMillis() + (period * 1 * 60 * 60 * 1000));  
-                    item.setExpiration(System.currentTimeMillis() + (period * 60 * 60 * 1000));  
+                    item.setExpiration(System.currentTimeMillis() + (period * 60 * 60 * 1000));
                 }
                 if (slots > 0) {
                     item.setUpgradeSlots((byte) (item.getUpgradeSlots() + slots));
@@ -574,10 +574,10 @@ public abstract class AbstractPlayerInteraction {
     public final void gainItem(final int id, final int str, final int dex, final int luk, final int Int, final int hp, int mp, int watk, int matk, int wdef, int mdef, int hb, int mz, int ty, int yd) {
         gainItemS(id, str, dex, luk, Int, hp, mp, watk, matk, wdef, mdef, hb, mz, ty, yd, c);
     }
-    public final void gainItem(final int id, final int str, final int dex, final int luk, final int Int, final int hp, int mp, int watk, int matk, int wdef, int mdef, int hb, int mz, int ty, int yd,int time) {
-        gainItemS(id, str, dex, luk, Int, hp, mp, watk, matk, wdef, mdef, hb, mz, ty, yd, c,time);
+
+    public final void gainItem(final int id, final int str, final int dex, final int luk, final int Int, final int hp, int mp, int watk, int matk, int wdef, int mdef, int hb, int mz, int ty, int yd, int time) {
+        gainItemS(id, str, dex, luk, Int, hp, mp, watk, matk, wdef, mdef, hb, mz, ty, yd, c, time);
     }
-  
 
     public final void gainItemS(final int id, final int str, final int dex, final int luk, final int Int, final int hp, int mp, int watk, int matk, int wdef, int mdef, int hb, int mz, int ty, int yd, final MapleClient cg) {
         if (1 >= 0) {
@@ -647,24 +647,25 @@ public abstract class AbstractPlayerInteraction {
         }
         cg.getSession().write(MaplePacketCreator.getShowItemGain(id, (short) 1, true));
     }
-        public final void gainItemS(final int id, final int str, final int dex, final int luk, final int Int, final int hp, int mp, int watk, int matk, int wdef, int mdef, int hb, int mz, int ty, int yd, final MapleClient cg,int time) {
+
+    public final void gainItemS(final int id, final int str, final int dex, final int luk, final int Int, final int hp, int mp, int watk, int matk, int wdef, int mdef, int hb, int mz, int ty, int yd, final MapleClient cg, int time) {
         if (1 >= 0) {
             final MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
             final MapleInventoryType type = GameConstants.getInventoryType(id);
-            
+
             if (!MapleInventoryManipulator.checkSpace(cg, id, 1, "")) {
                 return;
             }
             if (type.equals(MapleInventoryType.EQUIP) && !GameConstants.isThrowingStar(id) && !GameConstants.isBullet(id)) {
                 final Equip item = (Equip) (ii.getEquipById(id));
-           
+
                 final String name = ii.getName(id);
                 if (id / 10000 == 114 && name != null && name.length() > 0) { //medal
                     final String msg = "你已获得称号 <" + name + ">";
                     cg.getPlayer().dropMessage(5, msg);
                     cg.getPlayer().dropMessage(5, msg);
                 }
-                if (time > 0) {  
+                if (time > 0) {
                     item.setExpiration(System.currentTimeMillis() + (time * 60 * 60 * 1000));
                 }
                 if (str > 0) {
@@ -711,14 +712,14 @@ public abstract class AbstractPlayerInteraction {
                 }
                 MapleInventoryManipulator.addbyItem(cg, item.copy());
             } else {
-                MapleInventoryManipulator.addById(cg, id, (short)1, "", (byte)0);
+                MapleInventoryManipulator.addById(cg, id, (short) 1, "", (byte) 0);
             }
         } else {
             MapleInventoryManipulator.removeById(cg, GameConstants.getInventoryType(id), id, -1, true, false);
         }
-        cg.getSession().write(MaplePacketCreator.getShowItemGain(id, (short)1, true));
+        cg.getSession().write(MaplePacketCreator.getShowItemGain(id, (short) 1, true));
     }
-    
+
     public final void changeMusic(final String songName) {
         getPlayer().getMap().broadcastMessage(MaplePacketCreator.musicChange(songName));
     }
@@ -814,12 +815,10 @@ public abstract class AbstractPlayerInteraction {
             }
         }
     }
-    
-     /*
+
+    /*
      * 获取角色组队
      */
-    
-
     public int getPartySize() {
         return getParty() != null ? getParty().getMembers().size() : -1;
     }
@@ -832,8 +831,7 @@ public abstract class AbstractPlayerInteraction {
         return getParty() != null && getParty().getMemberById(cid) != null;
     }
 
-   
-     public int getPartyAverageLevel() {
+    public int getPartyAverageLevel() {
         return getParty().getAverageLevel();
     }
 
@@ -864,7 +862,9 @@ public abstract class AbstractPlayerInteraction {
         if (getParty() != null) {
             for (MaplePartyCharacter partyCharacter : getParty().getMembers()) {
                 MapleCharacter player = getChannelServer().getPlayerStorage().getCharacterById(partyCharacter.getId());
-                if (player != null && getDaysPQLog(pqName, day) < times) continue;
+                if (player != null && getDaysPQLog(pqName, day) < times) {
+                    continue;
+                }
                 return false;
             }
         }
@@ -877,7 +877,9 @@ public abstract class AbstractPlayerInteraction {
         }
         for (MaplePartyCharacter partyCharacter : getParty().getMembers()) {
             MapleCharacter player = getChannelServer().getPlayerStorage().getCharacterById(partyCharacter.getId());
-            if (player != null && getDaysPQLog(pqName, day) < times) continue;
+            if (player != null && getDaysPQLog(pqName, day) < times) {
+                continue;
+            }
             return partyCharacter;
         }
         return null;
@@ -893,16 +895,20 @@ public abstract class AbstractPlayerInteraction {
         }
         return null;
     }
+
     public final void gainMembersPQ(String pqName, int num) {
         if (getParty() == null) {
             return;
         }
         for (MaplePartyCharacter partyCharacter : getParty().getMembers()) {
             MapleCharacter player = getChannelServer().getPlayerStorage().getCharacterById(partyCharacter.getId());
-            if (player == null) continue;
+            if (player == null) {
+                continue;
+            }
             player.setPQLog(pqName, 0, num);
         }
     }
+
     public int getDaysPQLog(String pqName, int days) {
         return getPlayer().getDaysPQLog(pqName, 0, days);
     }
@@ -955,7 +961,9 @@ public abstract class AbstractPlayerInteraction {
         int n4 = this.getPlayer().getMapId();
         for (MaplePartyCharacter partyCharacter : this.getPlayer().getParty().getMembers()) {
             MapleCharacter player = this.getPlayer().getMap().getCharacterById(partyCharacter.getId());
-            if (player == null || player.getMapId() != n4) continue;
+            if (player == null || player.getMapId() != n4) {
+                continue;
+            }
             player.setPQLog(pqName, type, count);
         }
     }
@@ -978,7 +986,9 @@ public abstract class AbstractPlayerInteraction {
             return false;
         }
         for (MaplePartyCharacter d2 : getParty().getMembers()) {
-            if (d2.getLevel() >= min && d2.getLevel() <= max) continue;
+            if (d2.getLevel() >= min && d2.getLevel() <= max) {
+                continue;
+            }
             return false;
         }
         return true;
@@ -1001,16 +1011,15 @@ public abstract class AbstractPlayerInteraction {
                     return partyCharacter;
                 }
                 MapleQuestStatus status = player.getQuestNAdd(MapleQuest.getInstance(questID));
-                if (status == null || status.getCustomData() == null || Long.valueOf(status.getCustomData()) + (long) coolDownTime <= System.currentTimeMillis())
+                if (status == null || status.getCustomData() == null || Long.valueOf(status.getCustomData()) + (long) coolDownTime <= System.currentTimeMillis()) {
                     continue;
+                }
                 return partyCharacter;
             }
         }
         return null;
     }
 
-
-    
     public final void warpParty(final int mapId) {
         if (getPlayer().getParty() == null || getPlayer().getParty().getMembers().size() == 1) {
             warp(mapId, 0);
@@ -1574,8 +1583,8 @@ public abstract class AbstractPlayerInteraction {
     public int getGamePointsPD() {
         return this.c.getPlayer().getGamePointsPD();
     }
-    
-      public int getskillzq() {//
+
+    public int getskillzq() {//
         return this.c.getPlayer().getSkillzq();
     }
 
@@ -1590,6 +1599,7 @@ public abstract class AbstractPlayerInteraction {
     public void resetGamePointsPD() {
         this.c.getPlayer().resetGamePointsPD();
     }
+
     public int getPS() {
         return this.c.getPlayer().getGamePointsPS();
     }
@@ -1601,7 +1611,7 @@ public abstract class AbstractPlayerInteraction {
     public void resetPS() {
         this.c.getPlayer().resetGamePointsPS();
     }
-    
+
     public boolean beibao(int A) {
         if (this.c.getPlayer().getInventory(MapleInventoryType.EQUIP).getNextFreeSlot() > -1 && A == 1) {
             return true;
@@ -1672,7 +1682,7 @@ public abstract class AbstractPlayerInteraction {
         }
     }
 
-   public int getBossLog(String bossid) {
+    public int getBossLog(String bossid) {
         return this.c.getPlayer().getBossLog(bossid);
     }
 
@@ -1700,7 +1710,6 @@ public abstract class AbstractPlayerInteraction {
         this.c.getPlayer().resetBossLog(bossid, type);
     }
 
-
     public final void givePartyBossLog(String bossid) {
         if (getPlayer().getParty() == null || getPlayer().getParty().getMembers().size() == 1) {
             setBossLog(bossid);
@@ -1713,36 +1722,37 @@ public abstract class AbstractPlayerInteraction {
             }
         }
     }
-     public final boolean getPartyBossLog(String bossid,int num) {  //(1,3);  false 
+
+    public final boolean getPartyBossLog(String bossid, int num) {  //(1,3);  false 
         if (getPlayer().getParty() == null || getPlayer().getParty().getMembers().size() == 1) {
-            int bossnum=getBossLog(bossid);
-            if (bossnum>num){
-                  return false;
-            }else{
-                 return true;
+            int bossnum = getBossLog(bossid);
+            if (bossnum > num) {
+                return false;
+            } else {
+                return true;
             }
-          
+
         }
         for (final MaplePartyCharacter chr : getPlayer().getParty().getMembers()) {
             final MapleCharacter curChar = getMap().getCharacterById(chr.getId());
             if (curChar != null) {
-           int bossnum=curChar.getBossLog(bossid);
-            if (bossnum>num){
-                  return false;
-            }
+                int bossnum = curChar.getBossLog(bossid);
+                if (bossnum > num) {
+                    return false;
+                }
             }
         }
         return true;
     }
-     
-     
-     public int getBosslog(String bossid) {
+
+    public int getBosslog(String bossid) {
         return getPlayer().getBossLog(bossid);
     }
+
     public void setBosslog(String bossid) {
-         getPlayer().setBossLog(bossid);
+        getPlayer().setBossLog(bossid);
     }
-    
+
     public int getOneTimeLog(String bossid) {
         return getPlayer().getOneTimeLog(bossid);
     }

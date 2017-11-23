@@ -353,14 +353,14 @@ public class MapleMiniGame extends AbstractPlayerStore {
     public void setRequestedTie(int t) {
         this.tie = t;
     }
-    
+
     public int getRequestedREDO() {
         return REDO;
     }
 
     public void setRequestedREDO(int t) {
         this.REDO = t;
-    }    
+    }
 
     public int getTurn() {
         return turn;

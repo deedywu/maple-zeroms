@@ -43,7 +43,7 @@ public class ChatHandler {
             } catch (Throwable e) {
                 System.err.println(e);
             }
-         
+
             //if (chr != null && !CommandProcessor.processCommand(c, text, CommandType.NORMAL)) {
             if (!chr.isGM() && text.length() >= 80) {
                 return;
@@ -70,7 +70,7 @@ public class ChatHandler {
              * + " rocks")) { chr.finishAchievement(11);
              }
              */
-            /*
+ /*
              * } else { c.getSession().write(MaplePacketCreator.serverNotice(6,
              * "你已经被禁言，因此无法说话！"));
              }
@@ -170,12 +170,10 @@ public class ChatHandler {
                         } else {
                             c.getSession().write(MaplePacketCreator.messengerChat(c.getPlayer().getName() + " : " + target.getName() + "已经是使用枫叶信使."));
                         }
+                    } else if (World.isConnected(input)) {
+                        World.Messenger.messengerInvite(c.getPlayer().getName(), messenger.getId(), input, c.getChannel(), c.getPlayer().isGM());
                     } else {
-                        if (World.isConnected(input)) {
-                            World.Messenger.messengerInvite(c.getPlayer().getName(), messenger.getId(), input, c.getChannel(), c.getPlayer().isGM());
-                        } else {
-                            c.getSession().write(MaplePacketCreator.messengerNote(input, 4, 0));
-                        }
+                        c.getSession().write(MaplePacketCreator.messengerNote(input, 4, 0));
                     }
                 }
                 break;
@@ -186,10 +184,9 @@ public class ChatHandler {
                     if (target.getMessenger() != null) {
                         target.getClient().getSession().write(MaplePacketCreator.messengerNote(c.getPlayer().getName(), 5, 0));
                     }
-                } else { // Other channel
-                    if (!c.getPlayer().isGM()) {
-                        World.Messenger.declineChat(targeted, c.getPlayer().getName());
-                    }
+                } else // Other channel
+                if (!c.getPlayer().isGM()) {
+                    World.Messenger.declineChat(targeted, c.getPlayer().getName());
                 }
                 break;
             case 0x06: // message

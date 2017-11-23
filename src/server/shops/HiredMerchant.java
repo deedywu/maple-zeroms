@@ -117,7 +117,7 @@ public class HiredMerchant extends AbstractPlayerStore {
          * } else { c.getPlayer().dropMessage(1, "Your inventory is full.");
          * c.getSession().write(MaplePacketCreator.enableActions()); } }
          */
-        /*
+ /*
          * if (MapleInventoryManipulator.checkSpace(c, newItem.getItemId(),
          * newItem.getQuantity(), newItem.getOwner())) { final int gainmeso =
          * getMeso() + theQuantity -
@@ -136,7 +136,7 @@ public class HiredMerchant extends AbstractPlayerStore {
          * c.getPlayer().dropMessage(1, "您的背包滿了.");
          * c.getSession().write(MaplePacketCreator.enableActions()); }
          */
-        /*
+ /*
          * if (c.getPlayer().getMeso() >= pItem.price * quantity) { if
          * (MapleInventoryManipulator.商店防止复制(c, newItem, false)) { pItem.bundles
          * -= quantity; // Number remaining in the store

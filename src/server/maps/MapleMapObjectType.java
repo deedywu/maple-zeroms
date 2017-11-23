@@ -31,6 +31,6 @@ public enum MapleMapObjectType {
     SHOP,
     MIST,
     REACTOR,
-    LOVE, 
+    LOVE,
     HIRED_MERCHANT;
 }

@@ -88,7 +88,7 @@ public class MapleFamily implements java.io.Serializable {
 
             if (leadername == null || members.size() < 2) {
                 System.err.println("Leader " + leaderid + " isn't in family " + id + ".  Impossible... family is disbanding.");
-            //    writeToDB(true);
+                //    writeToDB(true);
                 proper = false;
                 return;
             }
@@ -208,7 +208,7 @@ public class MapleFamily implements java.io.Serializable {
                 changed = false;
             } else {
                 //members is less than 2, this shall be executed
-               /*
+                /*
                  * if (leadername == null || members.size() < 2) {
                  * broadcast(null, -1, FCOp.DISBAND, null);
                  }
@@ -379,7 +379,7 @@ public class MapleFamily implements java.io.Serializable {
      }
      */
 
-    /*
+ /*
      * public final void leaveFamily(final MapleFamilyCharacter mgc, final
      * boolean skipLeader) { bDirty = true; if (mgc.getId() == leaderid &&
      * !skipLeader) { //disband leadername = null; //to disband family
@@ -399,7 +399,7 @@ public class MapleFamily implements java.io.Serializable {
      * members.remove(mgc.getId()); bDirty = true;
      }
      */
-    /*
+ /*
      * public final void leaveFamily(final MapleFamilyCharacter mgc, final
      * boolean skipLeader) { bDirty = true; if (mgc.getId() == leaderid &&
      * !skipLeader) { //disband leadername = null; //to disband family

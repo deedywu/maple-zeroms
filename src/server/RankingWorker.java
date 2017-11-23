@@ -34,7 +34,7 @@ import java.util.Map;
 import server.Timer.WorldTimer;
 
 public class RankingWorker {
-/*
+    /*
     private final Map<Integer, List<RankingInformation>> rankings = new HashMap<Integer, List<RankingInformation>>();
     private final Map<String, Integer> jobCommands = new HashMap<String, Integer>();
     private static RankingWorker instance;

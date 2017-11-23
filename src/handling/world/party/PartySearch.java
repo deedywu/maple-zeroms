@@ -16,7 +16,7 @@ public class PartySearch {
         this.name = name;
         this.partyId = partyId;
         this.pst = pst;
-       // scheduleRemoval();
+        // scheduleRemoval();
     }
 
     public PartySearchType getType() {
@@ -31,7 +31,7 @@ public class PartySearch {
         return name;
     }
 
- /*   public final void scheduleRemoval() {
+    /*   public final void scheduleRemoval() {
         cancelRemoval();
         removal = EtcTimer.getInstance().schedule(() -> {
             String msg = "超出限制时间，组队广告已被删除。";
@@ -41,7 +41,7 @@ public class PartySearch {
             WorldPartyService.getInstance().removeSearch(PartySearch.this, msg);
         }, pst.timeLimit * 60 * 1000);
     }
-*/
+     */
     public void cancelRemoval() {
         if (removal != null) {
             removal.cancel(false);

@@ -215,7 +215,7 @@ public class DatabaseConnection {
 
         @Override
         public void run() {
-            // DatabaseConnection.closeTimeout();
+            DatabaseConnection.closeTimeout();
         }
     };
 }

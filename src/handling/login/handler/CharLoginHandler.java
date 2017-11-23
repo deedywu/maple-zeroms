@@ -1,65 +1,53 @@
-/*
- This file is part of the OdinMS Maple Story Server
- Copyright (C) 2008 ~ 2010 Patrick Huy <patrick.huy@frz.cc> 
- Matthias Butz <matze@odinms.de>
- Jan Christian Meyer <vimes@odinms.de>
 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License version 3
- as published by the Free Software Foundation. You may not use, modify
- or distribute this program under any other version of the
- GNU Affero General Public License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package handling.login.handler;
 
-import java.util.List;
-import java.util.Calendar;
-
-import client.inventory.IItem;
-import client.inventory.Item;
-import client.LoginCrypto;
-import client.MapleClient;
 import client.MapleCharacter;
 import client.MapleCharacterUtil;
+import client.MapleClient;
+import client.inventory.IItem;
+import client.inventory.Item;
 import client.inventory.MapleInventory;
 import client.inventory.MapleInventoryType;
-import constants.GameConstants;
 import handling.channel.ChannelServer;
 import handling.login.LoginInformationProvider;
 import handling.login.LoginServer;
 import handling.login.LoginWorker;
 import handling.world.World;
+import java.util.Calendar;
+import java.util.List;
 import server.MapleItemInformationProvider;
-import server.quest.MapleQuest;
 import server.ServerProperties;
+import server.quest.MapleQuest;
 import tools.FileoutputUtil;
-import tools.MaplePacketCreator;
-import tools.packet.LoginPacket;
 import tools.KoreanDateUtil;
+import tools.MaplePacketCreator;
 import tools.StringUtil;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packet.LoginPacket;
 
+/**
+ *
+ * @author zjj
+ */
 public class CharLoginHandler {
 
     private static final boolean loginFailCount(final MapleClient c) {
         c.loginAttempt++;
-        if (c.loginAttempt > 5) {
-            return true;
-        }
-        return false;
+        return c.loginAttempt > 5;
     }
 
+    /**
+     *
+     * @param c
+     */
     public static final void Welcome(final MapleClient c) {
     }
 
+    /**
+     *
+     * @param slea
+     * @param c
+     */
     public static final void login(final SeekableLittleEndianAccessor slea, final MapleClient c) {
         final String login = slea.readMapleAsciiString();
         final String pwd = slea.readMapleAsciiString();
@@ -158,6 +146,13 @@ public class CharLoginHandler {
      * c.getBanReason())); } } else { c.loginAttempt = 0;
      * LoginWorker.registerClient(c); } }
      */
+
+    /**
+     *
+     * @param slea
+     * @param c
+     */
+
     public static final void SetGenderRequest(final SeekableLittleEndianAccessor slea, final MapleClient c) {
         byte gender = slea.readByte();
         String username = slea.readMapleAsciiString();
@@ -175,6 +170,10 @@ public class CharLoginHandler {
         }
     }
 
+    /**
+     *
+     * @param c
+     */
     public static final void ServerListRequest(final MapleClient c) {
         c.getSession().write(LoginPacket.getServerList(0, LoginServer.getServerName(), LoginServer.getLoad()));
         //c.getSession().write(MaplePacketCreator.getServerList(1, "Scania", LoginServer.getInstance().getChannels(), 1200));
@@ -186,6 +185,10 @@ public class CharLoginHandler {
         c.getSession().write(LoginPacket.sendRecommended(0, LoginServer.getEventMessage()));
     }
 
+    /**
+     *
+     * @param c
+     */
     public static final void ServerStatusRequest(final MapleClient c) {
         // 0 = Select world normally
         // 1 = "Since there are many users, you may encounter some..."
@@ -210,6 +213,13 @@ public class CharLoginHandler {
         }
     }
      */
+
+    /**
+     *
+     * @param slea
+     * @param c
+     */
+
     public static final void CharlistRequest(final SeekableLittleEndianAccessor slea, final MapleClient c) {
         if (!c.isLoggedIn()) {
             c.getSession().close();
@@ -236,10 +246,20 @@ public class CharLoginHandler {
         }
     }
 
+    /**
+     *
+     * @param name
+     * @param c
+     */
     public static final void CheckCharName(final String name, final MapleClient c) {
         c.getSession().write(LoginPacket.charNameResponse(name, !MapleCharacterUtil.canCreateChar(name) || LoginInformationProvider.getInstance().isForbiddenName(name)));
     }
 
+    /**
+     *
+     * @param slea
+     * @param c
+     */
     public static final void CreateChar(final SeekableLittleEndianAccessor slea, final MapleClient c) {
         final String name = slea.readMapleAsciiString();
         final int JobType = slea.readInt(); // 1 = Adventurer, 0 = Cygnus, 2 = Aran
@@ -269,39 +289,42 @@ public class CharLoginHandler {
 
         final byte gender = c.getGender();
 
-        if (gender == 0) {
-            if (face != 20100 && face != 20401 && face != 20402) {
+        switch (gender) {
+            case 0:
+                if (face != 20_100 && face != 20_401 && face != 20_402) {
+                    return;
+                }
+                if (hair != 30_030 && hair != 30_027 && hair != 30_000) {
+                    return;
+                }
+                if (top != 1_040_002 && top != 1_040_006 && top != 1_040_010 && top != 1_042_167) {
+                    return;
+                }
+                if (bottom != 1_060_002 && bottom != 1_060_006 && bottom != 1_062_115) {
+                    return;
+                }
+                break;
+            case 1:
+                if (face != 21_002 && face != 21_700 && face != 21_201) {
+                    return;
+                }
+                if (hair != 31_002 && hair != 31_047 && hair != 31_057) {
+                    return;
+                }
+                if (top != 1_041_002 && top != 1_041_006 && top != 1_041_010 && top != 1_041_011) {
+                    return;
+                }
+                if (bottom != 1_061_002 && bottom != 1_061_008 && bottom != 1_062_115) {
+                    return;
+                }
+                break;
+            default:
                 return;
-            }
-            if (hair != 30030 && hair != 30027 && hair != 30000) {
-                return;
-            }
-            if (top != 1040002 && top != 1040006 && top != 1040010 && top != 1042167) {
-                return;
-            }
-            if (bottom != 1060002 && bottom != 1060006 && bottom != 1062115) {
-                return;
-            }
-        } else if (gender == 1) {
-            if (face != 21002 && face != 21700 && face != 21201) {
-                return;
-            }
-            if (hair != 31002 && hair != 31047 && hair != 31057) {
-                return;
-            }
-            if (top != 1041002 && top != 1041006 && top != 1041010 && top != 1041011) {
-                return;
-            }
-            if (bottom != 1061002 && bottom != 1061008 && bottom != 1062115) {
-                return;
-            }
-        } else {
+        }
+        if (shoes != 1_072_001 && shoes != 1_072_005 && shoes != 1_072_037 && shoes != 1_072_038 && shoes != 1_072_383) {
             return;
         }
-        if (shoes != 1072001 && shoes != 1072005 && shoes != 1072037 && shoes != 1072038 && shoes != 1072383) {
-            return;
-        }
-        if (weapon != 1302000 && weapon != 1322005 && weapon != 1312004 && weapon != 1442079) {
+        if (weapon != 1_302_000 && weapon != 1_322_005 && weapon != 1_312_004 && weapon != 1_442_079) {
             return;
         }
 
@@ -335,22 +358,24 @@ public class CharLoginHandler {
         //blue/red pots
         switch (JobType) {
             case 0: // Cygnus
-                newchar.setQuestAdd(MapleQuest.getInstance(20022), (byte) 1, "1");
-                newchar.setQuestAdd(MapleQuest.getInstance(20010), (byte) 1, null); //>_>_>_> ugh
+                newchar.setQuestAdd(MapleQuest.getInstance(20_022), (byte) 1, "1");
+                newchar.setQuestAdd(MapleQuest.getInstance(20_010), (byte) 1, null); //>_>_>_> ugh
 
-                newchar.setQuestAdd(MapleQuest.getInstance(20000), (byte) 1, null); //>_>_>_> ugh
-                newchar.setQuestAdd(MapleQuest.getInstance(20015), (byte) 1, null); //>_>_>_> ugh
-                newchar.setQuestAdd(MapleQuest.getInstance(20020), (byte) 1, null); //>_>_>_> ugh
+                newchar.setQuestAdd(MapleQuest.getInstance(20_000), (byte) 1, null); //>_>_>_> ugh
+                newchar.setQuestAdd(MapleQuest.getInstance(20_015), (byte) 1, null); //>_>_>_> ugh
+                newchar.setQuestAdd(MapleQuest.getInstance(20_020), (byte) 1, null); //>_>_>_> ugh
 
-                newchar.getInventory(MapleInventoryType.ETC).addItem(new Item(4161047, (byte) 0, (short) 1, (byte) 0));
+                newchar.getInventory(MapleInventoryType.ETC).addItem(new Item(4_161_047, (byte) 0, (short) 1, (byte) 0));
                 break;
             case 1: // Adventurer
-                newchar.getInventory(MapleInventoryType.ETC).addItem(new Item(4161001, (byte) 0, (short) 1, (byte) 0));
+                newchar.getInventory(MapleInventoryType.ETC).addItem(new Item(4_161_001, (byte) 0, (short) 1, (byte) 0));
                 break;
             case 2: // Aran
-                newchar.getInventory(MapleInventoryType.ETC).addItem(new Item(4161048, (byte) 0, (short) 1, (byte) 0));
+                newchar.getInventory(MapleInventoryType.ETC).addItem(new Item(4_161_048, (byte) 0, (short) 1, (byte) 0));
                 break;
             //     case 3: //Evan
+            //         newchar.getInventory(MapleInventoryType.ETC).addItem(new Item(4161052, (byte) 0, (short) 1, (byte) 0));
+            //        break;            //     case 3: //Evan
             //         newchar.getInventory(MapleInventoryType.ETC).addItem(new Item(4161052, (byte) 0, (short) 1, (byte) 0));
             //        break;
         }
@@ -364,6 +389,11 @@ public class CharLoginHandler {
         }
     }
 
+    /**
+     *
+     * @param slea
+     * @param c
+     */
     public static final void DeleteChar(final SeekableLittleEndianAccessor slea, final MapleClient c) {
         slea.readByte();
         String Secondpw_Client = null;
@@ -396,6 +426,11 @@ public class CharLoginHandler {
         c.getSession().write(LoginPacket.deleteCharResponse(Character_ID, state));
     }
 
+    /**
+     *
+     * @param slea
+     * @param c
+     */
     public static void Character_WithoutSecondPassword(final SeekableLittleEndianAccessor slea, final MapleClient c) {
 //        slea.skip(1);
         /*
@@ -446,6 +481,11 @@ public class CharLoginHandler {
         //  c.getSession().write(MaplePacketCreator.getServerIP(0, charId));
     }
 
+    /**
+     *
+     * @param slea
+     * @param c
+     */
     public static final void Character_WithSecondPassword(final SeekableLittleEndianAccessor slea, final MapleClient c) {
         final String password = slea.readMapleAsciiString();
         final int charId = slea.readInt();

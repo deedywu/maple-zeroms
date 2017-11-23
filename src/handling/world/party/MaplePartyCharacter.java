@@ -1,30 +1,39 @@
 package handling.world.party;
 
 import client.MapleCharacter;
-import server.maps.MapleDoor;
-
 import java.awt.*;
 import java.io.Serializable;
 import java.util.List;
+import server.maps.MapleDoor;
 
 /*
  * 队伍的成员信息设置
  */
+
+/**
+ *
+ * @author zjj
+ */
+
 public class MaplePartyCharacter implements Serializable {
 
-    private static final long serialVersionUID = 6215463252132450750L;
+    private static final long serialVersionUID = 6_215_463_252_132_450_750L;
     private final String name;
     private int id;
     private int level;
     private int channel;
     private int jobid;
     private int mapid;
-    private int doorTown = 999999999;
-    private int doorTarget = 999999999;
+    private int doorTown = 999_999_999;
+    private int doorTarget = 999_999_999;
     private int doorSkill = 0;
     private Point doorPosition = new Point(0, 0);
     private boolean online;
 
+    /**
+     *
+     * @param maplechar
+     */
     public MaplePartyCharacter(MapleCharacter maplechar) {
         this.name = maplechar.getName();
         this.level = maplechar.getLevel();
@@ -46,54 +55,105 @@ public class MaplePartyCharacter implements Serializable {
         }
     }
 
+    /**
+     *
+     */
     public MaplePartyCharacter() {
         this.name = "";
     }
 
+    /**
+     *
+     * @return
+     */
     public int getLevel() {
         return level;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getChannel() {
         return channel;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isOnline() {
         return online;
     }
 
+    /**
+     *
+     * @param online
+     */
     public void setOnline(boolean online) {
         this.online = online;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getMapid() {
         return mapid;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getJobId() {
         return jobid;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getDoorTown() {
         return doorTown;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getDoorTarget() {
         return doorTarget;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getDoorSkill() {
         return doorSkill;
     }
 
+    /**
+     *
+     * @return
+     */
     public Point getDoorPosition() {
         return doorPosition;
     }

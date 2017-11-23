@@ -32,18 +32,40 @@ import java.util.SimpleTimeZone;
  */
 public class KoreanDateUtil {
 
-    private final static int ITEM_YEAR2000 = -1085019342;
-    private final static long REAL_YEAR2000 = 946681229830l;
-    private final static int QUEST_UNIXAGE = 27111908;
-    private final static long FT_UT_OFFSET = 116444736000000000L; // 100 nsseconds from 1/1/1601 -> 1/1/1970
-    public final static long MAX_TIME = 150842304000000000L; //00 80 05 BB 46 E6 17 02
-    public final static long ZERO_TIME = 94354848000000000L; //00 40 E0 FD 3B 37 4F 01
-    public final static long PERMANENT = 150841440000000000L; // 00 C0 9B 90 7D E5 17 02
+    private final static int ITEM_YEAR2000 = -1_085_019_342;
+    private final static long REAL_YEAR2000 = 946_681_229_830l;
+    private final static int QUEST_UNIXAGE = 27_111_908;
+    private final static long FT_UT_OFFSET = 116_444_736_000_000_000L; // 100 nsseconds from 1/1/1601 -> 1/1/1970
 
+    /**
+     *
+     */
+    public final static long MAX_TIME = 150_842_304_000_000_000L; //00 80 05 BB 46 E6 17 02
+
+    /**
+     *
+     */
+    public final static long ZERO_TIME = 94_354_848_000_000_000L; //00 40 E0 FD 3B 37 4F 01
+
+    /**
+     *
+     */
+    public final static long PERMANENT = 150_841_440_000_000_000L; // 00 C0 9B 90 7D E5 17 02
+
+    /**
+     *
+     * @param realTimestamp
+     * @return
+     */
     public static long getKoreanTimestamp(final long realTimestamp) {
         return getTime(realTimestamp);
     }
 
+    /**
+     *
+     * @param realTimestamp
+     * @return
+     */
     public static long getTime(long realTimestamp) {
         if (realTimestamp == -1) {
             return MAX_TIME;
@@ -52,7 +74,7 @@ public class KoreanDateUtil {
         } else if (realTimestamp == -3) {
             return PERMANENT;
         }
-        return ((realTimestamp * 10000) + FT_UT_OFFSET);
+        return ((realTimestamp * 10_000) + FT_UT_OFFSET);
     }
 
     /**
@@ -63,7 +85,7 @@ public class KoreanDateUtil {
      */
     public static final long getTempBanTimestamp(final long realTimestamp) {
         // long time = (realTimestamp / 1000);//seconds
-        return ((realTimestamp * 10000) + FT_UT_OFFSET);
+        return ((realTimestamp * 10_000) + FT_UT_OFFSET);
     }
 
     /**
@@ -73,7 +95,7 @@ public class KoreanDateUtil {
      * @return The Korean timestamp for the real timestamp.
      */
     public static final int getItemTimestamp(final long realTimestamp) {
-        final int time = (int) ((realTimestamp - REAL_YEAR2000) / 1000 / 60); // convert to minutes
+        final int time = (int) ((realTimestamp - REAL_YEAR2000) / 1_000 / 60); // convert to minutes
         return (int) (time * 35.762787) + ITEM_YEAR2000;
     }
 
@@ -84,23 +106,33 @@ public class KoreanDateUtil {
      * @return The Korean timestamp for the real timestamp.
      */
     public static final int getQuestTimestamp(final long realTimestamp) {
-        final int time = (int) (realTimestamp / 1000 / 60); // convert to minutes
+        final int time = (int) (realTimestamp / 1_000 / 60); // convert to minutes
         return (int) (time * 0.1396987) + QUEST_UNIXAGE;
     }
 
+    /**
+     *
+     * @return
+     */
     public static boolean isDST() {
         return SimpleTimeZone.getDefault().inDaylightTime(new Date());
     }
 
+    /**
+     *
+     * @param timeStampinMillis
+     * @param roundToMinutes
+     * @return
+     */
     public static long getFileTimestamp(long timeStampinMillis, boolean roundToMinutes) {
         if (isDST()) {
-            timeStampinMillis -= 3600000L;
+            timeStampinMillis -= 3_600_000L;
         }
         long time;
         if (roundToMinutes) {
-            time = (timeStampinMillis / 1000 / 60) * 600000000;
+            time = (timeStampinMillis / 1_000 / 60) * 600_000_000;
         } else {
-            time = timeStampinMillis * 10000;
+            time = timeStampinMillis * 10_000;
         }
         return time + FT_UT_OFFSET;
     }

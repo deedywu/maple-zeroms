@@ -1,49 +1,34 @@
-/*
- This file is part of the OdinMS Maple Story Server
- Copyright (C) 2008 ~ 2010 Patrick Huy <patrick.huy@frz.cc> 
- Matthias Butz <matze@odinms.de>
- Jan Christian Meyer <vimes@odinms.de>
 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License version 3
- as published by the Free Software Foundation. You may not use, modify
- or distribute this program under any other version of the
- GNU Affero General Public License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package scripting;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import client.MapleClient;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.script.Compilable;
 import javax.script.CompiledScript;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
-
-import client.MapleClient;
-import java.io.*;
+import javax.script.ScriptException;
 import server.MaplePortal;
 import tools.FileoutputUtil;
 
+/**
+ *
+ * @author zjj
+ */
 public class PortalScriptManager {
 
     private static final PortalScriptManager instance = new PortalScriptManager();
-    private final Map<String, PortalScript> scripts = new HashMap<String, PortalScript>();
+    private final Map<String, PortalScript> scripts = new HashMap<>();
     private final static ScriptEngineFactory sef = new ScriptEngineManager().getEngineByName("javascript").getFactory();
 
+    /**
+     *
+     * @return
+     */
     public final static PortalScriptManager getInstance() {
         return instance;
     }
@@ -67,7 +52,7 @@ public class PortalScriptManager {
             BufferedReader bf = new BufferedReader(new InputStreamReader(fr, EncodingDetect.getJavaEncode(scriptFile)));
             CompiledScript compiled = ((Compilable) portal).compile(bf);
             compiled.eval();
-        } catch (final Exception e) {
+        } catch (final FileNotFoundException | UnsupportedEncodingException | ScriptException e) {
             System.err.println("Error executing Portalscript: " + scriptName + ":" + e);
             FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Error executing Portal script. (" + scriptName + ") " + e);
         } finally {
@@ -84,6 +69,11 @@ public class PortalScriptManager {
         return script;
     }
 
+    /**
+     *
+     * @param portal
+     * @param c
+     */
     public final void executePortalScript(final MaplePortal portal, final MapleClient c) {
         final PortalScript script = getPortalScript(c, portal.getScriptName());
         if (c.getPlayer().isGM()) {
@@ -102,6 +92,9 @@ public class PortalScriptManager {
         }
     }
 
+    /**
+     *
+     */
     public final void clearScripts() {
         scripts.clear();
     }

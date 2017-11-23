@@ -1,33 +1,17 @@
-/*
- This file is part of the OdinMS Maple Story Server
- Copyright (C) 2008 ~ 2010 Patrick Huy <patrick.huy@frz.cc> 
- Matthias Butz <matze@odinms.de>
- Jan Christian Meyer <vimes@odinms.de>
 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License version 3
- as published by the Free Software Foundation. You may not use, modify
- or distribute this program under any other version of the
- GNU Affero General Public License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package handling.channel.handler;
 
 import client.MapleClient;
 import handling.world.World;
 import handling.world.guild.MapleBBSThread;
-import java.rmi.RemoteException;
 import java.util.List;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 
+/**
+ *
+ * @author zjj
+ */
 public class BBSHandler {
 
     private static final String correctLength(final String in, final int maxSize) {
@@ -37,6 +21,11 @@ public class BBSHandler {
         return in;
     }
 
+    /**
+     *
+     * @param slea
+     * @param c
+     */
     public static final void BBSOperatopn(final SeekableLittleEndianAccessor slea, final MapleClient c) {
         if (c.getPlayer().getGuildId() <= 0) {
             return; // expelled while viewing bbs or hax
@@ -54,7 +43,7 @@ public class BBSHandler {
                 String text = correctLength(slea.readMapleAsciiString(), 600);
                 final int icon = slea.readInt();
                 if (icon >= 0x64 && icon <= 0x6a) {
-                    if (!c.getPlayer().haveItem(5290000 + icon - 0x64, 1, false, true)) {
+                    if (!c.getPlayer().haveItem(5_290_000 + icon - 0x64, 1, false, true)) {
                         return; // hax, using an nx icon that s/he doesn't have
                     }
                 } else if (icon < 0 || icon > 2) {

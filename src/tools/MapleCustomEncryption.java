@@ -88,7 +88,7 @@ public class MapleCustomEncryption {
                 for (int i = 0; i < data.length; i++) {
                     byte cur = data[i];
                     cur = (byte) (cur - 72);
-                    cur = (byte) ((cur ^ 0xFFFFFFFF) & 0xFF);
+                    cur = (byte) ((cur ^ 0xFFFF_FFFF) & 0xFF);
                     cur = BitTools.rollLeft(cur, dataLength & 0xFF);
                     nextRemember = cur;
                     cur = (byte) (cur ^ remember);

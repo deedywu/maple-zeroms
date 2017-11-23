@@ -22,11 +22,14 @@ package server.life;
 
 import java.awt.Point;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import server.Randomizer;
 import server.maps.MapleMap;
 import tools.MaplePacketCreator;
 
+/**
+ *
+ * @author zjj
+ */
 public class SpawnPointAreaBoss extends Spawns {
 
     private MapleMonster monster;
@@ -38,31 +41,56 @@ public class SpawnPointAreaBoss extends Spawns {
     private AtomicBoolean spawned = new AtomicBoolean(false);
     private String msg;
 
+    /**
+     *
+     * @param monster
+     * @param pos1
+     * @param pos2
+     * @param pos3
+     * @param mobTime
+     * @param msg
+     */
     public SpawnPointAreaBoss(final MapleMonster monster, final Point pos1, final Point pos2, final Point pos3, final int mobTime, final String msg) {
         this.monster = monster;
         this.pos1 = pos1;
         this.pos2 = pos2;
         this.pos3 = pos3;
-        this.mobTime = (mobTime < 0 ? -1 : (mobTime * 1000));
+        this.mobTime = (mobTime < 0 ? -1 : (mobTime * 1_000));
         this.msg = msg;
         this.nextPossibleSpawn = System.currentTimeMillis();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public final MapleMonster getMonster() {
         return monster;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public final byte getCarnivalTeam() {
         return -1;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public final int getCarnivalId() {
         return -1;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public final boolean shouldSpawn() {
         if (mobTime < 0) {
@@ -74,12 +102,21 @@ public class SpawnPointAreaBoss extends Spawns {
         return nextPossibleSpawn <= System.currentTimeMillis();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public final Point getPosition() {
         final int rand = Randomizer.nextInt(3);
         return rand == 0 ? pos1 : rand == 1 ? pos2 : pos3;
     }
 
+    /**
+     *
+     * @param map
+     * @return
+     */
     @Override
     public final MapleMonster spawnMonster(final MapleMap map) {
         final MapleMonster mob = new MapleMonster(monster);
@@ -106,6 +143,10 @@ public class SpawnPointAreaBoss extends Spawns {
         return mob;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public final int getMobTime() {
         return mobTime;

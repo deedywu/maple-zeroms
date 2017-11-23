@@ -22,13 +22,16 @@ package server.life;
 
 import java.awt.Point;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import server.MapleCarnivalFactory;
 import server.MapleCarnivalFactory.MCSkill;
 import server.maps.MapleMap;
 import server.maps.MapleReactor;
 import tools.MaplePacketCreator;
 
+/**
+ *
+ * @author zjj
+ */
 public class SpawnPoint extends Spawns {
 
     private MapleMonster monster;
@@ -40,16 +43,30 @@ public class SpawnPoint extends Spawns {
     private String msg;
     private byte carnivalTeam;
 
+    /**
+     *
+     * @param monster
+     * @param pos
+     * @param mobTime
+     * @param carnivalTeam
+     * @param msg
+     */
     public SpawnPoint(final MapleMonster monster, final Point pos, final int mobTime, final byte carnivalTeam, final String msg) {
         this.monster = monster;
         this.pos = pos;
-        this.mobTime = (mobTime < 0 ? -1 : (mobTime * 1000));
+        this.mobTime = (mobTime < 0 ? -1 : (mobTime * 1_000));
         this.carnivalTeam = carnivalTeam;
         this.msg = msg;
         this.immobile = !monster.getStats().getMobile();
         this.nextPossibleSpawn = System.currentTimeMillis();
     }
 
+    /**
+     *
+     * @param monster
+     * @param pos
+     * @param mobTime
+     */
     public SpawnPoint(MapleMonster monster, Point pos, int mobTime) {
         super();
         this.monster = monster;
@@ -59,34 +76,62 @@ public class SpawnPoint extends Spawns {
         this.nextPossibleSpawn = System.currentTimeMillis();
     }
 
+    /**
+     *
+     * @param c
+     */
     public final void setLevel(int c) {
         this.level = c;
     }
 
+    /**
+     *
+     * @param c
+     */
     public final void setCarnival(int c) {
         this.carnival = c;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public final Point getPosition() {
         return pos;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public final MapleMonster getMonster() {
         return monster;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public final byte getCarnivalTeam() {
         return carnivalTeam;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public final int getCarnivalId() {
         return carnival;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public final boolean shouldSpawn() {
         if (mobTime < 0) {
@@ -100,6 +145,11 @@ public class SpawnPoint extends Spawns {
         return nextPossibleSpawn <= System.currentTimeMillis();
     }
 
+    /**
+     *
+     * @param map
+     * @return
+     */
     @Override
     public final MapleMonster spawnMonster(final MapleMap map) {
         final MapleMonster mob = new MapleMonster(monster);
@@ -124,7 +174,7 @@ public class SpawnPoint extends Spawns {
         map.spawnMonster(mob, -2);
         if (carnivalTeam > -1) {
             for (MapleReactor r : map.getAllReactorsThreadsafe()) { //parsing through everytime a monster is spawned? not good idea
-                if (r.getName().startsWith(String.valueOf(carnivalTeam)) && r.getReactorId() == (9980000 + carnivalTeam) && r.getState() < 5) {
+                if (r.getName().startsWith(String.valueOf(carnivalTeam)) && r.getReactorId() == (9_980_000 + carnivalTeam) && r.getState() < 5) {
                     final int num = Integer.parseInt(r.getName().substring(1, 2)); //00, 01, etc
                     final MCSkill skil = MapleCarnivalFactory.getInstance().getGuardian(num);
                     if (skil != null) {
@@ -139,6 +189,10 @@ public class SpawnPoint extends Spawns {
         return mob;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public final int getMobTime() {
         return mobTime;

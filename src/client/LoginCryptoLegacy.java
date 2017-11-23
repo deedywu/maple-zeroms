@@ -20,11 +20,10 @@
  */
 package client;
 
-import java.util.Random;
-
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Random;
 
 /**
  * Provides cryptographic functions for password hashing.
@@ -86,6 +85,11 @@ public class LoginCryptoLegacy {
         return (myCrypt(password, hash).equals(hash));
     }
 
+    /**
+     *
+     * @param hash
+     * @return
+     */
     public static final boolean isLegacyPassword(String hash) {
         return hash.substring(0, 3).equals("$H$");
     }
@@ -129,9 +133,7 @@ public class LoginCryptoLegacy {
             } while (--count > 0);
             out = seed.substring(0, 12);
             out += encode64(sha1Hash);
-        } catch (NoSuchAlgorithmException Ex) {
-            System.err.println("Error hashing password." + Ex);
-        } catch (UnsupportedEncodingException Ex) {
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException Ex) {
             System.err.println("Error hashing password." + Ex);
         }
         if (out == null) {
@@ -156,7 +158,7 @@ public class LoginCryptoLegacy {
     }
 
     private static final String convertToHex(byte[] data) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (int i = 0; i < data.length; i++) {
             int halfbyte = (data[i] >>> 4) & 0x0F;
             int two_halfs = 0;
@@ -172,6 +174,13 @@ public class LoginCryptoLegacy {
         return buf.toString();
     }
 
+    /**
+     *
+     * @param text
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws UnsupportedEncodingException
+     */
     public static final String encodeSHA1(final String text) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         final MessageDigest md = MessageDigest.getInstance("SHA-1");
         md.update(text.getBytes("iso-8859-1"), 0, text.length());

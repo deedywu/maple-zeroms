@@ -194,6 +194,11 @@ public class BuddyEntry {
         this.group = newGroup;
     }
 
+    /**
+     *
+     * @param buddyName
+     * @return
+     */
     public static BuddyEntry getByNameFromDB(String buddyName) {
         try {
             Connection con = DatabaseConnection.getConnection();
@@ -219,6 +224,11 @@ public class BuddyEntry {
         }
     }
 
+    /**
+     *
+     * @param buddyCharId
+     * @return
+     */
     public static BuddyEntry getByIdfFromDB(int buddyCharId) {
         try {
             Connection con = DatabaseConnection.getConnection();

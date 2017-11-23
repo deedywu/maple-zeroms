@@ -1,39 +1,29 @@
-/*
- This file is part of the OdinMS Maple Story Server
- Copyright (C) 2008 ~ 2010 Patrick Huy <patrick.huy@frz.cc>
- Matthias Butz <matze@odinms.de>
- Jan Christian Meyer <vimes@odinms.de>
 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License version 3
- as published by the Free Software Foundation. You may not use, modify
- or distribute this program under any other version of the
- GNU Affero General Public License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package handling.channel.handler;
 
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
-
 import server.maps.AnimatedMapleMapObject;
 import server.movement.*;
 import tools.data.input.SeekableLittleEndianAccessor;
-import tools.data.input.LittleEndianAccessor;
 
+/**
+ *
+ * @author zjj
+ */
 public class MovementParse {
 
     //1 = player, 2 = mob, 3 = pet, 4 = summon, 5 = dragon
+
+    /**
+     *
+     * @param lea
+     * @param kind
+     * @return
+     */
     public static final List<LifeMovementFragment> parseMovement(final SeekableLittleEndianAccessor lea, int kind) {
-        final List<LifeMovementFragment> res = new ArrayList<LifeMovementFragment>();
+        final List<LifeMovementFragment> res = new ArrayList<>();
         final byte numCommands = lea.readByte();
 
         for (byte i = 0; i < numCommands; i++) {
@@ -167,6 +157,12 @@ public class MovementParse {
         return res;
     }
 
+    /**
+     *
+     * @param movement
+     * @param target
+     * @param yoffset
+     */
     public static final void updatePosition(final List<LifeMovementFragment> movement, final AnimatedMapleMapObject target, final int yoffset) {
         for (final LifeMovementFragment move : movement) {
             if (move instanceof LifeMovement) {

@@ -23,24 +23,91 @@ package client;
 import java.io.Serializable;
 import server.Randomizer;
 
+/**
+ *
+ * @author zjj
+ */
 public enum MapleDisease implements Serializable {
 
-    POTION(0x80000000000L, true),
-    SHADOW(0x100000000000L, true), //receiving damage/moving
-    BLIND(0x200000000000L, true),
-    FREEZE(0x8000000000000L, true),
+    /**
+     *
+     */
+    POTION(0x800_0000_0000L, true),
+
+    /**
+     *
+     */
+    SHADOW(0x1000_0000_0000L, true), //receiving damage/moving
+
+    /**
+     *
+     */
+    BLIND(0x2000_0000_0000L, true),
+
+    /**
+     *
+     */
+    FREEZE(0x8_0000_0000_0000L, true),
+
+    /**
+     *
+     */
     SLOW(0x1),
+
+    /**
+     *
+     */
     MORPH(0x2),
+
+    /**
+     *
+     */
     SEDUCE(0x80),
+
+    /**
+     *
+     */
     ZOMBIFY(0x4000),
-    REVERSE_DIRECTION(0x80000),
-    WEIRD_FLAME(0x8000000),
-    STUN(0x2000000000000L),
-    POISON(0x4000000000000L),
-    SEAL(0x8000000000000L),
-    DARKNESS(0x10000000000000L),
-    WEAKEN(0x4000000000000000L),
-    CURSE(0x8000000000000000L),;
+
+    /**
+     *
+     */
+    REVERSE_DIRECTION(0x8_0000),
+
+    /**
+     *
+     */
+    WEIRD_FLAME(0x800_0000),
+
+    /**
+     *
+     */
+    STUN(0x2_0000_0000_0000L),
+
+    /**
+     *
+     */
+    POISON(0x4_0000_0000_0000L),
+
+    /**
+     *
+     */
+    SEAL(0x8_0000_0000_0000L),
+
+    /**
+     *
+     */
+    DARKNESS(0x10_0000_0000_0000L),
+
+    /**
+     *
+     */
+    WEAKEN(0x4000_0000_0000_0000L),
+
+    /**
+     *
+     */
+    CURSE(0x8000_0000_0000_0000L),;
     // 0x100 is disable skill except buff
     private static final long serialVersionUID = 0L;
     private long i;
@@ -56,14 +123,26 @@ public enum MapleDisease implements Serializable {
         this.first = first;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isFirst() {
         return first;
     }
 
+    /**
+     *
+     * @return
+     */
     public long getValue() {
         return i;
     }
 
+    /**
+     *
+     * @return
+     */
     public static final MapleDisease getRandom() {
         while (true) {
             for (MapleDisease dis : MapleDisease.values()) {
@@ -74,6 +153,11 @@ public enum MapleDisease implements Serializable {
         }
     }
 
+    /**
+     *
+     * @param skill
+     * @return
+     */
     public static final MapleDisease getBySkill(final int skill) {
         switch (skill) {
             case 120:
@@ -108,6 +192,11 @@ public enum MapleDisease implements Serializable {
         return null;
     }
 
+    /**
+     *
+     * @param skill
+     * @return
+     */
     public static final int getByDisease(final MapleDisease skill) {
         switch (skill) {
             case SEAL:

@@ -23,9 +23,8 @@ public class FixShopItemsPrice {
     private final Connection con = DatabaseConnection.getConnection();
 
     private List<Integer> loadFromDB() {
-        List<Integer> shopItemsId = new ArrayList<Integer>();
-        try {
-            PreparedStatement ps = con.prepareStatement("SELECT itemid FROM shopitems ORDER BY itemid");
+        List<Integer> shopItemsId = new ArrayList<>();
+        try (PreparedStatement ps = con.prepareStatement("SELECT itemid FROM shopitems ORDER BY itemid")) {
             ResultSet rs = ps.executeQuery();
             int itemId = 0;
             while (rs.next()) {
@@ -36,7 +35,6 @@ public class FixShopItemsPrice {
                 }
             }
             rs.close();
-            ps.close();
         } catch (SQLException e) {
             System.err.println("无法载入商店");
         }
@@ -45,28 +43,30 @@ public class FixShopItemsPrice {
 
     private void changePrice(int itemId) {
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-        try {
-            PreparedStatement ps = con.prepareStatement("SELECT shopid, price FROM shopitems WHERE itemid = ? ORDER BY price");
+        try (PreparedStatement ps = con.prepareStatement("SELECT shopid, price FROM shopitems WHERE itemid = ? ORDER BY price")) {
             ps.setInt(1, itemId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 if (ii.getPrice(itemId) > rs.getLong("price")) {
                     System.out.println("道具: " + MapleItemInformationProvider.getInstance().getName(itemId) + "道具ID: " + itemId + " 商店: " + rs.getInt("shopid") + " 价格: " + rs.getLong("price") + " 新价格:" + (long) ii.getPrice(itemId));
-                    PreparedStatement pp = con.prepareStatement("UPDATE shopitems SET price = ? WHERE itemid = ? AND shopid = ?");
-                    pp.setLong(1, (long) ii.getPrice(itemId));
-                    pp.setInt(2, itemId);
-                    pp.setInt(3, rs.getInt("shopid"));
-                    pp.execute();
-                    pp.close();
+                    try (PreparedStatement pp = con.prepareStatement("UPDATE shopitems SET price = ? WHERE itemid = ? AND shopid = ?")) {
+                        pp.setLong(1, (long) ii.getPrice(itemId));
+                        pp.setInt(2, itemId);
+                        pp.setInt(3, rs.getInt("shopid"));
+                        pp.execute();
+                    }
                 }
             }
             rs.close();
-            ps.close();
         } catch (SQLException e) {
             System.out.println("處理商品失敗, 道具ID:" + itemId);
         }
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         System.setProperty("net.sf.odinms.wzpath", System.getProperty("net.sf.odinms.wzpath"));
         FixShopItemsPrice i = new FixShopItemsPrice();

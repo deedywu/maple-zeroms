@@ -1,50 +1,33 @@
-/*
- This file is part of the OdinMS Maple Story Server
- Copyright (C) 2008 ~ 2010 Patrick Huy <patrick.huy@frz.cc> 
- Matthias Butz <matze@odinms.de>
- Jan Christian Meyer <vimes@odinms.de>
 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License version 3
- as published by the Free Software Foundation. You may not use, modify
- or distribute this program under any other version of the
- GNU Affero General Public License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package server.quest;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.io.Serializable;
-
 import client.ISkill;
-import constants.GameConstants;
-import client.inventory.InventoryException;
 import client.MapleCharacter;
-import client.inventory.MapleInventoryType;
 import client.MapleQuestStatus;
 import client.MapleStat;
 import client.SkillFactory;
+import client.inventory.InventoryException;
+import client.inventory.MapleInventoryType;
+import constants.GameConstants;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import provider.MapleData;
 import provider.MapleDataTool;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
 import server.Randomizer;
 import tools.MaplePacketCreator;
-import tools.packet.UIPacket;
 
+/**
+ *
+ * @author zjj
+ */
 public class MapleQuestAction implements Serializable {
 
-    private static final long serialVersionUID = 9179541993413738569L;
+    private static final long serialVersionUID = 9_179_541_993_413_738_569L;
     private MapleQuestActionType type;
     private MapleData data;
     private MapleQuest quest;
@@ -90,6 +73,12 @@ public class MapleQuestAction implements Serializable {
         return true;
     }
 
+    /**
+     *
+     * @param c
+     * @param itemid
+     * @return
+     */
     public final boolean RestoreLostItem(final MapleCharacter c, final int itemid) {
         if (type == MapleQuestActionType.item) {
             int retitem;
@@ -107,6 +96,11 @@ public class MapleQuestAction implements Serializable {
         return false;
     }
 
+    /**
+     *
+     * @param c
+     * @param extSelection
+     */
     public void runStart(MapleCharacter c, Integer extSelection) {
         MapleQuestStatus status;
         switch (type) {
@@ -119,7 +113,7 @@ public class MapleQuestAction implements Serializable {
                 break;
             case item:
                 // first check for randomness in item selection
-                Map<Integer, Integer> props = new HashMap<Integer, Integer>();
+                Map<Integer, Integer> props = new HashMap<>();
                 MapleData prop;
                 for (MapleData iEntry : data.getChildren()) {
                     prop = iEntry.getChildByPath("prop");
@@ -158,9 +152,9 @@ public class MapleQuestAction implements Serializable {
                         }
                         c.getClient().getSession().write(MaplePacketCreator.getShowItemGain(id, count, true));
                     } else { // add items
-                        final int period = MapleDataTool.getInt(iEntry.getChildByPath("period"), 0) / 1440; //im guessing.
+                        final int period = MapleDataTool.getInt(iEntry.getChildByPath("period"), 0) / 1_440; //im guessing.
                         final String name = MapleItemInformationProvider.getInstance().getName(id);
-                        if (id / 10000 == 114 && name != null && name.length() > 0) { //medal
+                        if (id / 10_000 == 114 && name != null && name.length() > 0) { //medal
                             final String msg = "你已獲得稱號 <" + name + ">";
                             c.dropMessage(5, msg);
                             c.dropMessage(5, msg);
@@ -266,11 +260,17 @@ public class MapleQuestAction implements Serializable {
         }
     }
 
+    /**
+     *
+     * @param c
+     * @param extSelection
+     * @return
+     */
     public boolean checkEnd(MapleCharacter c, Integer extSelection) {
         switch (type) {
             case item: {
                 // first check for randomness in item selection
-                final Map<Integer, Integer> props = new HashMap<Integer, Integer>();
+                final Map<Integer, Integer> props = new HashMap<>();
 
                 for (MapleData iEntry : data.getChildren()) {
                     final MapleData prop = iEntry.getChildByPath("prop");
@@ -364,6 +364,11 @@ public class MapleQuestAction implements Serializable {
         return true;
     }
 
+    /**
+     *
+     * @param c
+     * @param extSelection
+     */
     public void runEnd(MapleCharacter c, Integer extSelection) {
         switch (type) {
             case exp: {
@@ -372,7 +377,7 @@ public class MapleQuestAction implements Serializable {
             }
             case item: {
                 // first check for randomness in item selection
-                Map<Integer, Integer> props = new HashMap<Integer, Integer>();
+                Map<Integer, Integer> props = new HashMap<>();
 
                 for (MapleData iEntry : data.getChildren()) {
                     final MapleData prop = iEntry.getChildByPath("prop");
@@ -406,9 +411,9 @@ public class MapleQuestAction implements Serializable {
                         MapleInventoryManipulator.removeById(c.getClient(), GameConstants.getInventoryType(id), id, (count * -1), true, false);
                         c.getClient().getSession().write(MaplePacketCreator.getShowItemGain(id, count, true));
                     } else { // add items
-                        final int period = MapleDataTool.getInt(iEntry.getChildByPath("period"), 0) / 1440;
+                        final int period = MapleDataTool.getInt(iEntry.getChildByPath("period"), 0) / 1_440;
                         final String name = MapleItemInformationProvider.getInstance().getName(id);
-                        if (id / 10000 == 114 && name != null && name.length() > 0) { //medal
+                        if (id / 10_000 == 114 && name != null && name.length() > 0) { //medal
                             final String msg = "You have attained title <" + name + ">";
                             c.dropMessage(5, msg);
                             c.dropMessage(5, msg);
@@ -497,7 +502,7 @@ public class MapleQuestAction implements Serializable {
     }
 
     private static List<Integer> getJobBy5ByteEncoding(int encoded) {
-        List<Integer> ret = new ArrayList<Integer>();
+        List<Integer> ret = new ArrayList<>();
         if ((encoded & 0x1) != 0) {
             ret.add(0);
         }
@@ -517,48 +522,52 @@ public class MapleQuestAction implements Serializable {
             ret.add(500);
         }
         if ((encoded & 0x400) != 0) {
-            ret.add(1000);
+            ret.add(1_000);
         }
         if ((encoded & 0x800) != 0) {
-            ret.add(1100);
+            ret.add(1_100);
         }
         if ((encoded & 0x1000) != 0) {
-            ret.add(1200);
+            ret.add(1_200);
         }
         if ((encoded & 0x2000) != 0) {
-            ret.add(1300);
+            ret.add(1_300);
         }
         if ((encoded & 0x4000) != 0) {
-            ret.add(1400);
+            ret.add(1_400);
         }
         if ((encoded & 0x8000) != 0) {
-            ret.add(1500);
+            ret.add(1_500);
         }
-        if ((encoded & 0x20000) != 0) {
-            ret.add(2001); //im not sure of this one
-            ret.add(2200);
+        if ((encoded & 0x2_0000) != 0) {
+            ret.add(2_001); //im not sure of this one
+            ret.add(2_200);
         }
-        if ((encoded & 0x100000) != 0) {
-            ret.add(2000);
-            ret.add(2001); //?
+        if ((encoded & 0x10_0000) != 0) {
+            ret.add(2_000);
+            ret.add(2_001); //?
         }
-        if ((encoded & 0x200000) != 0) {
-            ret.add(2100);
+        if ((encoded & 0x20_0000) != 0) {
+            ret.add(2_100);
         }
-        if ((encoded & 0x400000) != 0) {
-            ret.add(2001); //?
-            ret.add(2200);
+        if ((encoded & 0x40_0000) != 0) {
+            ret.add(2_001); //?
+            ret.add(2_200);
         }
 
-        if ((encoded & 0x40000000) != 0) { //i haven't seen any higher than this o.o
-            ret.add(3000);
-            ret.add(3200);
-            ret.add(3300);
-            ret.add(3500);
+        if ((encoded & 0x4000_0000) != 0) { //i haven't seen any higher than this o.o
+            ret.add(3_000);
+            ret.add(3_200);
+            ret.add(3_300);
+            ret.add(3_500);
         }
         return ret;
     }
 
+    /**
+     *
+     * @return
+     */
     public MapleQuestActionType getType() {
         return type;
     }

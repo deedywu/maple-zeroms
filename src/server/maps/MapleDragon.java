@@ -30,40 +30,68 @@ import client.MapleCharacter;
 import client.MapleClient;
 import tools.MaplePacketCreator;
 
+/**
+ *
+ * @author zjj
+ */
 public class MapleDragon extends AbstractAnimatedMapleMapObject {
 
     private int owner;
     private int jobid;
 
+    /**
+     *
+     * @param owner
+     */
     public MapleDragon(MapleCharacter owner) {
         super();
         this.owner = owner.getId();
         this.jobid = owner.getJob();
-        if (jobid < 2200 || jobid > 2218) {
+        if (jobid < 2_200 || jobid > 2_218) {
             throw new RuntimeException("Trying to create a dragon for a non-Evan");
         }
         setPosition(owner.getPosition());
         setStance(4);
     }
 
+    /**
+     *
+     * @param client
+     */
     @Override
     public void sendSpawnData(MapleClient client) {
         // client.getSession().write(MaplePacketCreator.spawnDragon(this));
     }
 
+    /**
+     *
+     * @param client
+     */
     @Override
     public void sendDestroyData(MapleClient client) {
         client.getSession().write(MaplePacketCreator.removeDragon(this.owner));
     }
 
+    /**
+     *
+     * @return
+     */
     public int getOwner() {
         return this.owner;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getJobId() {
         return this.jobid;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public MapleMapObjectType getType() {
         return MapleMapObjectType.SUMMON;

@@ -25,8 +25,19 @@ import handling.MaplePacket;
 import handling.SendPacketOpcode;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
+/**
+ *
+ * @author zjj
+ */
 public class MonsterBookPacket {
 
+    /**
+     *
+     * @param full
+     * @param cardid
+     * @param level
+     * @return
+     */
     public static MaplePacket addCard(boolean full, int cardid, int level) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -46,6 +57,11 @@ public class MonsterBookPacket {
         return mplew.getPacket();
     }
 
+    /**
+     *
+     * @param itemid
+     * @return
+     */
     public static MaplePacket showGainCard(final int itemid) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -58,6 +74,11 @@ public class MonsterBookPacket {
         return mplew.getPacket();
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     */
     public static MaplePacket showForeginCardEffect(int id) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -71,6 +92,11 @@ public class MonsterBookPacket {
         return mplew.getPacket();
     }
 
+    /**
+     *
+     * @param cardid
+     * @return
+     */
     public static MaplePacket changeCover(int cardid) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 

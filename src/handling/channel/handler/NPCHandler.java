@@ -20,37 +20,46 @@
  */
 package handling.channel.handler;
 
-import client.inventory.Equip;
-import client.inventory.IItem;
-import client.inventory.MapleInventoryType;
-import client.MapleClient;
 import client.MapleCharacter;
-import constants.GameConstants;
+import client.MapleClient;
 import client.MapleQuestStatus;
 import client.RockPaperScissors;
+import client.inventory.Equip;
+import client.inventory.IItem;
 import client.inventory.ItemFlag;
+import client.inventory.MapleInventoryType;
+import constants.GameConstants;
 import handling.SendPacketOpcode;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import scripting.NPCConversationManager;
+import scripting.NPCScriptManager;
 import server.AutobanManager;
-import server.MapleShop;
 import server.MapleInventoryManipulator;
+import server.MapleItemInformationProvider;
+import server.MapleShop;
 import server.MapleStorage;
 import server.life.MapleNPC;
-import server.quest.MapleQuest;
-import scripting.NPCScriptManager;
-import scripting.NPCConversationManager;
-import server.MapleItemInformationProvider;
 import server.maps.MapleMap;
+import server.quest.MapleQuest;
 import tools.ArrayMap;
 import tools.MaplePacketCreator;
 import tools.Pair;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
+/**
+ *
+ * @author zjj
+ */
 public class NPCHandler {
 
+    /**
+     *
+     * @param slea
+     * @param c
+     */
     public static final void NPCAnimation(final SeekableLittleEndianAccessor slea, final MapleClient c) {
 //        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 //        mplew.writeShort(SendPacketOpcode.NPC_ACTION.getValue());
@@ -86,14 +95,14 @@ public class NPCHandler {
         }
 
         switch (npc.getId()) {
-            case 1010100:
-            case 1012003:
-            case 1012106:
-            case 1052103:
-            case 1061100:
-            case 1032004:
-            case 2103:
-            case 10000:
+            case 1_010_100:
+            case 1_012_003:
+            case 1_012_106:
+            case 1_052_103:
+            case 1_061_100:
+            case 1_032_004:
+            case 2_103:
+            case 10_000:
                 return;
         }
 
@@ -120,6 +129,12 @@ public class NPCHandler {
 
     }
 
+    /**
+     *
+     * @param slea
+     * @param c
+     * @param chr
+     */
     public static void NPCShop(final SeekableLittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
         final byte bmode = slea.readByte();
         if (chr == null) {
@@ -164,6 +179,12 @@ public class NPCHandler {
         }
     }
 
+    /**
+     *
+     * @param slea
+     * @param c
+     * @param chr
+     */
     public static void NPCTalk(final SeekableLittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
         if (chr == null || chr.getMap() == null) {
             return;
@@ -194,11 +215,17 @@ public class NPCHandler {
         }
     }
 
+    /**
+     *
+     * @param slea
+     * @param c
+     * @param chr
+     */
     public static final void QuestAction(final SeekableLittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
         final byte action = slea.readByte();
         short quest = slea.readShort();
         if (quest < 0) { //questid 50000 and above, WILL cast to negative, this was tested.
-            quest += 65536; //probably not the best fix, but whatever
+            quest += 65_536; //probably not the best fix, but whatever
         }
         if (chr == null) {
             return;
@@ -276,6 +303,12 @@ public class NPCHandler {
         }
     }
 
+    /**
+     *
+     * @param slea
+     * @param c
+     * @param chr
+     */
     public static final void Storage(final SeekableLittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
         final MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         final byte mode = slea.readByte();
@@ -303,8 +336,8 @@ public class NPCHandler {
                     }
                     storage.sendTakenOut(c, GameConstants.getInventoryType(item.getItemId()));
                 } else {
-                    //AutobanManager.getInstance().autoban(c, "Trying to take out item from storage which does not exist.");
-                    return;
+                //AutobanManager.getInstance().autoban(c, "Trying to take out item from storage which does not exist.");
+
                 }
                 break;
             }
@@ -359,7 +392,7 @@ public class NPCHandler {
                         item.setQuantity(quantity);
                         storage.store(item);
                     } else {
-                        AutobanManager.getInstance().addPoints(c, 1000, 0, "Trying to store non-matching itemid (" + itemId + "/" + item.getItemId() + ") or quantity not in posession (" + quantity + "/" + item.getQuantity() + ")");
+                        AutobanManager.getInstance().addPoints(c, 1_000, 0, "Trying to store non-matching itemid (" + itemId + "/" + item.getItemId() + ") or quantity not in posession (" + quantity + "/" + item.getQuantity() + ")");
                         return;
                     }
                 }
@@ -386,7 +419,7 @@ public class NPCHandler {
                     storage.setMeso(storageMesos - meso);
                     chr.gainMeso(meso, false, true, false);
                 } else {
-                    AutobanManager.getInstance().addPoints(c, 1000, 0, "Trying to store or take out unavailable amount of mesos (" + meso + "/" + storage.getMeso() + "/" + c.getPlayer().getMeso() + ")");
+                    AutobanManager.getInstance().addPoints(c, 1_000, 0, "Trying to store or take out unavailable amount of mesos (" + meso + "/" + storage.getMeso() + "/" + c.getPlayer().getMeso() + ")");
                     return;
                 }
                 storage.sendMeso(c);
@@ -403,14 +436,23 @@ public class NPCHandler {
         }
     }
 
+    /**
+     *
+     * @param c
+     */
     public static final void MarrageNpc(MapleClient c) {
         if (c != null && c.getPlayer() != null) {
-            if (c.getPlayer().getMapId() == 700000100) {
-                c.getPlayer().changeMap(700000200);
+            if (c.getPlayer().getMapId() == 700_000_100) {
+                c.getPlayer().changeMap(700_000_200);
             }
         }
     }
 
+    /**
+     *
+     * @param slea
+     * @param c
+     */
     public static final void NPCMoreTalk(final SeekableLittleEndianAccessor slea, final MapleClient c) {
         final byte lastMsg = slea.readByte(); // 00 (last msg type I think)
         final byte action = slea.readByte(); // 00 = end chat, 01 == follow
@@ -424,12 +466,16 @@ public class NPCHandler {
         if (lastMsg == 2) {
             if (action != 0) {
                 cm.setGetText(slea.readMapleAsciiString());
-                if (cm.getType() == 0) {
-                    NPCScriptManager.getInstance().startQuest(c, action, lastMsg, -1);
-                } else if (cm.getType() == 1) {
-                    NPCScriptManager.getInstance().endQuest(c, action, lastMsg, -1);
-                } else {
-                    NPCScriptManager.getInstance().action(c, action, lastMsg, -1);
+                switch (cm.getType()) {
+                    case 0:
+                        NPCScriptManager.getInstance().startQuest(c, action, lastMsg, -1);
+                        break;
+                    case 1:
+                        NPCScriptManager.getInstance().endQuest(c, action, lastMsg, -1);
+                        break;
+                    default:
+                        NPCScriptManager.getInstance().action(c, action, lastMsg, -1);
+                        break;
                 }
             } else {
                 cm.dispose();
@@ -446,12 +492,16 @@ public class NPCHandler {
                 return;//h4x
             }
             if (selection >= -1 && action != -1) {
-                if (cm.getType() == 0) {
-                    NPCScriptManager.getInstance().startQuest(c, action, lastMsg, selection);
-                } else if (cm.getType() == 1) {
-                    NPCScriptManager.getInstance().endQuest(c, action, lastMsg, selection);
-                } else {
-                    NPCScriptManager.getInstance().action(c, action, lastMsg, selection);
+                switch (cm.getType()) {
+                    case 0:
+                        NPCScriptManager.getInstance().startQuest(c, action, lastMsg, selection);
+                        break;
+                    case 1:
+                        NPCScriptManager.getInstance().endQuest(c, action, lastMsg, selection);
+                        break;
+                    default:
+                        NPCScriptManager.getInstance().action(c, action, lastMsg, selection);
+                        break;
                 }
             } else {
                 cm.dispose();
@@ -459,8 +509,12 @@ public class NPCHandler {
         }
     }
 
+    /**
+     *
+     * @param c
+     */
     public static final void repairAll(final MapleClient c) {
-        if (c.getPlayer().getMapId() != 240000000) {
+        if (c.getPlayer().getMapId() != 240_000_000) {
             return;
         }
         Equip eq;
@@ -468,7 +522,7 @@ public class NPCHandler {
         int price = 0;
         Map<String, Integer> eqStats;
         final MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-        final Map<Equip, Integer> eqs = new ArrayMap<Equip, Integer>();
+        final Map<Equip, Integer> eqs = new ArrayMap<>();
         final MapleInventoryType[] types = {MapleInventoryType.EQUIP, MapleInventoryType.EQUIPPED};
         for (MapleInventoryType type : types) {
             for (IItem item : c.getPlayer().getInventory(type)) {
@@ -497,8 +551,13 @@ public class NPCHandler {
         }
     }
 
+    /**
+     *
+     * @param slea
+     * @param c
+     */
     public static final void repair(final SeekableLittleEndianAccessor slea, final MapleClient c) {
-        if (c.getPlayer().getMapId() != 240000000 || slea.available() < 4) { //leafre for now
+        if (c.getPlayer().getMapId() != 240_000_000 || slea.available() < 4) { //leafre for now
             return;
         }
         final int position = slea.readInt(); //who knows why this is a int
@@ -526,6 +585,11 @@ public class NPCHandler {
         c.getPlayer().forceReAddItem(eq.copy(), type);
     }
 
+    /**
+     *
+     * @param slea
+     * @param c
+     */
     public static final void UpdateQuest(final SeekableLittleEndianAccessor slea, final MapleClient c) {
         final MapleQuest quest = MapleQuest.getInstance(slea.readShort());
         if (quest != null) {
@@ -533,6 +597,11 @@ public class NPCHandler {
         }
     }
 
+    /**
+     *
+     * @param slea
+     * @param c
+     */
     public static final void UseItemQuest(final SeekableLittleEndianAccessor slea, final MapleClient c) {
         final short slot = slea.readShort();
         final int itemId = slea.readInt();
@@ -544,7 +613,7 @@ public class NPCHandler {
         Pair<Integer, List<Integer>> questItemInfo = null;
         boolean found = false;
         for (IItem i : c.getPlayer().getInventory(MapleInventoryType.ETC)) {
-            if (i.getItemId() / 10000 == 422) {
+            if (i.getItemId() / 10_000 == 422) {
                 questItemInfo = ii.questItemInfo(i.getItemId());
                 if (questItemInfo != null && questItemInfo.getLeft() == qid && questItemInfo.getRight().contains(itemId)) {
                     found = true;
@@ -563,8 +632,13 @@ public class NPCHandler {
         }
     }
 
+    /**
+     *
+     * @param slea
+     * @param c
+     */
     public static final void RPSGame(final SeekableLittleEndianAccessor slea, final MapleClient c) {
-        if (slea.available() == 0 || !c.getPlayer().getMap().containsNPC(9000019)) {
+        if (slea.available() == 0 || !c.getPlayer().getMap().containsNPC(9_000_019)) {
             if (c.getPlayer().getRPS() != null) {
                 c.getPlayer().getRPS().dispose(c);
             }
@@ -577,7 +651,7 @@ public class NPCHandler {
                 if (c.getPlayer().getRPS() != null) {
                     c.getPlayer().getRPS().reward(c);
                 }
-                if (c.getPlayer().getMeso() >= 1000) {
+                if (c.getPlayer().getMeso() >= 1_000) {
                     c.getPlayer().setRPS(new RockPaperScissors(c, mode));
                 } else {
                     c.getSession().write(MaplePacketCreator.getRPSMode((byte) 0x08, -1, -1, -1));

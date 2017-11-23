@@ -1,35 +1,18 @@
-/*
- This file is part of the OdinMS Maple Story Server
- Copyright (C) 2008 ~ 2010 Patrick Huy <patrick.huy@frz.cc> 
- Matthias Butz <matze@odinms.de>
- Jan Christian Meyer <vimes@odinms.de>
 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License version 3
- as published by the Free Software Foundation. You may not use, modify
- or distribute this program under any other version of the
- GNU Affero General Public License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package server.maps;
-
-import java.awt.Point;
 
 import client.MapleCharacter;
 import client.MapleClient;
-import constants.GameConstants;
 import client.anticheat.CheatingOffense;
-import handling.channel.ChannelServer;
+import constants.GameConstants;
+import java.awt.Point;
 import server.MapleStatEffect;
 import tools.MaplePacketCreator;
 
+/**
+ *
+ * @author zjj
+ */
 public class MapleSummon extends AbstractAnimatedMapleMapObject {
 
     private final int ownerid, skillLevel, ownerLevel, skill;
@@ -44,6 +27,13 @@ public class MapleSummon extends AbstractAnimatedMapleMapObject {
     private byte Summon_tickResetCount;
     private long Server_ClientSummonTickDiff;
 
+    /**
+     *
+     * @param owner
+     * @param skill
+     * @param pos
+     * @param movementType
+     */
     public MapleSummon(final MapleCharacter owner, final MapleStatEffect skill, final Point pos, final SummonMovementType movementType) {
         super();
         this.ownerid = owner.getId();
@@ -66,117 +56,193 @@ public class MapleSummon extends AbstractAnimatedMapleMapObject {
         }
     }
 
+    /**
+     *
+     * @param client
+     */
     @Override
     public final void sendSpawnData(final MapleClient client) {
     }
 
+    /**
+     *
+     * @param client
+     */
     @Override
     public final void sendDestroyData(final MapleClient client) {
         client.getSession().write(MaplePacketCreator.removeSummon(this, false));
     }
 
+    /**
+     *
+     * @param map
+     */
     public final void updateMap(final MapleMap map) {
         this.map = map;
     }
 
+    /**
+     *
+     * @return
+     */
     public final MapleCharacter getOwner() {
         return map.getCharacterById(ownerid);
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getFh() {
         return fh;
     }
 
+    /**
+     *
+     * @param fh
+     */
     public final void setFh(final int fh) {
         this.fh = fh;
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getOwnerId() {
         return ownerid;
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getOwnerLevel() {
         return ownerLevel;
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getSkill() {
         return skill;
     }
 
+    /**
+     *
+     * @return
+     */
     public final short getHP() {
         return hp;
     }
 
+    /**
+     *
+     * @param delta
+     */
     public final void addHP(final short delta) {
         this.hp += delta;
     }
 
+    /**
+     *
+     * @return
+     */
     public final SummonMovementType getMovementType() {
         return movementType;
     }
 
+    /**
+     *
+     * @return
+     */
     public final boolean isPuppet() {
         switch (skill) {
-            case 3111002:
-            case 3211002:
-            case 13111004:
-            case 4341006:
-            case 33111003:
+            case 3_111_002:
+            case 3_211_002:
+            case 13_111_004:
+            case 4_341_006:
+            case 33_111_003:
                 return true;
         }
         return false;
     }
 
+    /**
+     *
+     * @return
+     */
     public final boolean isGaviota() {
-        return skill == 5211002;
+        return skill == 5_211_002;
     }
 
+    /**
+     *
+     * @return
+     */
     public final boolean isBeholder() {
-        return skill == 1321007;
+        return skill == 1_321_007;
     }
 
+    /**
+     *
+     * @return
+     */
     public final boolean isMultiSummon() {
-        return skill == 5211002 || skill == 5211001 || skill == 5220002 || skill == 32111006;
+        return skill == 5_211_002 || skill == 5_211_001 || skill == 5_220_002 || skill == 32_111_006;
     }
 
+    /**
+     *
+     * @return
+     */
     public final boolean isSummon() {
         switch (skill) {
-            case 12111004:
-            case 1321007: //beholder
-            case 2311006:
-            case 2321003:
-            case 2121005:
-            case 2221005:
-            case 5211001: // Pirate octopus summon
-            case 5211002:
-            case 5220002: // wrath of the octopi
-            case 13111004:
-            case 11001004:
-            case 12001004:
-            case 13001004:
-            case 14001005:
-            case 15001004:
+            case 12_111_004:
+            case 1_321_007: //beholder
+            case 2_311_006:
+            case 2_321_003:
+            case 2_121_005:
+            case 2_221_005:
+            case 5_211_001: // Pirate octopus summon
+            case 5_211_002:
+            case 5_220_002: // wrath of the octopi
+            case 13_111_004:
+            case 11_001_004:
+            case 12_001_004:
+            case 13_001_004:
+            case 14_001_005:
+            case 15_001_004:
                 return true;
         }
         return false;
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getSkillLevel() {
         return skillLevel;
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getSummonType() {
         if (isPuppet()) {
             return 0;
         }
         switch (skill) {
-            case 1321007:
+            case 1_321_007:
                 return 2;
-            case 35111001: //satellite.
-            case 35111009:
-            case 35111010:
+            case 35_111_001: //satellite.
+            case 35_111_009:
+            case 35_111_010:
                 return 3;
-            case 35121009: //bots n. tots
+            case 35_121_009: //bots n. tots
                 return 4;
             //case 4111007: //TEMP
             //	return 6; //TEMP
@@ -184,11 +250,20 @@ public class MapleSummon extends AbstractAnimatedMapleMapObject {
         return 1;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public final MapleMapObjectType getType() {
         return MapleMapObjectType.SUMMON;
     }
 
+    /**
+     *
+     * @param chr
+     * @param tickcount
+     */
     public final void CheckSummonAttackFrequency(final MapleCharacter chr, final int tickcount) {
         final int tickdifference = (tickcount - lastSummonTickCount);
         if (tickdifference < GameConstants.getSummonAttackDelay(skill)) {
@@ -207,10 +282,18 @@ public class MapleSummon extends AbstractAnimatedMapleMapObject {
         lastSummonTickCount = tickcount;
     }
 
+    /**
+     *
+     * @return
+     */
     public final boolean isChangedMap() {
         return changedMap;
     }
 
+    /**
+     *
+     * @param cm
+     */
     public final void setChangedMap(boolean cm) {
         this.changedMap = cm;
     }

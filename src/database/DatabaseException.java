@@ -22,14 +22,27 @@ package database;
 
 import java.sql.SQLException;
 
+/**
+ *
+ * @author zjj
+ */
 public class DatabaseException extends RuntimeException {
 
-    private static final long serialVersionUID = -420103154764822555L;
+    private static final long serialVersionUID = -420_103_154_764_822_555L;
 
+    /**
+     *
+     * @param msg
+     */
     public DatabaseException(String msg) {
         super(msg);
     }
 
+    /**
+     *
+     * @param message
+     * @param cause
+     */
     public DatabaseException(String message, Throwable cause) {
         super(message, cause);
     }

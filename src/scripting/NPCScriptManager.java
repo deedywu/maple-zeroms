@@ -20,29 +20,48 @@
  */
 package scripting;
 
-import java.util.Map;
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-
 import client.MapleClient;
+import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.locks.Lock;
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptException;
 import server.quest.MapleQuest;
 import tools.FileoutputUtil;
 
+/**
+ *
+ * @author zjj
+ */
 public class NPCScriptManager extends AbstractScriptManager {
 
-    private final Map<MapleClient, NPCConversationManager> cms = new WeakHashMap<MapleClient, NPCConversationManager>();
+    private final Map<MapleClient, NPCConversationManager> cms = new WeakHashMap<>();
     private static final NPCScriptManager instance = new NPCScriptManager();
 
+    /**
+     *
+     * @return
+     */
     public static final NPCScriptManager getInstance() {
         return instance;
     }
 
+    /**
+     *
+     * @param c
+     * @param npc
+     */
     public void start(MapleClient c, int npc) {
         start(c, npc, 0);
     }
 
+    /**
+     *
+     * @param c
+     * @param npc
+     * @param wh
+     */
     public final void start(final MapleClient c, final int npc, int wh) {
         final Lock lock = c.getNPCLock();
         lock.lock();
@@ -103,7 +122,7 @@ public class NPCScriptManager extends AbstractScriptManager {
                 c.getPlayer().dropMessage(5, "你现在已经假死请使用@ea");
             }
 
-        } catch (final Exception e) {
+        } catch (final ScriptException | NoSuchMethodException e) {
             System.err.println("NPC 腳本錯誤, 它ID為 : " + npc + "_" + wh + "." + e);
             if (c.getPlayer().isGM()) {
                 c.getPlayer().dropMessage("[系統提示] NPC " + npc + "_" + wh + "腳本錯誤 " + e + "");
@@ -115,10 +134,25 @@ public class NPCScriptManager extends AbstractScriptManager {
         }
     }
 
+    /**
+     *
+     * @param c
+     * @param mode
+     * @param type
+     * @param selection
+     */
     public void action(final MapleClient c, final byte mode, final byte type, final int selection) {
         action(c, (byte) mode, (byte) type, selection, 0);
     }
 
+    /**
+     *
+     * @param c
+     * @param mode
+     * @param type
+     * @param selection
+     * @param wh
+     */
     public final void action(final MapleClient c, final byte mode, final byte type, final int selection, int wh) {
         if (mode != -1) {
             final NPCConversationManager cm = cms.get(c);
@@ -136,7 +170,7 @@ public class NPCScriptManager extends AbstractScriptManager {
                 } else {
                     cm.getIv().invokeFunction("action", mode, type, selection, wh);
                 }
-            } catch (final Exception e) {
+            } catch (final ScriptException | NoSuchMethodException e) {
                 if (c.getPlayer().isGM()) {
                     c.getPlayer().dropMessage("[系統提示] NPC " + cm.getNpc() + "_" + wh + "腳本錯誤 " + e + "");
                 }
@@ -149,6 +183,12 @@ public class NPCScriptManager extends AbstractScriptManager {
         }
     }
 
+    /**
+     *
+     * @param c
+     * @param npc
+     * @param quest
+     */
     public final void startQuest(final MapleClient c, final int npc, final int quest) {
         if (!MapleQuest.getInstance(quest).canStart(c.getPlayer(), null)) {
             return;
@@ -177,7 +217,7 @@ public class NPCScriptManager extends AbstractScriptManager {
                 dispose(c);
                 // c.getPlayer().dropMessage(5, "You already are talking to an NPC. Use @ea if this is not intended.");
             }
-        } catch (final Exception e) {
+        } catch (final ScriptException | NoSuchMethodException e) {
             System.err.println("Error executing Quest script. (" + quest + ")..NPCID: " + npc + ":" + e);
             FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Error executing Quest script. (" + quest + ")..NPCID: " + npc + ":" + e);
             dispose(c);
@@ -186,6 +226,13 @@ public class NPCScriptManager extends AbstractScriptManager {
         }
     }
 
+    /**
+     *
+     * @param c
+     * @param mode
+     * @param type
+     * @param selection
+     */
     public final void startQuest(final MapleClient c, final byte mode, final byte type, final int selection) {
         final Lock lock = c.getNPCLock();
         final NPCConversationManager cm = cms.get(c);
@@ -199,7 +246,7 @@ public class NPCScriptManager extends AbstractScriptManager {
             } else {
                 cm.getIv().invokeFunction("start", mode, type, selection);
             }
-        } catch (Exception e) {
+        } catch (ScriptException | NoSuchMethodException e) {
             if (c.getPlayer().isGM()) {
                 c.getPlayer().dropMessage("[系統提示]任務腳本:" + cm.getQuest() + "錯誤...NPC: " + cm.getNpc() + ":" + e);
             }
@@ -211,6 +258,13 @@ public class NPCScriptManager extends AbstractScriptManager {
         }
     }
 
+    /**
+     *
+     * @param c
+     * @param npc
+     * @param quest
+     * @param customEnd
+     */
     public final void endQuest(final MapleClient c, final int npc, final int quest, final boolean customEnd) {
         if (!customEnd && !MapleQuest.getInstance(quest).canComplete(c.getPlayer(), null)) {
             return;
@@ -236,7 +290,7 @@ public class NPCScriptManager extends AbstractScriptManager {
             } else {
                 // c.getPlayer().dropMessage(5, "You already are talking to an NPC. Use @ea if this is not intended.");
             }
-        } catch (Exception e) {
+        } catch (ScriptException | NoSuchMethodException e) {
             if (c.getPlayer().isGM()) {
                 c.getPlayer().dropMessage("[系統提示]任務腳本:" + quest + "錯誤...NPC: " + quest + ":" + e);
             }
@@ -248,6 +302,13 @@ public class NPCScriptManager extends AbstractScriptManager {
         }
     }
 
+    /**
+     *
+     * @param c
+     * @param mode
+     * @param type
+     * @param selection
+     */
     public final void endQuest(final MapleClient c, final byte mode, final byte type, final int selection) {
         final Lock lock = c.getNPCLock();
         final NPCConversationManager cm = cms.get(c);
@@ -261,7 +322,7 @@ public class NPCScriptManager extends AbstractScriptManager {
             } else {
                 cm.getIv().invokeFunction("end", mode, type, selection);
             }
-        } catch (Exception e) {
+        } catch (ScriptException | NoSuchMethodException e) {
             if (c.getPlayer().isGM()) {
                 c.getPlayer().dropMessage("[系統提示]任務腳本:" + cm.getQuest() + "錯誤...NPC: " + cm.getNpc() + ":" + e);
             }
@@ -273,6 +334,10 @@ public class NPCScriptManager extends AbstractScriptManager {
         }
     }
 
+    /**
+     *
+     * @param c
+     */
     public final void dispose(final MapleClient c) {
         final NPCConversationManager npccm = cms.get(c);
         if (npccm != null) {
@@ -294,6 +359,11 @@ public class NPCScriptManager extends AbstractScriptManager {
         }
     }
 
+    /**
+     *
+     * @param c
+     * @return
+     */
     public final NPCConversationManager getCM(final MapleClient c) {
         return cms.get(c);
     }

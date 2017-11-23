@@ -22,7 +22,6 @@ package tools;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -43,6 +42,10 @@ public class MapleAESOFB {
     private short mapleVersion;
     //private final static SecretKeySpec skey = new SecretKeySpec(new byte[]{0x13, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, (byte) 0xB4, 0x00, 0x00, 0x00, 0x1B, 0x00, 0x00, 0x00, 0x0F, 0x00, 0x00, 0x00, 0x33, 0x00, 0x00, 0x00, 0x52, 0x00, 0x00, 0x00}, "AES");
     private final static SecretKeySpec skey = new SecretKeySpec(new byte[]{0x13, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, (byte) 0xB4, 0x00, 0x00, 0x00, 0x1B, 0x00, 0x00, 0x00, 0x0F, 0x00, 0x00, 0x00, 0x33, 0x00, 0x00, 0x00, 0x52, 0x00, 0x00, 0x00}, "AES");
+
+    /**
+     *
+     */
     public static final byte[] MAPLE_AES_KEY = {0x13, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, (byte) 0xB4, 0x00, 0x00, 0x00, 0x1B, 0x00, 0x00, 0x00, 0x0F, 0x00, 0x00, 0x00, 0x33, 0x00, 0x00, 0x00, 0x52, 0x00, 0x00, 0x00};
     // KMS
 //    {0x13, 0x00, 0x00, 0x00, 0x52, 0x00, 0x00, 0x00, 0x2A, 0x00, 0x00, 0x00, 0x5B, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x60, 0x00, 0x00, 0x00}
@@ -143,9 +146,7 @@ public class MapleAESOFB {
         try {
             cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.ENCRYPT_MODE, skey);
-        } catch (NoSuchAlgorithmException e) {
-            System.err.println("ERROR" + e);
-        } catch (NoSuchPaddingException e) {
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             System.err.println("ERROR" + e);
         } catch (InvalidKeyException e) {
             System.err.println("Error initalizing the encryption cipher.  Make sure you're using the Unlimited Strength cryptography jar files.");
@@ -193,10 +194,7 @@ public class MapleAESOFB {
                 for (int x = start; x < (start + llength); x++) {
                     if ((x - start) % myIv.length == 0) {
                         byte[] newIv = cipher.doFinal(myIv);
-                        for (int j = 0; j < myIv.length; j++) {
-                            myIv[j] = newIv[j];
-                        }
-                        // System.arraycopy(newIv, 0, myIv, 0, myIv.length);
+                        System.arraycopy(newIv, 0, myIv, 0, myIv.length); // System.arraycopy(newIv, 0, myIv, 0, myIv.length);
                         // System.out
                         // .println("Iv is now " + HexTool.toString(this.iv));
 
@@ -208,9 +206,7 @@ public class MapleAESOFB {
                 llength = 0x5B4;
             }
             updateIv();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
+        } catch (IllegalBlockSizeException | BadPaddingException e) {
             e.printStackTrace();
         }
         return data;
@@ -324,8 +320,8 @@ public class MapleAESOFB {
 
         int merry = ((int) in[0]) & 0xFF;
         merry |= (in[1] << 8) & 0xFF00;
-        merry |= (in[2] << 16) & 0xFF0000;
-        merry |= (in[3] << 24) & 0xFF000000;
+        merry |= (in[2] << 16) & 0xFF_0000;
+        merry |= (in[3] << 24) & 0xFF00_0000;
         int ret_value = merry >>> 0x1d;
         merry <<= 3;
         ret_value |= merry;

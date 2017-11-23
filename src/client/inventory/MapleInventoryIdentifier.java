@@ -1,56 +1,47 @@
-/*
- This file is part of the ZeroFusion MapleStory Server
- Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc> 
- Matthias Butz <matze@odinms.de>
- Jan Christian Meyer <vimes@odinms.de>
- ZeroFusion organized by "RMZero213" <RMZero213@hotmail.com>
 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License version 3
- as published by the Free Software Foundation. You may not use, modify
- or distribute this program under any other version of the
- GNU Affero General Public License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package client.inventory;
 
+import database.DatabaseConnection;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import database.DatabaseConnection;
-import handling.cashshop.CashShopServer;
-import handling.channel.ChannelServer;
-import handling.login.LoginServer;
-import handling.world.World;
-import java.io.Serializable;
 
+/**
+ *
+ * @author zjj
+ */
 public class MapleInventoryIdentifier implements Serializable {
 
-    private static final long serialVersionUID = 21830921831301L;
+    private static final long serialVersionUID = 21_830_921_831_301L;
     private AtomicInteger runningUID;
     private ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
     private Lock readLock = rwl.readLock(), writeLock = rwl.writeLock();
     private static MapleInventoryIdentifier instance = new MapleInventoryIdentifier();
 
+    /**
+     *
+     */
     public MapleInventoryIdentifier() {
         this.runningUID = new AtomicInteger(0);
         getNextUniqueId();
     }
 
+    /**
+     *
+     * @return
+     */
     public static int getInstance() {
         return instance.getNextUniqueId();
     }
 
+    /**
+     *
+     * @return
+     */
     public int getNextUniqueId() {
         if (grabRunningUID() <= 0) {
             setRunningUID(initUID());
@@ -59,6 +50,10 @@ public class MapleInventoryIdentifier implements Serializable {
         return grabRunningUID();
     }
 
+    /**
+     *
+     * @return
+     */
     public int grabRunningUID() {
         readLock.lock();
         try {
@@ -68,10 +63,17 @@ public class MapleInventoryIdentifier implements Serializable {
         }
     }
 
+    /**
+     *
+     */
     public void incrementRunningUID() {
         setRunningUID(grabRunningUID() + 1);
     }
 
+    /**
+     *
+     * @param rUID
+     */
     public void setRunningUID(int rUID) {
         if (rUID < grabRunningUID()) { //dont go backwards.
             return;
@@ -84,6 +86,10 @@ public class MapleInventoryIdentifier implements Serializable {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public int initUID() {
         int ret = 0;
         if (grabRunningUID() > 0) {

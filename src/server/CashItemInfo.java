@@ -1,5 +1,9 @@
 package server;
 
+/**
+ *
+ * @author zjj
+ */
 public class CashItemInfo {
 
     private int itemId;
@@ -11,6 +15,16 @@ public class CashItemInfo {
     private boolean onSale;
     private String name;
 
+    /**
+     *
+     * @param itemId
+     * @param count
+     * @param price
+     * @param sn
+     * @param expire
+     * @param gender
+     * @param sale
+     */
     public CashItemInfo(int itemId, int count, int price, int sn, int expire, int gender, boolean sale) {
         this.itemId = itemId;
         this.count = count;
@@ -21,6 +35,17 @@ public class CashItemInfo {
         this.onSale = sale;
     }
 
+    /**
+     *
+     * @param itemId
+     * @param count
+     * @param price
+     * @param sn
+     * @param expire
+     * @param gender
+     * @param sale
+     * @param name
+     */
     public CashItemInfo(int itemId, int count, int price, int sn, int expire, int gender, boolean sale, String name) {
         this.itemId = itemId;
         this.count = count;
@@ -32,10 +57,18 @@ public class CashItemInfo {
         this.name = name;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getId() {
         return itemId;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getOnSale() {
         if (onSale) {
             return 1;
@@ -44,44 +77,168 @@ public class CashItemInfo {
 
     }
 
+    /**
+     *
+     * @return
+     */
     public int getExpire() {
         return expire;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getCount() {
         return count;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getPrice() {
         return price;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getSN() {
         return sn;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getPeriod() {
         return expire;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getGender() {
         return gender;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean onSale() {
         return onSale || (CashItemFactory.getInstance().getModInfo(sn) != null && CashItemFactory.getInstance().getModInfo(sn).showUp);
     }
 
+    /**
+     *
+     * @param g
+     * @return
+     */
     public boolean genderEquals(int g) {
         return g == this.gender || this.gender == 2;
     }
 
+    /**
+     *
+     */
     public static class CashModInfo {
 
-        public int discountPrice, mark, priority, sn, itemid, flags, period, gender, count, meso, unk_1, unk_2, unk_3, extra_flags;
-        public boolean showUp, packagez;
+        public int discountPrice, 
+
+        /**
+         *
+         */
+        mark, 
+
+        /**
+         *
+         */
+        priority, 
+
+        /**
+         *
+         */
+        sn, 
+
+        /**
+         *
+         */
+        itemid, 
+
+        /**
+         *
+         */
+        flags, 
+
+        /**
+         *
+         */
+        period, 
+
+        /**
+         *
+         */
+        gender, 
+
+        /**
+         *
+         */
+        count, 
+
+        /**
+         *
+         */
+        meso, 
+
+        /**
+         *
+         */
+        unk_1, 
+
+        /**
+         *
+         */
+        unk_2, 
+
+        /**
+         *
+         */
+        unk_3, 
+
+        /**
+         *
+         */
+        extra_flags;
+        public boolean showUp, 
+
+        /**
+         *
+         */
+        packagez;
         private CashItemInfo cii;
 
+        /**
+         *
+         * @param sn
+         * @param discount
+         * @param mark
+         * @param show
+         * @param itemid
+         * @param priority
+         * @param packagez
+         * @param period
+         * @param gender
+         * @param count
+         * @param meso
+         * @param unk_1
+         * @param unk_2
+         * @param unk_3
+         * @param extra_flags
+         */
         public CashModInfo(int sn, int discount, int mark, boolean show, int itemid, int priority, boolean packagez, int period, int gender, int count, int meso, int unk_1, int unk_2, int unk_3, int extra_flags) {
             this.sn = sn;
             this.itemid = itemid;
@@ -139,10 +296,15 @@ public class CashItemInfo {
             }
             //0x2000, 0x4000, 0x8000 - ?
             if (this.packagez) {
-                this.flags |= 0x10000;
+                this.flags |= 0x1_0000;
             }
         }
 
+        /**
+         *
+         * @param backup
+         * @return
+         */
         public CashItemInfo toCItem(CashItemInfo backup) {
             if (cii != null) {
                 return cii;

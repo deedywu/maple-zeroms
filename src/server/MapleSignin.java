@@ -10,19 +10,29 @@ import constants.GameConstants;
 import database.DatabaseConnection;
 import handling.channel.ChannelServer;
 import java.sql.Connection;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ *
+ * @author zjj
+ */
 public class MapleSignin {
 
+    /**
+     *
+     */
     public static final int MINLEVEL = 33;
     private static final MapleSignin instance = new MapleSignin();
     private final List<SiginRewardInfo> siginrewards = new LinkedList<>();
 
+    /**
+     *
+     * @return
+     */
     public static MapleSignin getInstance() {
         return instance;
     }
@@ -36,10 +46,17 @@ public class MapleSignin {
         return "check1=0;cDate=" + new SimpleDateFormat("yy/MM/dd").format(new Date());
     }
 
+    /**
+     *
+     * @return
+     */
     public List<SiginRewardInfo> getSiginRewards() {
         return siginrewards;
     }
 
+    /**
+     *
+     */
     public void load() {
         if (siginrewards.isEmpty()) {
             reload(false);
@@ -105,8 +122,8 @@ public class MapleSignin {
      */
     public Map<Integer, Integer> getUnknownMap() {
         Map<Integer, Integer> ret = new LinkedHashMap<>();
-        ret.put(100, 40914);
-        ret.put(101, 40914);
+        ret.put(100, 40_914);
+        ret.put(101, 40_914);
         return ret;
     }
 
@@ -125,22 +142,42 @@ public class MapleSignin {
             this.isCash = isCash;
         }
 
+        /**
+         *
+         * @return
+         */
         public int getRank() {
             return rank;
         }
 
+        /**
+         *
+         * @return
+         */
         public int getItemId() {
             return itemid;
         }
 
+        /**
+         *
+         * @return
+         */
         public int getQuantity() {
             return quantity;
         }
 
+        /**
+         *
+         * @return
+         */
         public int getExpiredate() {
             return expiredate;
         }
 
+        /**
+         *
+         * @return
+         */
         public int getIsCash() {
             return isCash;
         }

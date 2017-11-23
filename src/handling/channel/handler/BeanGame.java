@@ -1,18 +1,27 @@
 package handling.channel.handler;
 
-import java.util.ArrayList;
-import java.util.List;
 import client.MapleCharacter;
 import client.MapleClient;
+import java.util.ArrayList;
+import java.util.List;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
 
+/**
+ *
+ * @author zjj
+ */
 public class BeanGame {
 
+    /**
+     *
+     * @param slea
+     * @param c
+     */
     public static void BeanGame1(SeekableLittleEndianAccessor slea, MapleClient c) {
         //System.out.println("豆�?�出?��???" +slea.toString());
         MapleCharacter chr = c.getPlayer();
-        List<Beans> beansInfo = new ArrayList<Beans>();
+        List<Beans> beansInfo = new ArrayList<>();
 
         int type = slea.readByte();
         int 力度 = 0;
@@ -92,31 +101,57 @@ public class BeanGame {
         return (int) ((Math.random() * (ubound - lbound + 1)) + lbound);
     }
 
+    /**
+     *
+     */
     public class Beans {
 
         private int number;
         private int type;
         private int pos;
 
+        /**
+         *
+         * @param pos
+         * @param type
+         * @param number
+         */
         public Beans(int pos, int type, int number) {
             this.pos = pos;
             this.number = number;
             this.type = type;
         }
 
+        /**
+         *
+         * @return
+         */
         public int getType() {
             return type;
         }
 
+        /**
+         *
+         * @return
+         */
         public int getNumber() {
             return number;
         }
 
+        /**
+         *
+         * @return
+         */
         public int getPos() {
             return pos;
         }
     }
 
+    /**
+     *
+     * @param slea
+     * @param c
+     */
     public static final void BeanGame2(SeekableLittleEndianAccessor slea, MapleClient c) {
         c.getSession().write(MaplePacketCreator.updateBeans(c.getPlayer().getId(), c.getPlayer().getBeans()));
         c.getSession().write(MaplePacketCreator.enableActions());

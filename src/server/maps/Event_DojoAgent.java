@@ -20,23 +20,32 @@
  */
 package server.maps;
 
-import java.awt.Point;
-
 import client.MapleCharacter;
 import handling.channel.ChannelServer;
 import handling.world.MaplePartyCharacter;
+import java.awt.Point;
 import server.Randomizer;
 import server.Timer.MapTimer;
 import server.life.MapleLifeFactory;
 import tools.MaplePacketCreator;
 
+/**
+ *
+ * @author zjj
+ */
 public class Event_DojoAgent {
 
-    private final static int baseAgentMapId = 970030000; // 9500337 = mano
+    private final static int baseAgentMapId = 970_030_000; // 9500337 = mano
     private final static Point point1 = new Point(140, 0),
             point2 = new Point(-193, 0),
             point3 = new Point(355, 0);
 
+    /**
+     *
+     * @param c
+     * @param party
+     * @return
+     */
     public static boolean warpStartAgent(final MapleCharacter c, final boolean party) {
         final int stage = 1;
         final int mapid = baseAgentMapId + (stage * 100);
@@ -54,6 +63,12 @@ public class Event_DojoAgent {
         return false;
     }
 
+    /**
+     *
+     * @param c
+     * @param fromResting
+     * @return
+     */
     public static boolean warpNextMap_Agent(final MapleCharacter c, final boolean fromResting) {
         final int currentmap = c.getMapId();
         final int thisStage = (currentmap - baseAgentMapId) / 100;
@@ -67,7 +82,7 @@ public class Event_DojoAgent {
             // c.modifyCSPoints(1, 40, true);
         }
         final ChannelServer ch = c.getClient().getChannelServer();
-        if (currentmap >= 970032700 && currentmap <= 970032800) {
+        if (currentmap >= 970_032_700 && currentmap <= 970_032_800) {
             map = ch.getMapFactory().getMap(baseAgentMapId);
             c.changeMap(map, map.getPortal(0));
             return true;
@@ -85,18 +100,24 @@ public class Event_DojoAgent {
         return false;
     }
 
+    /**
+     *
+     * @param c
+     * @param party
+     * @return
+     */
     public static boolean warpStartDojo(final MapleCharacter c, final boolean party) {
         int stage = 1;
         if (party || stage <= -1 || stage > 38) {
             stage = 1;
         }
-        int mapid = 925020000 + (stage * 100);
+        int mapid = 925_020_000 + (stage * 100);
         boolean canenter = false;
         final ChannelServer ch = c.getClient().getChannelServer();
         for (int x = 0; x < 15; x++) { //15 maps each stage
             boolean canenterr = true;
             for (int i = 1; i < 39; i++) { //only 32 stages, but 38 maps
-                MapleMap map = ch.getMapFactory().getMap(925020000 + 100 * i + x);
+                MapleMap map = ch.getMapFactory().getMap(925_020_000 + 100 * i + x);
                 if (map.getCharactersSize() > 0) {
                     canenterr = false;
                     break;
@@ -135,10 +156,17 @@ public class Event_DojoAgent {
     // 925022400 ~ 925022409
     // 925023000 ~ 925023009
     // 925023600 ~ 925023609
+
+    /**
+     *
+     * @param c
+     * @param fromResting
+     * @return
+     */
     public static boolean warpNextMap(final MapleCharacter c, final boolean fromResting) {
         try {
             final MapleMap currentmap = c.getMap();
-            final int temp = (currentmap.getId() - 925000000) / 100;
+            final int temp = (currentmap.getId() - 925_000_000) / 100;
             final int thisStage = (int) (temp - ((temp / 100) * 100));
             final int points = getDojoPoints(thisStage);
 
@@ -163,8 +191,8 @@ public class Event_DojoAgent {
                 }
 
             }
-            if (currentmap.getId() >= 925023800 && currentmap.getId() <= 925023814) {
-                final MapleMap map = ch.getMapFactory().getMap(925020003);
+            if (currentmap.getId() >= 925_023_800 && currentmap.getId() <= 925_023_814) {
+                final MapleMap map = ch.getMapFactory().getMap(925_020_003);
 
                 if (c.getParty() != null) {
                     for (MaplePartyCharacter mem : c.getParty().getMembers()) {
@@ -285,100 +313,100 @@ public class Event_DojoAgent {
 
         switch (stage) {
             case 1:
-                mobid = 9300184; // Mano
+                mobid = 9_300_184; // Mano
                 break;
             case 2:
-                mobid = 9300185; // Stumpy
+                mobid = 9_300_185; // Stumpy
                 break;
             case 3:
-                mobid = 9300186; // Dewu
+                mobid = 9_300_186; // Dewu
                 break;
             case 4:
-                mobid = 9300187; // King Slime
+                mobid = 9_300_187; // King Slime
                 break;
             case 5:
-                mobid = 9300188; // Giant Centipede
+                mobid = 9_300_188; // Giant Centipede
                 break;
             case 7:
-                mobid = 9300189; // Faust
+                mobid = 9_300_189; // Faust
                 break;
             case 8:
-                mobid = 9300190; // King Clang
+                mobid = 9_300_190; // King Clang
                 break;
             case 9:
-                mobid = 9300191; // Mushmom
+                mobid = 9_300_191; // Mushmom
                 break;
             case 10:
-                mobid = 9300192; // Alishar
+                mobid = 9_300_192; // Alishar
                 break;
             case 11:
-                mobid = 9300193; // Timer
+                mobid = 9_300_193; // Timer
                 break;
             case 13:
-                mobid = 9300194; // Dale
+                mobid = 9_300_194; // Dale
                 break;
             case 14:
-                mobid = 9300195; // Papa Pixie
+                mobid = 9_300_195; // Papa Pixie
                 break;
             case 15:
-                mobid = 9300196; // Zombie Mushmom
+                mobid = 9_300_196; // Zombie Mushmom
                 break;
             case 16:
-                mobid = 9300197; // Jeno
+                mobid = 9_300_197; // Jeno
                 break;
             case 17:
-                mobid = 9300198; // Lord Pirate
+                mobid = 9_300_198; // Lord Pirate
                 break;
             case 19:
-                mobid = 9300199; // Old Fox
+                mobid = 9_300_199; // Old Fox
                 break;
             case 20:
-                mobid = 9300200; // Tae Roon
+                mobid = 9_300_200; // Tae Roon
                 break;
             case 21:
-                mobid = 9300201; // Poison Golem
+                mobid = 9_300_201; // Poison Golem
                 break;
             case 22:
-                mobid = 9300202; // Ghost Priest
+                mobid = 9_300_202; // Ghost Priest
                 break;
             case 23:
-                mobid = 9300203; // Jr. Balrog
+                mobid = 9_300_203; // Jr. Balrog
                 break;
             case 25:
-                mobid = 9300204; // Eliza
+                mobid = 9_300_204; // Eliza
                 break;
             case 26:
-                mobid = 9300205; // Frankenroid
+                mobid = 9_300_205; // Frankenroid
                 break;
             case 27:
-                mobid = 9300206; // Chimera
+                mobid = 9_300_206; // Chimera
                 break;
             case 28:
-                mobid = 9300207; // Snack Bar
+                mobid = 9_300_207; // Snack Bar
                 break;
             case 29:
-                mobid = 9300208; // Snowman
+                mobid = 9_300_208; // Snowman
                 break;
             case 31:
-                mobid = 9300209; // Blue Mushmom
+                mobid = 9_300_209; // Blue Mushmom
                 break;
             case 32:
-                mobid = 9300210; // Crimson Balrog
+                mobid = 9_300_210; // Crimson Balrog
                 break;
             case 33:
-                mobid = 9300211; // Manon
+                mobid = 9_300_211; // Manon
                 break;
             case 34:
-                mobid = 9300212; // Griffey
+                mobid = 9_300_212; // Griffey
                 break;
             case 35:
-                mobid = 9300213; // Leviathan
+                mobid = 9_300_213; // Leviathan
                 break;
             case 37:
-                mobid = 9300214; // Papulatus
+                mobid = 9_300_214; // Papulatus
                 break;
             case 38:
-                mobid = 9300215; // Mu gong
+                mobid = 9_300_215; // Mu gong
                 break;
             default:
                 return;
@@ -392,7 +420,7 @@ public class Event_DojoAgent {
                 public void run() {
                     map.spawnMonsterWithEffect(MapleLifeFactory.getMonster(mobid), 15, rand == 0 ? point1 : rand == 1 ? point2 : point3);
                 }
-            }, 3000);
+            }, 3_000);
         }
     }
 }

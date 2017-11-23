@@ -1,50 +1,39 @@
-/*
- This file is part of the OdinMS Maple Story Server
- Copyright (C) 2008 ~ 2010 Patrick Huy <patrick.huy@frz.cc> 
- Matthias Butz <matze@odinms.de>
- Jan Christian Meyer <vimes@odinms.de>
 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License version 3
- as published by the Free Software Foundation. You may not use, modify
- or distribute this program under any other version of the
- GNU Affero General Public License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package handling.mina;
 
 import client.MapleClient;
 import constants.ServerConstants;
 import handling.MaplePacket;
 import handling.SendPacketOpcode;
-import java.nio.ByteBuffer;
-import tools.MapleAESOFB;
-import tools.MapleCustomEncryption;
-
 import java.util.concurrent.locks.Lock;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
-
 import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.FileoutputUtil;
 import tools.HexTool;
+import tools.MapleAESOFB;
+import tools.MapleCustomEncryption;
 import tools.data.input.ByteArrayByteStream;
 import tools.data.input.GenericLittleEndianAccessor;
 
+/**
+ *
+ * @author zjj
+ */
 public class MaplePacketEncoder implements ProtocolEncoder {
 
     private static Logger log = LoggerFactory.getLogger(MaplePacketEncoder.class);
 
+    /**
+     *
+     * @param session
+     * @param message
+     * @param out
+     * @throws Exception
+     */
     @Override
     public void encode(final IoSession session, final Object message, final ProtocolEncoderOutput out) throws Exception {
         final MapleClient client = (MapleClient) session.getAttribute(MapleClient.CLIENT_KEY);
@@ -78,7 +67,7 @@ public class MaplePacketEncoder implements ProtocolEncoder {
                         show = false;
                 }
                 String Recv = "服务端发送 " + op + " [" + pHeaderStr + "] (" + packetLen + ")\r\n";
-                if (packetLen <= 50000) {
+                if (packetLen <= 50_000) {
                     String RecvTo = Recv + HexTool.toString(inputInitialPacket) + "\r\n" + HexTool.toStringFromAscii(inputInitialPacket);
                     if (show) {
                         FileoutputUtil.packetLog("log\\服务端封包.log", RecvTo);
@@ -111,6 +100,11 @@ public class MaplePacketEncoder implements ProtocolEncoder {
         }
     }
 
+    /**
+     *
+     * @param session
+     * @throws Exception
+     */
     @Override
     public void dispose(IoSession session) throws Exception {
         // nothing to do

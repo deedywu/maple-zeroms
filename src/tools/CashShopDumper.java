@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package tools;
 
 import client.inventory.MapleInventoryType;
@@ -22,7 +18,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import provider.MapleData;
 import provider.MapleDataProvider;
 import provider.MapleDataProviderFactory;
@@ -39,6 +34,11 @@ public class CashShopDumper {
 
     private static final MapleDataProvider data = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/Etc.wz"));
 
+    /**
+     *
+     * @param sn
+     * @return
+     */
     public static final CashModInfo getModInfo(int sn) {
         CashModInfo ret = null;
 
@@ -59,14 +59,18 @@ public class CashShopDumper {
         return ret;
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
-        CashModInfo m = getModInfo(20000393);
+        CashModInfo m = getModInfo(20_000_393);
         CashItemFactory.getInstance().initialize();
         Collection<CashModInfo> list = CashItemFactory.getInstance().getAllModInfo();
         Connection con = DatabaseConnection.getConnection();
 
-        final List<Integer> itemids = new ArrayList<Integer>();
-        List<Integer> qq = new ArrayList<Integer>();
+        final List<Integer> itemids = new ArrayList<>();
+        List<Integer> qq = new ArrayList<>();
 
         Map<Integer, List<String>> dics = new HashMap<>();
 
@@ -86,7 +90,7 @@ public class CashShopDumper {
                     continue;
                 }
 
-                int cat = itemId / 10000;
+                int cat = itemId / 10_000;
                 if (dics.get(cat) == null) {
                     dics.put(cat, new ArrayList());
                 }
@@ -109,31 +113,31 @@ public class CashShopDumper {
                     System.out.println(MapleItemInformationProvider.getInstance().getName(itemId));
                     continue;
                 }
-                PreparedStatement ps = con.prepareStatement("INSERT INTO cashshop_modified_items (serial, showup,itemid,priority,period,gender,count,meso,discount_price,mark, unk_1, unk_2, unk_3,name  ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                ps.setInt(1, sn);
-                ps.setInt(2, 1);
-                ps.setInt(3, 0);
-                ps.setInt(4, 0);
-                ps.setInt(5, period);
-                ps.setInt(6, gender);
-                ps.setInt(7, count > 1 ? count : 0);
-                ps.setInt(8, meso);
-                if ((1000000 <= itemId || itemId <= 1003091) && sn >= 20000000) {
-                    ps.setInt(9, price);
-                } else {
-                    ps.setInt(9, 0);
+                try (PreparedStatement ps = con.prepareStatement("INSERT INTO cashshop_modified_items (serial, showup,itemid,priority,period,gender,count,meso,discount_price,mark, unk_1, unk_2, unk_3,name  ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    ps.setInt(1, sn);
+                    ps.setInt(2, 1);
+                    ps.setInt(3, 0);
+                    ps.setInt(4, 0);
+                    ps.setInt(5, period);
+                    ps.setInt(6, gender);
+                    ps.setInt(7, count > 1 ? count : 0);
+                    ps.setInt(8, meso);
+                    if ((1_000_000 <= itemId || itemId <= 1_003_091) && sn >= 20_000_000) {
+                        ps.setInt(9, price);
+                    } else {
+                        ps.setInt(9, 0);
+                    }
+                    qq.add(itemId);
+                    ps.setInt(10, 0);
+                    ps.setInt(11, 0);
+                    ps.setInt(12, 0);
+                    ps.setInt(13, 0);
+                    ps.setString(14, MapleItemInformationProvider.getInstance().getName(itemId));
+                    
+                    String sql = ps.toString().split(":")[1].trim() + ";";
+                    ps.executeUpdate();
+                    dics.get(cat).add("-- " + MapleItemInformationProvider.getInstance().getName(itemId) + "\n" + sql);
                 }
-                qq.add(itemId);
-                ps.setInt(10, 0);
-                ps.setInt(11, 0);
-                ps.setInt(12, 0);
-                ps.setInt(13, 0);
-                ps.setString(14, MapleItemInformationProvider.getInstance().getName(itemId));
-
-                String sql = ps.toString().split(":")[1].trim() + ";";
-                ps.executeUpdate();
-                dics.get(cat).add("-- " + MapleItemInformationProvider.getInstance().getName(itemId) + "\n" + sql);
-                ps.close();
 
             } catch (SQLException ex) {
                 FilePrinter.printError("CashShopDumper.txt", ex);
@@ -151,13 +155,12 @@ public class CashShopDumper {
                     fout.createNewFile();
                 }
                 fos = new FileOutputStream(fout);
-                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
-                for (int i = 0; i < l.size(); i++) {
-                    bw.write(l.get(i));
-                    bw.newLine();
+                try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos))) {
+                    for (int i = 0; i < l.size(); i++) {
+                        bw.write(l.get(i));
+                        bw.newLine();
+                    }
                 }
-
-                bw.close();
 
             } catch (FileNotFoundException ex) {
                 FilePrinter.printError("CashShopDumper.txt", ex);

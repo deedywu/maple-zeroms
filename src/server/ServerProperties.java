@@ -1,13 +1,11 @@
 package server;
 
-import java.io.FileReader;
-import java.io.IOException;
+import database.DatabaseConnection;
+import java.io.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
-import database.DatabaseConnection;
-import java.io.*;
 
 /**
  *
@@ -35,14 +33,12 @@ public class ServerProperties {
             }
 
         }
-        try {
-            PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM auth_server_channel_ip");
+        try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM auth_server_channel_ip")) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 props.put(rs.getString("name") + rs.getInt("channelid"), rs.getString("value"));
             }
             rs.close();
-            ps.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
             System.exit(0); //Big ass error.

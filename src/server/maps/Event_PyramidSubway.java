@@ -8,10 +8,14 @@ import java.awt.Point;
 import java.util.concurrent.ScheduledFuture;
 import server.Randomizer;
 import server.Timer.MapTimer;
-import server.quest.MapleQuest;
 import server.life.MapleLifeFactory;
+import server.quest.MapleQuest;
 import tools.MaplePacketCreator;
 
+/**
+ *
+ * @author zjj
+ */
 public class Event_PyramidSubway {
 
     private int kill = 0, cool = 0, miss = 0, skill = 0, type, energybar = 100;
@@ -19,17 +23,22 @@ public class Event_PyramidSubway {
     private ScheduledFuture<?> energyBarDecrease, timerSchedule, yetiSchedule;
     //type: -1 = subway, 0-3 = difficulty of nett's pyramid.
 
+    /**
+     *
+     * @param c
+     */
     public Event_PyramidSubway(final MapleCharacter c) {
         final int mapid = c.getMapId();
-        if (mapid / 10000 == 91032) {
+        if (mapid / 10_000 == 91_032) {
             type = -1;
         } else {
-            type = mapid % 10000 / 1000;
+            type = mapid % 10_000 / 1_000;
         }
         if (c.getParty() == null || c.getParty().getLeader().equals(new MaplePartyCharacter(c))) {
             commenceTimerNextMap(c, 1);
             energyBarDecrease = MapTimer.getInstance().register(new Runnable() {
 
+                @Override
                 public void run() {
                     energybar -= (c.getParty() != null && c.getParty().getMembers().size() > 1 ? 10 : 5);
                     if (broaded) {
@@ -42,10 +51,15 @@ public class Event_PyramidSubway {
                         fail(c);
                     }
                 }
-            }, 1000);
+            }, 1_000);
         }
     }
 
+    /**
+     *
+     * @param c
+     * @param stage
+     */
     public final void fullUpdate(final MapleCharacter c, final int stage) {
         broadcastEnergy(c, "massacre_party", c.getParty() == null ? 0 : c.getParty().getMembers().size()); //huh
         broadcastEnergy(c, "massacre_miss", miss);
@@ -56,6 +70,11 @@ public class Event_PyramidSubway {
         broadcastUpdate(c);
     }
 
+    /**
+     *
+     * @param c
+     * @param stage
+     */
     public final void commenceTimerNextMap(final MapleCharacter c, final int stage) {
         if (timerSchedule != null) {
             timerSchedule.cancel(false);
@@ -90,15 +109,17 @@ public class Event_PyramidSubway {
             final MapleMap map = c.getMap();
             yetiSchedule = MapTimer.getInstance().register(new Runnable() {
 
+                @Override
                 public void run() {
-                    if (map.countMonsterById(9300021) <= (stage == 4 ? 1 : 2)) {
-                        map.spawnMonsterOnGroundBelow(MapleLifeFactory.getMonster(9300021), new Point(pos));
+                    if (map.countMonsterById(9_300_021) <= (stage == 4 ? 1 : 2)) {
+                        map.spawnMonsterOnGroundBelow(MapleLifeFactory.getMonster(9_300_021), new Point(pos));
                     }
                 }
-            }, 10000L);
+            }, 10_000L);
         }
         timerSchedule = MapTimer.getInstance().schedule(new Runnable() {
 
+            @Override
             public void run() {
                 boolean ret = false;
                 if (type == -1) {
@@ -110,9 +131,13 @@ public class Event_PyramidSubway {
                     fail(c);
                 }
             }
-        }, time * 1000L);
+        }, time * 1_000L);
     }
 
+    /**
+     *
+     * @param c
+     */
     public final void onKill(final MapleCharacter c) {
         kill++;
         if (Randomizer.nextInt(100) < 5) { //monster properties coolDamage and coolDamageProb determine this, will code later
@@ -141,6 +166,10 @@ public class Event_PyramidSubway {
         broadcastEnergy(c, "massacre_hit", kill);
     }
 
+    /**
+     *
+     * @param c
+     */
     public final void onMiss(final MapleCharacter c) {
         miss++;
         energybar -= 5;
@@ -148,6 +177,11 @@ public class Event_PyramidSubway {
         broadcastEnergy(c, "massacre_miss", miss);
     }
 
+    /**
+     *
+     * @param c
+     * @return
+     */
     public final boolean onSkillUse(final MapleCharacter c) {
         if (skill > 0 && type != -1) {
             skill--;
@@ -157,23 +191,30 @@ public class Event_PyramidSubway {
         return false;
     }
 
+    /**
+     *
+     * @param c
+     * @param newmapid
+     */
     public final void onChangeMap(final MapleCharacter c, final int newmapid) {
-        if ((newmapid == 910330001 && type == -1) || (newmapid == 926020001 + type && type != -1)) {
+        if ((newmapid == 910_330_001 && type == -1) || (newmapid == 926_020_001 + type && type != -1)) {
             succeed(c);
-        } else if (type == -1 && (newmapid < 910320100 || newmapid > 910320304)) {
+        } else if (type == -1 && (newmapid < 910_320_100 || newmapid > 910_320_304)) {
             dispose(c);
-            return;
-        } else if (type != -1 && (newmapid < 926010100 || newmapid > 926013504)) {
+        } else if (type != -1 && (newmapid < 926_010_100 || newmapid > 926_013_504)) {
             dispose(c);
-            return;
         } else if (c.getParty() == null || c.getParty().getLeader().equals(new MaplePartyCharacter(c))) {
             energybar = 100;
-            commenceTimerNextMap(c, newmapid % 1000 / 100);
+            commenceTimerNextMap(c, newmapid % 1_000 / 100);
         }
     }
 
+    /**
+     *
+     * @param c
+     */
     public final void succeed(final MapleCharacter c) {
-        final MapleQuestStatus record = c.getQuestNAdd(MapleQuest.getInstance(type == -1 ? 7662 : 7760));
+        final MapleQuestStatus record = c.getQuestNAdd(MapleQuest.getInstance(type == -1 ? 7_662 : 7_760));
         String data = record.getCustomData();
         if (data == null) {
             record.setCustomData("0");
@@ -184,22 +225,22 @@ public class Event_PyramidSubway {
         record.setCustomData(String.valueOf(mons + tk));
         byte rank = 4;
         if (type == -1) {
-            if (tk >= 2000) {
+            if (tk >= 2_000) {
                 rank = 0;
-            } else if (tk >= 1500 && tk <= 1999) {
+            } else if (tk >= 1_500 && tk <= 1_999) {
                 rank = 1;
-            } else if (tk >= 1000 && tk <= 1499) {
+            } else if (tk >= 1_000 && tk <= 1_499) {
                 rank = 2;
             } else if (tk >= 500 && tk <= 999) {
                 rank = 3;
             }
-        } else if (tk >= 3000) {
+        } else if (tk >= 3_000) {
             rank = 0;
-        } else if (tk >= 2000 && tk <= 2999) {
+        } else if (tk >= 2_000 && tk <= 2_999) {
             rank = 1;
-        } else if (tk >= 1500 && tk <= 1999) {
+        } else if (tk >= 1_500 && tk <= 1_999) {
             rank = 2;
-        } else if (tk >= 500 && tk <= 1499) {
+        } else if (tk >= 500 && tk <= 1_499) {
             rank = 3;
         }
 
@@ -208,80 +249,80 @@ public class Event_PyramidSubway {
             case 0:
                 switch (rank) {
                     case 0:
-                        pt = 60500;
+                        pt = 60_500;
                         break;
                     case 1:
-                        pt = 55000;
+                        pt = 55_000;
                         break;
                     case 2:
-                        pt = 46750;
+                        pt = 46_750;
                         break;
                     case 3:
-                        pt = 22000;
+                        pt = 22_000;
                         break;
                 }
                 break;
             case 1:
                 switch (rank) {
                     case 0:
-                        pt = 66000;
+                        pt = 66_000;
                         break;
                     case 1:
-                        pt = 60000;
+                        pt = 60_000;
                         break;
                     case 2:
-                        pt = 51750;
+                        pt = 51_750;
                         break;
                     case 3:
-                        pt = 24000;
+                        pt = 24_000;
                         break;
                 }
                 break;
             case 2:
                 switch (rank) {
                     case 0:
-                        pt = 71500;
+                        pt = 71_500;
                         break;
                     case 1:
-                        pt = 65000;
+                        pt = 65_000;
                         break;
                     case 2:
-                        pt = 55250;
+                        pt = 55_250;
                         break;
                     case 3:
-                        pt = 26000;
+                        pt = 26_000;
                         break;
                 }
                 break;
             case 3:
                 switch (rank) {
                     case 0:
-                        pt = 77000;
+                        pt = 77_000;
                         break;
                     case 1:
-                        pt = 70000;
+                        pt = 70_000;
                         break;
                     case 2:
-                        pt = 59500;
+                        pt = 59_500;
                         break;
                     case 3:
-                        pt = 28000;
+                        pt = 28_000;
                         break;
                 }
                 break;
             default:
                 switch (rank) {
                     case 0:
-                        pt = 22000;
+                        pt = 22_000;
                         break;
                     case 1:
-                        pt = 17000;
+                        pt = 17_000;
                         break;
                     case 2:
-                        pt = 10750;
+                        pt = 10_750;
                         break;
                     case 3:
-                        pt = 7000;
+                        pt = 7_000;
                         break;
                 }
                 break;
@@ -296,17 +337,25 @@ public class Event_PyramidSubway {
         dispose(c);
     }
 
+    /**
+     *
+     * @param c
+     */
     public final void fail(final MapleCharacter c) {
         final MapleMap map;
         if (type == -1) {
-            map = c.getClient().getChannelServer().getMapFactory().getMap(910320001);
+            map = c.getClient().getChannelServer().getMapFactory().getMap(910_320_001);
         } else {
-            map = c.getClient().getChannelServer().getMapFactory().getMap(926010001 + type);
+            map = c.getClient().getChannelServer().getMapFactory().getMap(926_010_001 + type);
         }
         changeMap(c, map, 1, 200, 2);
         dispose(c);
     }
 
+    /**
+     *
+     * @param c
+     */
     public final void dispose(final MapleCharacter c) {
         final boolean lead = energyBarDecrease != null && timerSchedule != null;
         if (energyBarDecrease != null) {
@@ -328,6 +377,10 @@ public class Event_PyramidSubway {
         c.setPyramidSubway(null);
     }
 
+    /**
+     *
+     * @param c
+     */
     public final void broadcastUpdate(final MapleCharacter c) {
         final MapleMap map = c.getMap();
         if (c.getParty() != null && c.getParty().getMembers().size() > 1) {
@@ -342,16 +395,32 @@ public class Event_PyramidSubway {
         }
     }
 
+    /**
+     *
+     * @param c
+     * @param effect
+     */
     public final void broadcastEffect(final MapleCharacter c, final String effect) {
         c.getClient().getSession().write(MaplePacketCreator.showEffect(effect));
     }
 
+    /**
+     *
+     * @param c
+     * @param type
+     * @param amount
+     */
     public final void broadcastEnergy(final MapleCharacter c, final String type, final int amount) {
         c.getClient().getSession().write(MaplePacketCreator.sendPyramidEnergy(type, String.valueOf(amount)));
     }
 
+    /**
+     *
+     * @param c
+     * @return
+     */
     public static boolean warpStartSubway(final MapleCharacter c) {
-        final int mapid = 910320100;
+        final int mapid = 910_320_100;
 
         final ChannelServer ch = c.getClient().getChannelServer();
         for (int i = 0; i < 5; i++) {
@@ -365,8 +434,13 @@ public class Event_PyramidSubway {
         return false;
     }
 
+    /**
+     *
+     * @param c
+     * @return
+     */
     public static boolean warpBonusSubway(final MapleCharacter c) {
-        final int mapid = 910320010;
+        final int mapid = 910_320_010;
 
         final ChannelServer ch = c.getClient().getChannelServer();
         for (int i = 0; i < 20; i++) {
@@ -380,19 +454,24 @@ public class Event_PyramidSubway {
         return false;
     }
 
+    /**
+     *
+     * @param c
+     * @return
+     */
     public static boolean warpNextMap_Subway(final MapleCharacter c) {
         final int currentmap = c.getMapId();
-        final int thisStage = (currentmap - 910320100) / 100;
+        final int thisStage = (currentmap - 910_320_100) / 100;
 
         MapleMap map = c.getMap();
         clearMap(map, true);
         final ChannelServer ch = c.getClient().getChannelServer();
         if (thisStage >= 2) {
-            map = ch.getMapFactory().getMap(910330001);
+            map = ch.getMapFactory().getMap(910_330_001);
             changeMap(c, map, 1, 200, 1);
             return true;
         }
-        final int nextmapid = 910320100 + ((thisStage + 1) * 100);
+        final int nextmapid = 910_320_100 + ((thisStage + 1) * 100);
         for (int i = 0; i < 5; i++) {
             map = ch.getMapFactory().getMap(nextmapid + i);
             if (map.getCharactersSize() == 0) {
@@ -404,8 +483,14 @@ public class Event_PyramidSubway {
         return false;
     }
 
+    /**
+     *
+     * @param c
+     * @param difficulty
+     * @return
+     */
     public static boolean warpStartPyramid(final MapleCharacter c, final int difficulty) {
-        final int mapid = 926010100 + (difficulty * 1000);
+        final int mapid = 926_010_100 + (difficulty * 1_000);
         int minLevel = 40, maxLevel = 60;
         switch (difficulty) {
             case 1:
@@ -431,8 +516,14 @@ public class Event_PyramidSubway {
         return false;
     }
 
+    /**
+     *
+     * @param c
+     * @param difficulty
+     * @return
+     */
     public static boolean warpBonusPyramid(final MapleCharacter c, final int difficulty) {
-        final int mapid = 926010010 + (difficulty * 20);
+        final int mapid = 926_010_010 + (difficulty * 20);
 
         final ChannelServer ch = c.getClient().getChannelServer();
         for (int i = 0; i < 20; i++) {
@@ -446,19 +537,25 @@ public class Event_PyramidSubway {
         return false;
     }
 
+    /**
+     *
+     * @param c
+     * @param difficulty
+     * @return
+     */
     public static boolean warpNextMap_Pyramid(final MapleCharacter c, final int difficulty) {
         final int currentmap = c.getMapId();
-        final int thisStage = (currentmap - (926010100 + (difficulty * 1000))) / 100;
+        final int thisStage = (currentmap - (926_010_100 + (difficulty * 1_000))) / 100;
 
         MapleMap map = c.getMap();
         clearMap(map, true);
         final ChannelServer ch = c.getClient().getChannelServer();
         if (thisStage >= 4) {
-            map = ch.getMapFactory().getMap(926020001 + difficulty);
+            map = ch.getMapFactory().getMap(926_020_001 + difficulty);
             changeMap(c, map, 1, 200, 1);
             return true;
         }
-        final int nextmapid = 926010100 + ((thisStage + 1) * 100) + (difficulty * 1000);
+        final int nextmapid = 926_010_100 + ((thisStage + 1) * 100) + (difficulty * 1_000);
         for (int i = 0; i < 5; i++) {
             map = ch.getMapFactory().getMap(nextmapid + i);
             if (map.getCharactersSize() == 0) {

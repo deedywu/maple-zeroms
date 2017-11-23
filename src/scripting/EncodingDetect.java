@@ -16,10 +16,20 @@ import java.net.URL;
  */
 public class EncodingDetect {
 
+    /**
+     *
+     * @param filePath
+     * @return
+     */
     public static String getJavaEncode(String filePath) {
         return getJavaEncode(new File(filePath));
     }
 
+    /**
+     *
+     * @param file
+     * @return
+     */
     public static String getJavaEncode(File file) {
         BytesEncodingDetect s = new BytesEncodingDetect();
         String fileCode = BytesEncodingDetect.javaname[s.detectEncoding(file)];
@@ -82,7 +92,7 @@ class BytesEncodingDetect extends Encoding {
      * highest probability is returned.
      */
     public int detectEncoding(URL testurl) {
-        byte[] rawtext = new byte[10000];
+        byte[] rawtext = new byte[10_000];
         int bytesread = 0, byteoffset = 0;
         int guess = OTHER;
         InputStream chinesestream;
@@ -360,45 +370,50 @@ class BytesEncodingDetect extends Encoding {
         rawtextlen = rawtext.length;
         for (i = 0; i < rawtextlen; i++) {
             if (rawtext[i] == '~') {
-                if (rawtext[i + 1] == '{') {
-                    hzstart++;
-                    i += 2;
-                    while (i < rawtextlen - 1) {
-                        if (rawtext[i] == 0x0A || rawtext[i] == 0x0D) {
-                            break;
-                        } else if (rawtext[i] == '~' && rawtext[i + 1] == '}') {
-                            hzend++;
-                            i++;
-                            break;
-                        } else if ((0x21 <= rawtext[i] && rawtext[i] <= 0x77) && (0x21 <= rawtext[i + 1] && rawtext[i + 1] <= 0x77)) {
-                            hzchars += 2;
-                            row = rawtext[i] - 0x21;
-                            column = rawtext[i + 1] - 0x21;
-                            totalfreq += 500;
-                            if (GBFreq[row][column] != 0) {
-                                hzfreq += GBFreq[row][column];
-                            } else if (15 <= row && row < 55) {
-                                hzfreq += 200;
-                            }
-                        } else if ((0xA1 <= rawtext[i] && rawtext[i] <= 0xF7) && (0xA1 <= rawtext[i + 1] && rawtext[i + 1] <= 0xF7)) {
-                            hzchars += 2;
-                            row = rawtext[i] + 256 - 0xA1;
-                            column = rawtext[i + 1] + 256 - 0xA1;
-                            totalfreq += 500;
-                            if (GBFreq[row][column] != 0) {
-                                hzfreq += GBFreq[row][column];
-                            } else if (15 <= row && row < 55) {
-                                hzfreq += 200;
-                            }
-                        }
-                        dbchars += 2;
+                switch (rawtext[i + 1]) {
+                    case '{':
+                        hzstart++;
                         i += 2;
-                    }
-                } else if (rawtext[i + 1] == '}') {
-                    hzend++;
-                    i++;
-                } else if (rawtext[i + 1] == '~') {
-                    i++;
+                        while (i < rawtextlen - 1) {
+                            if (rawtext[i] == 0x0A || rawtext[i] == 0x0D) {
+                                break;
+                            } else if (rawtext[i] == '~' && rawtext[i + 1] == '}') {
+                                hzend++;
+                                i++;
+                                break;
+                            } else if ((0x21 <= rawtext[i] && rawtext[i] <= 0x77) && (0x21 <= rawtext[i + 1] && rawtext[i + 1] <= 0x77)) {
+                                hzchars += 2;
+                                row = rawtext[i] - 0x21;
+                                column = rawtext[i + 1] - 0x21;
+                                totalfreq += 500;
+                                if (GBFreq[row][column] != 0) {
+                                    hzfreq += GBFreq[row][column];
+                                } else if (15 <= row && row < 55) {
+                                    hzfreq += 200;
+                                }
+                            } else if ((0xA1 <= rawtext[i] && rawtext[i] <= 0xF7) && (0xA1 <= rawtext[i + 1] && rawtext[i + 1] <= 0xF7)) {
+                                hzchars += 2;
+                                row = rawtext[i] + 256 - 0xA1;
+                                column = rawtext[i + 1] + 256 - 0xA1;
+                                totalfreq += 500;
+                                if (GBFreq[row][column] != 0) {
+                                    hzfreq += GBFreq[row][column];
+                                } else if (15 <= row && row < 55) {
+                                    hzfreq += 200;
+                                }
+                            }
+                            dbchars += 2;
+                            i += 2;
+                        }   break;
+                    case '}':
+                        hzend++;
+                        i++;
+                        break;
+                    case '~':
+                        i++;
+                        break;
+                    default:
+                        break;
                 }
             }
         }

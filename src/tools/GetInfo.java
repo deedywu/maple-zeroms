@@ -2,13 +2,23 @@ package tools;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.Formatter;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ *
+ * @author zjj
+ */
 public class GetInfo {
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         Config();
         getConfig();
@@ -18,6 +28,11 @@ public class GetInfo {
     /*
 	  windows和Linux，mac下結果不一樣
      */
+
+    /**
+     *
+     */
+
     public static void getIpconfig() {
         Map< String, String> map = System.getenv();
         System.out.println(map);
@@ -32,6 +47,9 @@ public class GetInfo {
     }
     //其它的一些東西,會有用到的時候的
 
+    /**
+     *
+     */
     public static void all() {
         Properties 設定檔 = System.getProperties();
         System.out.println("Java的運行環境版本：" + 設定檔.getProperty("java.version"));
@@ -66,11 +84,14 @@ public class GetInfo {
         System.out.println("用戶的當前工作目錄：" + 設定檔.getProperty("user.dir"));
     }
 
+    /**
+     *
+     */
     public static void Config() {
         try {
             InetAddress addr = InetAddress.getLocalHost();
-            String ip = addr.getHostAddress().toString(); //獲取本機ip
-            String hostName = addr.getHostName().toString(); //獲取本機計算機名稱
+            String ip = addr.getHostAddress(); //獲取本機ip
+            String hostName = addr.getHostName(); //獲取本機計算機名稱
             System.out.println("本機IP：" + ip + "\n本機名稱:" + hostName);
             Properties 設定檔 = System.getProperties();
             System.out.println("操作系統的名稱：" + 設定檔.getProperty("os.name"));
@@ -104,7 +125,7 @@ public class GetInfo {
             }
             System.out.println("IP：" + sIP);
             System.out.println("MAC：" + sMAC);
-        } catch (Exception e) {
+        } catch (UnknownHostException | SocketException e) {
             e.printStackTrace();
         }
     }

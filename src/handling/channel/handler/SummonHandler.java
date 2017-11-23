@@ -1,58 +1,46 @@
-/*
- This file is part of the OdinMS Maple Story Server
- Copyright (C) 2008 ~ 2010 Patrick Huy <patrick.huy@frz.cc> 
- Matthias Butz <matze@odinms.de>
- Jan Christian Meyer <vimes@odinms.de>
 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License version 3
- as published by the Free Software Foundation. You may not use, modify
- or distribute this program under any other version of the
- GNU Affero General Public License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package handling.channel.handler;
-
-import java.awt.Point;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 import client.ISkill;
 import client.MapleBuffStat;
-import client.MapleClient;
 import client.MapleCharacter;
+import client.MapleClient;
 import client.SkillFactory;
 import client.SummonSkillEntry;
-import client.status.MonsterStatusEffect;
 import client.anticheat.CheatingOffense;
 import client.status.MonsterStatus;
+import client.status.MonsterStatusEffect;
+import java.awt.Point;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import server.MapleStatEffect;
-import server.AutobanManager;
 import server.Timer.CloneTimer;
-import server.movement.LifeMovementFragment;
 import server.life.MapleMonster;
 import server.life.SummonAttackEntry;
 import server.maps.MapleMap;
-import server.maps.MapleSummon;
 import server.maps.MapleMapObject;
 import server.maps.MapleMapObjectType;
+import server.maps.MapleSummon;
 import server.maps.SummonMovementType;
+import server.movement.LifeMovementFragment;
 import tools.MaplePacketCreator;
-import tools.packet.MobPacket;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packet.MobPacket;
 
+/**
+ *
+ * @author zjj
+ */
 public class SummonHandler {
 
+    /**
+     *
+     * @param slea
+     * @param chr
+     */
     public static final void MoveDragon(final SeekableLittleEndianAccessor slea, final MapleCharacter chr) {
         slea.skip(8); //POS
         final List<LifeMovementFragment> res = MovementParse.parseMovement(slea, 5);
@@ -68,9 +56,10 @@ public class SummonHandler {
                 if (clones[i].get() != null) {
                     final MapleMap map = chr.getMap();
                     final MapleCharacter clone = clones[i].get();
-                    final List<LifeMovementFragment> res3 = new ArrayList<LifeMovementFragment>(res);
+                    final List<LifeMovementFragment> res3 = new ArrayList<>(res);
                     CloneTimer.getInstance().schedule(new Runnable() {
 
+                        @Override
                         public void run() {
                             try {
                                 if (clone.getMap() == map && clone.getDragon() != null) {
@@ -92,6 +81,11 @@ public class SummonHandler {
         }
     }
 
+    /**
+     *
+     * @param slea
+     * @param chr
+     */
     public static final void MoveSummon(final SeekableLittleEndianAccessor slea, final MapleCharacter chr) {
         final int oid = slea.readInt();
         Point startPos = new Point(slea.readShort(), slea.readShort());
@@ -113,6 +107,11 @@ public class SummonHandler {
         }
     }
 
+    /**
+     *
+     * @param slea
+     * @param chr
+     */
     public static final void DamageSummon(final SeekableLittleEndianAccessor slea, final MapleCharacter chr) {
         final int unkByte = slea.readByte();
         final int damage = slea.readInt();
@@ -156,6 +155,12 @@ public class SummonHandler {
 //        }
     }
 
+    /**
+     *
+     * @param slea
+     * @param c
+     * @param chr
+     */
     public static void SummonAttack(final SeekableLittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
         if (chr == null || !chr.isAlive()) {
             return;
@@ -187,7 +192,7 @@ public class SummonHandler {
             return;
         }
         //slea.skip(8); //some pos stuff
-        final List<SummonAttackEntry> allDamage = new ArrayList<SummonAttackEntry>();
+        final List<SummonAttackEntry> allDamage = new ArrayList<>();
         chr.getCheatTracker().checkSummonAttack();
 
         for (int i = 0; i < numAttacked; i++) {
@@ -219,11 +224,11 @@ public class SummonHandler {
             if (toDamage > 0 && summonEffect.getMonsterStati().size() > 0) {
                 if (summonEffect.makeChanceResult()) {
                     for (Map.Entry<MonsterStatus, Integer> z : summonEffect.getMonsterStati().entrySet()) {
-                        mob.applyStatus(chr, new MonsterStatusEffect(z.getKey(), z.getValue(), summonSkill.getId(), null, false), summonEffect.isPoison(), 4000, false);
+                        mob.applyStatus(chr, new MonsterStatusEffect(z.getKey(), z.getValue(), summonSkill.getId(), null, false), summonEffect.isPoison(), 4_000, false);
                     }
                 }
             }
-            if (chr.isGM() || toDamage < 120000) {
+            if (chr.isGM() || toDamage < 120_000) {
                 mob.damage(chr, toDamage, true);
                 chr.checkMonsterAggro(mob);
                 if (!mob.isAlive()) {

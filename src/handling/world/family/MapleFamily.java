@@ -20,39 +20,61 @@
  */
 package handling.world.family;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-import java.util.Iterator;
-
 import client.MapleCharacter;
 import database.DatabaseConnection;
 import handling.MaplePacket;
 import handling.world.World;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import tools.MaplePacketCreator;
 import tools.packet.FamilyPacket;
 
+/**
+ *
+ * @author zjj
+ */
 public class MapleFamily implements java.io.Serializable {
 
+    /**
+     *
+     */
     public static enum FCOp {
 
-        NONE, DISBAND;
+        /**
+         *
+         */
+        NONE, 
+
+        /**
+         *
+         */
+        DISBAND;
     }
-    public static final long serialVersionUID = 6322150443228168192L;
+
+    /**
+     *
+     */
+    public static final long serialVersionUID = 6_322_150_443_228_168_192L;
     //does not need to be in order :) CID -> MFC
-    private final Map<Integer, MapleFamilyCharacter> members = new ConcurrentHashMap<Integer, MapleFamilyCharacter>();
+    private final Map<Integer, MapleFamilyCharacter> members = new ConcurrentHashMap<>();
     private String leadername = null, notice;
     private int id, leaderid, generations = 0;
     private boolean proper = true, bDirty = false, changed = false;
 
+    /**
+     *
+     * @param fid
+     */
     public MapleFamily(final int fid) {
         super();
 
@@ -141,10 +163,17 @@ public class MapleFamily implements java.io.Serializable {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public int getGens() {
         return generations;
     }
 
+    /**
+     *
+     */
     public void resetPedigree() {
         for (MapleFamilyCharacter mfc : members.values()) {
             mfc.resetPedigree(this);
@@ -152,6 +181,9 @@ public class MapleFamily implements java.io.Serializable {
         bDirty = true;
     }
 
+    /**
+     *
+     */
     public void resetGens() {
         MapleFamilyCharacter mfc = getMFC(leaderid);
         if (mfc != null) {
@@ -160,6 +192,9 @@ public class MapleFamily implements java.io.Serializable {
         bDirty = true;
     }
 
+    /**
+     *
+     */
     public void resetDescendants() { //not stored here, but rather in the MFC
         MapleFamilyCharacter mfc = getMFC(leaderid);
         if (mfc != null) {
@@ -168,25 +203,33 @@ public class MapleFamily implements java.io.Serializable {
         bDirty = true;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isProper() {
         return proper;
     }
 
+    /**
+     *
+     * @return
+     */
     public static final Collection<MapleFamily> loadAll() {
-        final Collection<MapleFamily> ret = new ArrayList<MapleFamily>();
+        final Collection<MapleFamily> ret = new ArrayList<>();
         MapleFamily g;
         try {
             Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("SELECT familyid FROM families");
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                g = new MapleFamily(rs.getInt("familyid"));
-                if (g.getId() > 0) {
-                    ret.add(g);
+            try (PreparedStatement ps = con.prepareStatement("SELECT familyid FROM families")) {
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    g = new MapleFamily(rs.getInt("familyid"));
+                    if (g.getId() > 0) {
+                        ret.add(g);
+                    }
                 }
+                rs.close();
             }
-            rs.close();
-            ps.close();
         } catch (SQLException se) {
             System.err.println("unable to read family information from sql");
             se.printStackTrace();
@@ -194,30 +237,33 @@ public class MapleFamily implements java.io.Serializable {
         return ret;
     }
 
+    /**
+     *
+     * @param bDisband
+     */
     public final void writeToDB(final boolean bDisband) {
         try {
             Connection con = DatabaseConnection.getConnection();
             if (!bDisband) {
                 if (changed) {
-                    PreparedStatement ps = con.prepareStatement("UPDATE families SET notice = ? WHERE familyid = ?");
-                    ps.setString(1, notice);
-                    ps.setInt(2, id);
-                    ps.execute();
-                    ps.close();
+                    try (PreparedStatement ps = con.prepareStatement("UPDATE families SET notice = ? WHERE familyid = ?")) {
+                        ps.setString(1, notice);
+                        ps.setInt(2, id);
+                        ps.execute();
+                    }
                 }
                 changed = false;
             } else {
-                //members is less than 2, this shall be executed
+                try ( //members is less than 2, this shall be executed
                 /*
                  * if (leadername == null || members.size() < 2) {
                  * broadcast(null, -1, FCOp.DISBAND, null);
-                 }
+                }
                  */
-
-                PreparedStatement ps = con.prepareStatement("DELETE FROM families WHERE familyid = ?");
-                ps.setInt(1, id);
-                ps.execute();
-                ps.close();
+                        PreparedStatement ps = con.prepareStatement("DELETE FROM families WHERE familyid = ?")) {
+                    ps.setInt(1, id);
+                    ps.execute();
+                }
             }
         } catch (SQLException se) {
             System.err.println("Error saving family to SQL");
@@ -225,14 +271,26 @@ public class MapleFamily implements java.io.Serializable {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getId() {
         return id;
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getLeaderId() {
         return leaderid;
     }
 
+    /**
+     *
+     * @return
+     */
     public final String getNotice() {
         if (notice == null) {
             return "";
@@ -240,18 +298,40 @@ public class MapleFamily implements java.io.Serializable {
         return notice;
     }
 
+    /**
+     *
+     * @return
+     */
     public final String getLeaderName() {
         return leadername;
     }
 
+    /**
+     *
+     * @param packet
+     * @param cids
+     */
     public final void broadcast(final MaplePacket packet, List<Integer> cids) {
         broadcast(packet, -1, FCOp.NONE, cids);
     }
 
+    /**
+     *
+     * @param packet
+     * @param exception
+     * @param cids
+     */
     public final void broadcast(final MaplePacket packet, final int exception, List<Integer> cids) {
         broadcast(packet, exception, FCOp.NONE, cids);
     }
 
+    /**
+     *
+     * @param packet
+     * @param exceptionId
+     * @param bcop
+     * @param cids
+     */
     public final void broadcast(final MaplePacket packet, final int exceptionId, final FCOp bcop, List<Integer> cids) {
         //passing null to cids will ensure all
         buildNotifications();
@@ -293,7 +373,6 @@ public class MapleFamily implements java.io.Serializable {
             }
             if (mfc.getFamilyId() != id) {
                 toRemove.remove();
-                continue;
             }
         }
         if (members.size() < 2 && World.Family.getFamily(id) != null) {
@@ -302,6 +381,12 @@ public class MapleFamily implements java.io.Serializable {
         bDirty = false;
     }
 
+    /**
+     *
+     * @param cid
+     * @param online
+     * @param channel
+     */
     public final void setOnline(final int cid, final boolean online, final int channel) {
         final MapleFamilyCharacter mgc = getMFC(cid);
         if (mgc != null && mgc.getFamilyId() == id) {
@@ -314,6 +399,13 @@ public class MapleFamily implements java.io.Serializable {
         bDirty = true; // member formation has changed, update notifications
     }
 
+    /**
+     *
+     * @param cid
+     * @param addrep
+     * @param oldLevel
+     * @return
+     */
     public final int setRep(final int cid, int addrep, final int oldLevel) {
         final MapleFamilyCharacter mgc = getMFC(cid);
         if (mgc != null && mgc.getFamilyId() == id) {
@@ -323,7 +415,7 @@ public class MapleFamily implements java.io.Serializable {
             //mgc.setCurrentRep(mgc.getCurrentRep()+addrep);
             //mgc.setTotalRep(mgc.getTotalRep()+addrep);
             if (mgc.isOnline()) {
-                List<Integer> dummy = new ArrayList<Integer>();
+                List<Integer> dummy = new ArrayList<>();
                 dummy.add(mgc.getId());
                 broadcast(FamilyPacket.changeRep(addrep), -1, dummy);
                 World.Family.setFamily(id, mgc.getSeniorId(), mgc.getJunior1(), mgc.getJunior2(), mgc.getCurrentRep() + addrep, mgc.getTotalRep() + addrep, mgc.getId());
@@ -335,12 +427,20 @@ public class MapleFamily implements java.io.Serializable {
         return 0;
     }
 
+    /**
+     *
+     * @param mc
+     * @param seniorid
+     * @param junior1
+     * @param junior2
+     * @return
+     */
     public final MapleFamilyCharacter addFamilyMemberInfo(final MapleCharacter mc, final int seniorid, final int junior1, final int junior2) {
         final MapleFamilyCharacter ret = new MapleFamilyCharacter(mc, id, seniorid, junior1, junior2);
         members.put(mc.getId(), ret);
         ret.resetPedigree(this);
         bDirty = true;
-        List<Integer> toRemove = new ArrayList<Integer>();
+        List<Integer> toRemove = new ArrayList<>();
         for (int i = 0; i < ret.getPedigree().size(); i++) {
             if (ret.getPedigree().get(i) == ret.getId()) {
                 continue;
@@ -358,6 +458,11 @@ public class MapleFamily implements java.io.Serializable {
         return ret;
     }
 
+    /**
+     *
+     * @param mgc
+     * @return
+     */
     public final int addFamilyMember(final MapleFamilyCharacter mgc) {
         mgc.setFamilyId(id);
         members.put(mgc.getId(), mgc);
@@ -369,6 +474,10 @@ public class MapleFamily implements java.io.Serializable {
         return 1;
     }
 
+    /**
+     *
+     * @param id
+     */
     public final void leaveFamily(final int id) {
         leaveFamily(getMFC(id), true);
     }
@@ -413,6 +522,13 @@ public class MapleFamily implements java.io.Serializable {
      * final void setNotice(final String notice) { this.notice = notice;
      }
      */
+
+    /**
+     *
+     * @param mgc
+     * @param skipLeader
+     */
+
     public final void leaveFamily(final MapleFamilyCharacter mgc, final boolean skipLeader) {
         bDirty = true;
         if (mgc.getId() == leaderid && !skipLeader) {
@@ -448,7 +564,7 @@ public class MapleFamily implements java.io.Serializable {
                     }
                 }
             }
-            List<Integer> dummy = new ArrayList<Integer>();
+            List<Integer> dummy = new ArrayList<>();
             dummy.add(mgc.getId());
             broadcast(null, -1, FCOp.DISBAND, dummy);
             resetPedigree(); //ex but eh
@@ -457,6 +573,10 @@ public class MapleFamily implements java.io.Serializable {
         bDirty = true;
     }
 
+    /**
+     *
+     * @param mgc
+     */
     public final void memberLevelJobUpdate(final MapleCharacter mgc) {
         final MapleFamilyCharacter member = getMFC(mgc.getId());
         if (member != null) {
@@ -473,53 +593,80 @@ public class MapleFamily implements java.io.Serializable {
         }
     }
 
+    /**
+     *
+     */
     public final void disbandFamily() {
         writeToDB(true);
     }
 
+    /**
+     *
+     * @param cid
+     * @return
+     */
     public final MapleFamilyCharacter getMFC(final int cid) {
         return members.get(cid);
     }
 
+    /**
+     *
+     * @return
+     */
     public int getMemberSize() {
         return members.size();
     }
 
+    /**
+     *
+     * @param familyid
+     * @param seniorid
+     * @param junior1
+     * @param junior2
+     * @param currentrep
+     * @param totalrep
+     * @param cid
+     */
     public static void setOfflineFamilyStatus(int familyid, int seniorid, int junior1, int junior2, int currentrep, int totalrep, int cid) {
         try {
             java.sql.Connection con = DatabaseConnection.getConnection();
-            java.sql.PreparedStatement ps = con.prepareStatement("UPDATE characters SET familyid = ?, seniorid = ?, junior1 = ?, junior2 = ?, currentrep = ?, totalrep = ? WHERE id = ?");
-            ps.setInt(1, familyid);
-            ps.setInt(2, seniorid);
-            ps.setInt(3, junior1);
-            ps.setInt(4, junior2);
-            ps.setInt(5, currentrep);
-            ps.setInt(6, totalrep);
-            ps.setInt(7, cid);
-            ps.execute();
-            ps.close();
+            try (java.sql.PreparedStatement ps = con.prepareStatement("UPDATE characters SET familyid = ?, seniorid = ?, junior1 = ?, junior2 = ?, currentrep = ?, totalrep = ? WHERE id = ?")) {
+                ps.setInt(1, familyid);
+                ps.setInt(2, seniorid);
+                ps.setInt(3, junior1);
+                ps.setInt(4, junior2);
+                ps.setInt(5, currentrep);
+                ps.setInt(6, totalrep);
+                ps.setInt(7, cid);
+                ps.execute();
+            }
         } catch (SQLException se) {
             System.out.println("SQLException: " + se.getLocalizedMessage());
             se.printStackTrace();
         }
     }
 
+    /**
+     *
+     * @param leaderId
+     * @return
+     */
     public static int createFamily(int leaderId) {
         try {
             Connection con = DatabaseConnection.getConnection();
 
-            PreparedStatement ps = con.prepareStatement("INSERT INTO families (`leaderid`) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
-            ps.setInt(1, leaderId);
-            ps.executeUpdate();
-            ResultSet rs = ps.getGeneratedKeys();
-            if (!rs.next()) {
+            int ret;
+            try (PreparedStatement ps = con.prepareStatement("INSERT INTO families (`leaderid`) VALUES (?)", Statement.RETURN_GENERATED_KEYS)) {
+                ps.setInt(1, leaderId);
+                ps.executeUpdate();
+                ResultSet rs = ps.getGeneratedKeys();
+                if (!rs.next()) {
+                    rs.close();
+                    ps.close();
+                    return 0;
+                }   ret = rs.getInt(1);
                 rs.close();
-                ps.close();
-                return 0;
             }
-            int ret = rs.getInt(1);
-            rs.close();
-            ps.close();
             return ret;
         } catch (Exception e) {
             e.printStackTrace();
@@ -527,6 +674,11 @@ public class MapleFamily implements java.io.Serializable {
         }
     }
 
+    /**
+     *
+     * @param newfam
+     * @param oldfam
+     */
     public static void mergeFamily(MapleFamily newfam, MapleFamily oldfam) {
         //happens when someone in newfam juniors LEADER in oldfam
         //update all the members.
@@ -573,6 +725,13 @@ public class MapleFamily implements java.io.Serializable {
      }
      */
     //return disbanded or not.
+
+    /**
+     *
+     * @param splitId
+     * @param def
+     * @return
+     */
     public boolean splitFamily(int splitId, MapleFamilyCharacter def) {
         //toSplit = initiator who either broke off with their junior/senior, splitId is the ID of the one broken off
         //if it's junior, splitId will be the new leaderID, if its senior it's toSplit thats the new leader
@@ -618,6 +777,10 @@ public class MapleFamily implements java.io.Serializable {
         return false;
     }
 
+    /**
+     *
+     * @param notice
+     */
     public final void setNotice(final String notice) {
         this.changed = true;
         this.notice = notice;

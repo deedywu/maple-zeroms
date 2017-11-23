@@ -8,30 +8,53 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ *
+ * @author zjj
+ */
 public class AutoRegister {
 
     private static final int ACCOUNTS_PER_MAC = 1;
-    public static boolean autoRegister = ServerConstants.getAutoReg();
-    public static boolean success = false, mac = true;
 
+    /**
+     *
+     */
+    public static boolean autoRegister = ServerConstants.getAutoReg();
+    public static boolean success = false,
+
+    /**
+     *
+     */
+    mac = true;
+
+    /**
+     *
+     * @param login
+     * @return
+     */
     public static boolean getAccountExists(String login) {
         boolean accountExists = false;
         Connection con = DatabaseConnection.getConnection();
-        try {
-            PreparedStatement ps = con.prepareStatement("SELECT name FROM accounts WHERE name = ?");
+        try (PreparedStatement ps = con.prepareStatement("SELECT name FROM accounts WHERE name = ?")) {
             ps.setString(1, login);
             ResultSet rs = ps.executeQuery();
             if (rs.first()) {
                 accountExists = true;
             }
             rs.close();;
-            ps.close();
         } catch (SQLException ex) {
             System.out.println(ex);
         }
         return accountExists;
     }
 
+    /**
+     *
+     * @param login
+     * @param pwd
+     * @param eip
+     * @param macs
+     */
     public static void createAccount(String login, String pwd, String eip, String macs) {
         String sockAddr = eip;
         Connection con;
@@ -67,7 +90,6 @@ public class AutoRegister {
             rs.close();
         } catch (SQLException ex) {
             System.out.println(ex);
-            return;
         }
     }
 }

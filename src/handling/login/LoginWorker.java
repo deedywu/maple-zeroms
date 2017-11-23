@@ -20,19 +20,26 @@
  */
 package handling.login;
 
-import java.util.Map;
-import java.util.Map.Entry;
-
 import client.MapleClient;
 import handling.channel.ChannelServer;
+import java.util.Map;
+import java.util.Map.Entry;
 import server.Timer.PingTimer;
-import tools.packet.LoginPacket;
 import tools.MaplePacketCreator;
+import tools.packet.LoginPacket;
 
+/**
+ *
+ * @author zjj
+ */
 public class LoginWorker {
 
     private static long lastUpdate = 0;
 
+    /**
+     *
+     * @param c
+     */
     public static void registerClient(final MapleClient c) {
         if (LoginServer.isAdminOnly() && !c.isGm()) {
             c.getSession().write(MaplePacketCreator.serverNotice(1, "服务器正在维护中"));
@@ -40,7 +47,7 @@ public class LoginWorker {
             return;
         }
 
-        if (System.currentTimeMillis() - lastUpdate > 600000) { // Update once every 10 minutes
+        if (System.currentTimeMillis() - lastUpdate > 600_000) { // Update once every 10 minutes
             lastUpdate = System.currentTimeMillis();
             final Map<Integer, Integer> load = ChannelServer.getChannelLoad();
             int usersOn = 0;
@@ -53,10 +60,10 @@ public class LoginWorker {
             }
             double loads = load.size();
             double userlimit = LoginServer.getUserLimit();
-            final double loadFactor = 1200 / ((double) LoginServer.getUserLimit() / load.size());
+            final double loadFactor = 1_200 / ((double) LoginServer.getUserLimit() / load.size());
             for (Entry<Integer, Integer> entry : load.entrySet()) {
                 usersOn += entry.getValue();
-                load.put(entry.getKey(), Math.min(1200, (int) (entry.getValue() * loadFactor)));
+                load.put(entry.getKey(), Math.min(1_200, (int) (entry.getValue() * loadFactor)));
 
             }
             LoginServer.setLoad(load, usersOn);
@@ -75,10 +82,11 @@ public class LoginWorker {
             }
             c.setIdleTask(PingTimer.getInstance().schedule(new Runnable() {
 
+                @Override
                 public void run() {
 //                    c.getSession().close();
                 }
-            }, 10 * 60 * 10000));
+            }, 10 * 60 * 10_000));
         } else if (c.getGender() == 10) {
             c.getSession().write(LoginPacket.getGenderNeeded(c));
 

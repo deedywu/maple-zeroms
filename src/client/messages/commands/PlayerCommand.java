@@ -1,24 +1,16 @@
 package client.messages.commands;
 
-import client.MapleCharacter;
 import client.MapleClient;
 import client.MapleStat;
-import client.inventory.MapleInventoryType;
-import client.inventory.MaplePet;
-import client.inventory.PetDataFactory;
 import constants.ServerConstants.PlayerGMRank;
-import handling.channel.ChannelServer;
 import handling.world.World;
+import java.util.Arrays;
 import scripting.NPCScriptManager;
-import tools.FileoutputUtil;
-import tools.MaplePacketCreator;
-import tools.StringUtil;
-import tools.packet.PetPacket;
+import server.life.MapleMonster;
 import server.maps.MapleMapObject;
 import server.maps.MapleMapObjectType;
-import java.util.Arrays;
-import server.life.MapleMonster;
-import server.maps.MapleMap;
+import tools.MaplePacketCreator;
+import tools.StringUtil;
 
 /**
  *
@@ -26,37 +18,68 @@ import server.maps.MapleMap;
  */
 public class PlayerCommand {
 
+    /**
+     *
+     * @return
+     */
     public static PlayerGMRank getPlayerLevelRequired() {
         return PlayerGMRank.NORMAL;
     }
 
+    /**
+     *
+     */
     public static class 存档 extends save {
     }
 
+    /**
+     *
+     */
     public static class 帮助 extends help {
     }
 
+    /**
+     *
+     */
     public static class 领取点券 extends gainPoint {
     }
 
+    /**
+     *
+     */
     public static class GM爆率 extends Mobdrop {
     }
 
+    /**
+     *
+     */
     public static class ea extends 查看 {
     }
 
+    /**
+     *
+     */
     public static class 解卡 extends 查看 {
 
     }
 
+    /**
+     *
+     */
     public static class 复活 extends fh {
 
     }
 
+    /**
+     *
+     */
     public static class 破攻 extends pg {
 
     }
 
+    /**
+     *
+     */
     public static class 查看 extends CommandExecute {
 
         @Override
@@ -96,6 +119,9 @@ public class PlayerCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class save extends CommandExecute {
 
         @Override
@@ -106,6 +132,9 @@ public class PlayerCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class gainPoint extends CommandExecute {
 
         @Override
@@ -113,11 +142,14 @@ public class PlayerCommand {
             NPCScriptManager.getInstance().dispose(c);
             c.getSession().write(MaplePacketCreator.enableActions());
             NPCScriptManager npc = NPCScriptManager.getInstance();
-            npc.start(c, 9270034);
+            npc.start(c, 9_270_034);
             return 1;
         }
     }
 
+    /**
+     *
+     */
     public static class Mobdrop extends CommandExecute {
 
         @Override
@@ -125,20 +157,26 @@ public class PlayerCommand {
             NPCScriptManager.getInstance().dispose(c);
             c.getSession().write(MaplePacketCreator.enableActions());
             NPCScriptManager npc = NPCScriptManager.getInstance();
-            npc.start(c, 9900007);
+            npc.start(c, 9_900_007);
             return 1;
         }
     }
 
+    /**
+     *
+     */
     public static class mob extends 怪物 {
     }
 
+    /**
+     *
+     */
     public static class 怪物 extends CommandExecute {
 
         @Override
         public int execute(MapleClient c, String[] splitted) {
             MapleMonster mob = null;
-            for (final MapleMapObject monstermo : c.getPlayer().getMap().getMapObjectsInRange(c.getPlayer().getPosition(), 100000, Arrays.asList(MapleMapObjectType.MONSTER))) {
+            for (final MapleMapObject monstermo : c.getPlayer().getMap().getMapObjectsInRange(c.getPlayer().getPosition(), 100_000, Arrays.asList(MapleMapObjectType.MONSTER))) {
                 mob = (MapleMonster) monstermo;
                 if (mob.isAlive()) {
                     c.getPlayer().dropMessage(6, "怪物 " + mob.toString());
@@ -152,15 +190,21 @@ public class PlayerCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class 爆率 extends CommandExecute {
 
         @Override
         public int execute(MapleClient c, String[] splitted) {
-            NPCScriptManager.getInstance().start(c, 9010000, 1);
+            NPCScriptManager.getInstance().start(c, 9_010_000, 1);
             return 1;
         }
     }
 
+    /**
+     *
+     */
     public static class CGM extends CommandExecute {
 
         @Override
@@ -173,7 +217,7 @@ public class PlayerCommand {
                 c.getPlayer().dropMessage(6, "因为你自己是GM无法使用此命令,可以尝试!cngm <讯息> 來建立GM聊天頻道~");
                 return 1;
             }
-            if (!c.getPlayer().getCheatTracker().GMSpam(100000, 1)) { // 5 minutes.
+            if (!c.getPlayer().getCheatTracker().GMSpam(100_000, 1)) { // 5 minutes.
                 World.Broadcast.broadcastGMMessage(MaplePacketCreator.serverNotice(6, "頻道 " + c.getPlayer().getClient().getChannel() + " 玩家 [" + c.getPlayer().getName() + "] : " + StringUtil.joinStringFrom(splitted, 1)).getBytes());
                 c.getPlayer().dropMessage(6, "讯息已经发给GM了!");
             } else {
@@ -183,8 +227,12 @@ public class PlayerCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class fh extends CommandExecute {
 
+        @Override
         public int execute(MapleClient c, String[] splitted) {
             if (c.getPlayer().getLevel() < 70) {
                 c.getPlayer().dropMessage(5, "等级达到70级才可以使用这个命令.");
@@ -223,16 +271,19 @@ public class PlayerCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class pg extends CommandExecute {
 
         @Override
         public int execute(MapleClient c, String[] splitted) {
             int VipCount = c.getPlayer().getVip();
-            long maxdamage = (199999 + (VipCount * 10000));
+            long maxdamage = (199_999 + (VipCount * 10_000));
             int damage = 0;
-            damage = Math.min(damage, 199999 + (VipCount * 10000));
-            if ((maxdamage >= 2147483647) || (maxdamage < 0)) {
-                maxdamage = 2147483647;
+            damage = Math.min(damage, 199_999 + (VipCount * 10_000));
+            if ((maxdamage >= 2_147_483_647) || (maxdamage < 0)) {
+                maxdamage = 2_147_483_647;
             }
             String mds = "当前您的伤害上限为： " + maxdamage + " ";
             c.getPlayer().dropMessage(5, "============================================================");
@@ -350,6 +401,11 @@ public class PlayerCommand {
             return 1;
         }
     }*/
+
+    /**
+     *
+     */
+
 
     public static class help extends CommandExecute {
 

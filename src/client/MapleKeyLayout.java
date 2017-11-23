@@ -20,42 +20,59 @@
  */
 package client;
 
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.HashMap;
+import database.DatabaseConnection;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.io.Serializable;
-
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import tools.Pair;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
-import database.DatabaseConnection;
-import tools.Pair;
-
+/**
+ *
+ * @author zjj
+ */
 public class MapleKeyLayout implements Serializable {
 
-    private static final long serialVersionUID = 9179541993413738569L;
+    private static final long serialVersionUID = 9_179_541_993_413_738_569L;
     private boolean changed = false;
     private Map<Integer, Pair<Byte, Integer>> keymap;
 
+    /**
+     *
+     */
     public MapleKeyLayout() {
-        keymap = new HashMap<Integer, Pair<Byte, Integer>>();
+        keymap = new HashMap<>();
     }
 
+    /**
+     *
+     * @param keys
+     */
     public MapleKeyLayout(Map<Integer, Pair<Byte, Integer>> keys) {
         keymap = keys;
     }
 
+    /**
+     *
+     * @return
+     */
     public final Map<Integer, Pair<Byte, Integer>> Layout() {
         changed = true;
         return keymap;
     }
 
+    /**
+     *
+     * @param mplew
+     */
     public final void writeData(final MaplePacketLittleEndianWriter mplew) {
         Pair<Byte, Integer> binding;
         for (int x = 0; x < 90; x++) {
-            binding = keymap.get(Integer.valueOf(x));
+            binding = keymap.get(x);
             if (binding != null) {
                 mplew.write(binding.getLeft());
                 mplew.writeInt(binding.getRight());
@@ -66,8 +83,13 @@ public class MapleKeyLayout implements Serializable {
         }
     }
 
+    /**
+     *
+     * @param charid
+     * @throws SQLException
+     */
     public final void saveKeys(final int charid) throws SQLException {
-        if (!changed || keymap.size() == 0) {
+        if (!changed || keymap.isEmpty()) {
             return;
         }
         Connection con = DatabaseConnection.getConnection();

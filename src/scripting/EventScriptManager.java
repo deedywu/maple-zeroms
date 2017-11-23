@@ -20,13 +20,13 @@
  */
 package scripting;
 
+import handling.channel.ChannelServer;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
-
-import handling.channel.ChannelServer;
+import javax.script.ScriptException;
 import tools.FileoutputUtil;
 
 /**
@@ -46,17 +46,26 @@ public class EventScriptManager extends AbstractScriptManager {
         public Invocable iv;
         public EventManager em;
     }
-    private final Map<String, EventEntry> events = new LinkedHashMap<String, EventEntry>();
+    private final Map<String, EventEntry> events = new LinkedHashMap<>();
     private final AtomicInteger runningInstanceMapId = new AtomicInteger(0);
 
+    /**
+     *
+     * @return
+     */
     public final int getNewInstanceMapId() {
         return runningInstanceMapId.addAndGet(1);
     }
 
+    /**
+     *
+     * @param cserv
+     * @param scripts
+     */
     public EventScriptManager(final ChannelServer cserv, final String[] scripts) {
         super();
         for (final String script : scripts) {
-            if (!script.equals("")) {
+            if (!script.isEmpty()) {
                 final Invocable iv = getInvocable("event/" + script + ".js", null);
 
                 if (iv != null) {
@@ -66,6 +75,11 @@ public class EventScriptManager extends AbstractScriptManager {
         }
     }
 
+    /**
+     *
+     * @param event
+     * @return
+     */
     public final EventManager getEventManager(final String event) {
         final EventEntry entry = events.get(event);
         if (entry == null) {
@@ -74,19 +88,25 @@ public class EventScriptManager extends AbstractScriptManager {
         return entry.em;
     }
 
+    /**
+     *
+     */
     public final void init() {
         for (final EventEntry entry : events.values()) {
             try {
                 ((ScriptEngine) entry.iv).put("em", entry.em);
                 entry.iv.invokeFunction("init", (Object) null);
 
-            } catch (final Exception ex) {
+            } catch (final ScriptException | NoSuchMethodException ex) {
                 System.out.println("Error initiating event: " + entry.script + ":" + ex);
                 FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Error initiating event: " + entry.script + ":" + ex);
             }
         }
     }
 
+    /**
+     *
+     */
     public final void cancel() {
         for (final EventEntry entry : events.values()) {
             entry.em.cancel();

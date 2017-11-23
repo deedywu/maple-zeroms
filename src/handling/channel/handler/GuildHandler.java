@@ -1,40 +1,26 @@
-/*
- This file is part of the OdinMS Maple Story Server
- Copyright (C) 2008 ~ 2010 Patrick Huy <patrick.huy@frz.cc> 
- Matthias Butz <matze@odinms.de>
- Jan Christian Meyer <vimes@odinms.de>
 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License version 3
- as published by the Free Software Foundation. You may not use, modify
- or distribute this program under any other version of the
- GNU Affero General Public License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package handling.channel.handler;
-
-import java.rmi.RemoteException;
-import java.util.Iterator;
 
 import client.MapleCharacter;
 import client.MapleClient;
-import client.inventory.MaplePet;
 import handling.MaplePacket;
 import handling.world.World;
 import handling.world.guild.*;
+import java.util.Iterator;
 import tools.MaplePacketCreator;
 import tools.data.input.SeekableLittleEndianAccessor;
-import tools.packet.PetPacket;
 
+/**
+ *
+ * @author zjj
+ */
 public class GuildHandler {
 
+    /**
+     *
+     * @param from
+     * @param c
+     */
     public static final void DenyGuildRequest(final String from, final MapleClient c) {
         final MapleCharacter cfrom = c.getChannelServer().getPlayerStorage().getCharacterByName(from);
         if (cfrom != null) {
@@ -46,10 +32,7 @@ public class GuildHandler {
         if (name.length() > 15) {
             return false;
         }
-        if (name.length() < 3) {
-            return false;
-        }
-        return true;
+        return name.length() >= 3;
     }
 
     private static final void respawnPlayer(final MapleCharacter mc) {
@@ -67,7 +50,7 @@ public class GuildHandler {
         public Invited(final String n, final int id) {
             name = n.toLowerCase();
             gid = id;
-            expiration = System.currentTimeMillis() + 60 * 60 * 1000; // 1 hr expiration
+            expiration = System.currentTimeMillis() + 60 * 60 * 1_000; // 1 hr expiration
         }
 
         @Override
@@ -79,9 +62,14 @@ public class GuildHandler {
             return (gid == oth.gid && name.equals(oth.name));
         }
     }
-    private static final java.util.List<Invited> invited = new java.util.LinkedList<Invited>();
-    private static long nextPruneTime = System.currentTimeMillis() + 20 * 60 * 1000;
+    private static final java.util.List<Invited> invited = new java.util.LinkedList<>();
+    private static long nextPruneTime = System.currentTimeMillis() + 20 * 60 * 1_000;
 
+    /**
+     *
+     * @param slea
+     * @param c
+     */
     public static final void Guild(final SeekableLittleEndianAccessor slea, final MapleClient c) {
         if (System.currentTimeMillis() >= nextPruneTime) {
             Iterator<Invited> itr = invited.iterator();
@@ -92,15 +80,15 @@ public class GuildHandler {
                     itr.remove();
                 }
             }
-            nextPruneTime = System.currentTimeMillis() + 20 * 60 * 1000;
+            nextPruneTime = System.currentTimeMillis() + 20 * 60 * 1_000;
         }
 
         switch (slea.readByte()) {
             case 0x02: // Create guild
-                if (c.getPlayer().getGuildId() > 0 || c.getPlayer().getMapId() != 200000301) {
+                if (c.getPlayer().getGuildId() > 0 || c.getPlayer().getMapId() != 200_000_301) {
                     c.getPlayer().dropMessage(1, "你不能在创建一个新的家族.");
                     return;
-                } else if (c.getPlayer().getMeso() < 15000000) {
+                } else if (c.getPlayer().getMeso() < 15_000_000) {
                     c.getPlayer().dropMessage(1, "你的金币不够，无法创建家族");
                     return;
                 }
@@ -115,7 +103,7 @@ public class GuildHandler {
                     c.getSession().write(MaplePacketCreator.genericGuildMessage((byte) 0x1c));
                     return;
                 }
-                c.getPlayer().gainMeso(-15000000, true, false, true);
+                c.getPlayer().gainMeso(-15_000_000, true, false, true);
                 c.getPlayer().setGuildId(guildId);
                 c.getPlayer().setGuildRank((byte) 1);
                 c.getPlayer().saveGuildStatus();
@@ -222,11 +210,11 @@ public class GuildHandler {
                 World.Guild.changeRank(c.getPlayer().getGuildId(), cid, newRank);
                 break;
             case 0x0F: // guild emblem change
-                if (c.getPlayer().getGuildId() <= 0 || c.getPlayer().getGuildRank() != 1 || c.getPlayer().getMapId() != 200000301) {
+                if (c.getPlayer().getGuildId() <= 0 || c.getPlayer().getGuildRank() != 1 || c.getPlayer().getMapId() != 200_000_301) {
                     return;
                 }
 
-                if (c.getPlayer().getMeso() < 5000000) {
+                if (c.getPlayer().getMeso() < 5_000_000) {
                     c.getPlayer().dropMessage(1, "你的金币不够，无法创建家族勋章");
                     return;
                 }
@@ -237,7 +225,7 @@ public class GuildHandler {
 
                 World.Guild.setGuildEmblem(c.getPlayer().getGuildId(), bg, bgcolor, logo, logocolor);
 
-                c.getPlayer().gainMeso(-5000000, true, false, true);
+                c.getPlayer().gainMeso(-5_000_000, true, false, true);
                 respawnPlayer(c.getPlayer());
                 break;
             case 0x10: // guild notice change

@@ -26,8 +26,17 @@ import handling.SendPacketOpcode;
 import tools.MaplePacketCreator;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
+/**
+ *
+ * @author zjj
+ */
 public class UIPacket {
 
+    /**
+     *
+     * @param msg
+     * @return
+     */
     public static final MaplePacket EarnTitleMsg(final String msg) {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -41,6 +50,12 @@ public class UIPacket {
         return mplew.getPacket();
     }
 
+    /**
+     *
+     * @param sp
+     * @param job
+     * @return
+     */
     public static MaplePacket getSPMsg(byte sp, short job) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -55,6 +70,11 @@ public class UIPacket {
         return mplew.getPacket();
     }
 
+    /**
+     *
+     * @param itemid
+     * @return
+     */
     public static MaplePacket getGPMsg(int itemid) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -69,6 +89,11 @@ public class UIPacket {
         return mplew.getPacket();
     }
 
+    /**
+     *
+     * @param msg
+     * @return
+     */
     public static MaplePacket getTopMsg(String msg) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -81,6 +106,11 @@ public class UIPacket {
         return mplew.getPacket();
     }
 
+    /**
+     *
+     * @param itemid
+     * @return
+     */
     public static MaplePacket getStatusMsg(int itemid) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -95,6 +125,11 @@ public class UIPacket {
         return mplew.getPacket();
     }
 
+    /**
+     *
+     * @param path
+     * @return
+     */
     public static final MaplePacket MapEff(final String path) {
         if (ServerConstants.调试输出封包) {
             System.out.println("MapEff--------------------");
@@ -102,6 +137,11 @@ public class UIPacket {
         return MaplePacketCreator.environmentChange(path, 3);
     }
 
+    /**
+     *
+     * @param mapid
+     * @return
+     */
     public static final MaplePacket MapNameDisplay(final int mapid) {//地图名称显示
         if (ServerConstants.调试输出封包) {
             System.out.println("MapNameDisplay--------------------");
@@ -109,6 +149,10 @@ public class UIPacket {
         return MaplePacketCreator.environmentChange("maplemap/enter/" + mapid, 3);
     }
 
+    /**
+     *
+     * @return
+     */
     public static final MaplePacket Aran_Start() {
         if (ServerConstants.调试输出封包) {
             System.out.println("Aran_Start--------------------");
@@ -116,6 +160,11 @@ public class UIPacket {
         return MaplePacketCreator.environmentChange("Aran/balloon", 4);
     }
 
+    /**
+     *
+     * @param data
+     * @return
+     */
     public static final MaplePacket AranTutInstructionalBalloon(final String data) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -130,6 +179,12 @@ public class UIPacket {
         return mplew.getPacket();
     }
 
+    /**
+     *
+     * @param data
+     * @param info
+     * @return
+     */
     public static final MaplePacket ShowWZEffect(final String data, int info) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -150,6 +205,11 @@ public class UIPacket {
         return mplew.getPacket();
     }
 
+    /**
+     *
+     * @param summon
+     * @return
+     */
     public static MaplePacket summonHelper(boolean summon) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -162,6 +222,11 @@ public class UIPacket {
         return mplew.getPacket();
     }
 
+    /**
+     *
+     * @param type
+     * @return
+     */
     public static MaplePacket summonMessage(int type) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -171,11 +236,16 @@ public class UIPacket {
         mplew.writeShort(SendPacketOpcode.SUMMON_HINT_MSG.getValue());
         mplew.write(1);
         mplew.writeInt(type);
-        mplew.writeInt(7000); // probably the delay
+        mplew.writeInt(7_000); // probably the delay
 
         return mplew.getPacket();
     }
 
+    /**
+     *
+     * @param message
+     * @return
+     */
     public static MaplePacket summonMessage(String message) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -187,11 +257,16 @@ public class UIPacket {
         mplew.writeMapleAsciiString(message);
         mplew.writeInt(200); // IDK
         mplew.writeShort(0);
-        mplew.writeInt(10000); // Probably delay
+        mplew.writeInt(10_000); // Probably delay
 
         return mplew.getPacket();
     }
 
+    /**
+     *
+     * @param enable
+     * @return
+     */
     public static MaplePacket IntroLock(boolean enable) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -204,6 +279,11 @@ public class UIPacket {
         return mplew.getPacket();
     }
 
+    /**
+     *
+     * @param enable
+     * @return
+     */
     public static MaplePacket IntroDisableUI(boolean enable) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -216,6 +296,12 @@ public class UIPacket {
         return mplew.getPacket();
     }
 
+    /**
+     *
+     * @param type
+     * @param id
+     * @return
+     */
     public static MaplePacket fishingUpdate(byte type, int id) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -229,6 +315,11 @@ public class UIPacket {
         return mplew.getPacket();
     }
 
+    /**
+     *
+     * @param chrid
+     * @return
+     */
     public static MaplePacket fishingCaught(int chrid) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 

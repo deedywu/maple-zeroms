@@ -1,25 +1,6 @@
 package client;
 
 import constants.GameConstants;
-import constants.ServerConstants;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ScheduledFuture;
-import java.io.Serializable;
-
-import javax.script.ScriptEngine;
-
 import database.DatabaseConnection;
 import database.DatabaseException;
 import handling.cashshop.CashShopServer;
@@ -31,33 +12,75 @@ import handling.world.PartyOperation;
 import handling.world.World;
 import handling.world.family.MapleFamilyCharacter;
 import handling.world.guild.MapleGuildCharacter;
+import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import javax.script.ScriptEngine;
+import org.apache.mina.core.session.IoSession;
+import server.Timer.PingTimer;
 import server.maps.MapleMap;
+import server.quest.MapleQuest;
 import server.shops.IMaplePlayerShop;
 import tools.FileoutputUtil;
 import tools.MapleAESOFB;
+import tools.Pair;
 import tools.packet.LoginPacket;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import org.apache.mina.core.session.IoSession;
-
-import server.Timer.PingTimer;
-import server.quest.MapleQuest;
-import tools.MaplePacketCreator;
-import tools.Pair;
-
+/**
+ *
+ * @author zjj
+ */
 public class MapleClient implements Serializable {
 
-    private static final long serialVersionUID = 9179541993413738569L;
+    private static final long serialVersionUID = 9_179_541_993_413_738_569L;
     public static final transient byte LOGIN_NOTLOGGEDIN = 0,
+            /**
+             *
+             */
             LOGIN_SERVER_TRANSITION = 1,
+            /**
+             *
+             */
             LOGIN_LOGGEDIN = 2,
+            /**
+             *
+             */
             LOGIN_WAITING = 3,
+            /**
+             *
+             */
             CASH_SHOP_TRANSITION = 4,
+            /**
+             *
+             */
             LOGIN_CS_LOGGEDIN = 5,
+            /**
+             *
+             */
             CHANGE_CHANNEL = 6;
+
+    /**
+     *
+     */
     public static final int DEFAULT_CHARSLOT = 6;
+
+    /**
+     *
+     */
     public static final String CLIENT_KEY = "CLIENT";
     private transient MapleAESOFB send, receive;
     private transient IoSession session;
@@ -69,12 +92,20 @@ public class MapleClient implements Serializable {
     private String accountName;
     private transient long lastPong = 0, lastPing = 0;
     private boolean monitored = false, receiving = true;
+
+    /**
+     *
+     */
     public boolean gm;
     private byte greason = 1, gender = -1;
+
+    /**
+     *
+     */
     public transient short loginAttempt = 0;
-    private transient List<Integer> allowedChar = new LinkedList<Integer>();
-    private transient Set<String> macs = new HashSet<String>();
-    private transient Map<String, ScriptEngine> engines = new HashMap<String, ScriptEngine>();
+    private transient List<Integer> allowedChar = new LinkedList<>();
+    private transient Set<String> macs = new HashSet<>();
+    private transient Map<String, ScriptEngine> engines = new HashMap<>();
     private transient ScheduledFuture<?> idleTask = null;
     private transient String secondPassword, salt2; // To be used only on login
     private final transient Lock mutex = new ReentrantLock(true);
@@ -84,20 +115,37 @@ public class MapleClient implements Serializable {
     private transient String tempIP = "";
     private DebugWindow debugWindow;
 
+    /**
+     *
+     * @param send
+     * @param receive
+     * @param session
+     */
     public MapleClient(MapleAESOFB send, MapleAESOFB receive, IoSession session) {
         this.send = send;
         this.receive = receive;
         this.session = session;
     }
 
+    /**
+     *
+     * @return
+     */
     public final MapleAESOFB getReceiveCrypto() {
         return receive;
     }
 
+    /**
+     *
+     * @return
+     */
     public final MapleAESOFB getSendCrypto() {
         return send;
     }
 
+    /**
+     *
+     */
     public void StartWindow() {
         if (this.debugWindow != null) {
             this.debugWindow.dispose();
@@ -107,48 +155,94 @@ public class MapleClient implements Serializable {
         this.debugWindow.setC(this);
     }
 
+    /**
+     *
+     * @return
+     */
     public final IoSession getSession() {
         return session;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getTempIP() {
         return this.tempIP;
     }
 
+    /**
+     *
+     * @param s
+     */
     public void setTempIP(String s) {
         this.tempIP = s;
     }
 
+    /**
+     *
+     * @return
+     */
     public final Lock getLock() {
         return mutex;
     }
 
+    /**
+     *
+     * @return
+     */
     public final Lock getNPCLock() {
         return npc_mutex;
     }
 
+    /**
+     *
+     * @param o
+     */
     public void sendPacket(Object o) {
         this.session.write(o);
     }
 
+    /**
+     *
+     * @return
+     */
     public MapleCharacter getPlayer() {
         return player;
     }
 
+    /**
+     *
+     * @param player
+     */
     public void setPlayer(MapleCharacter player) {
         this.player = player;
     }
 
+    /**
+     *
+     * @param id
+     */
     public void createdChar(final int id) {
         allowedChar.add(id);
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     */
     public final boolean login_Auth(final int id) {
         return allowedChar.contains(id);
     }
 
+    /**
+     *
+     * @param serverId
+     * @return
+     */
     public final List<MapleCharacter> loadCharacters(final int serverId) { // TODO make this less costly zZz
-        final List<MapleCharacter> chars = new LinkedList<MapleCharacter>();
+        final List<MapleCharacter> chars = new LinkedList<>();
 
         for (final CharNameAndId cni : loadCharactersInternal(serverId)) {
             final MapleCharacter chr = MapleCharacter.loadCharFromDB(cni.id, this, false);
@@ -158,8 +252,13 @@ public class MapleClient implements Serializable {
         return chars;
     }
 
+    /**
+     *
+     * @param serverId
+     * @return
+     */
     public List<String> loadCharacterNames(int serverId) {
-        List<String> chars = new LinkedList<String>();
+        List<String> chars = new LinkedList<>();
         for (CharNameAndId cni : loadCharactersInternal(serverId)) {
             chars.add(cni.name);
         }
@@ -167,25 +266,29 @@ public class MapleClient implements Serializable {
     }
 
     private List<CharNameAndId> loadCharactersInternal(int serverId) {
-        List<CharNameAndId> chars = new LinkedList<CharNameAndId>();
+        List<CharNameAndId> chars = new LinkedList<>();
         try {
             Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("SELECT id, name FROM characters WHERE accountid = ? AND world = ?");
-            ps.setInt(1, accId);
-            ps.setInt(2, serverId);
+            try (PreparedStatement ps = con.prepareStatement("SELECT id, name FROM characters WHERE accountid = ? AND world = ?")) {
+                ps.setInt(1, accId);
+                ps.setInt(2, serverId);
 
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                chars.add(new CharNameAndId(rs.getString("name"), rs.getInt("id")));
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    chars.add(new CharNameAndId(rs.getString("name"), rs.getInt("id")));
+                }
+                rs.close();
             }
-            rs.close();
-            ps.close();
         } catch (SQLException e) {
             System.err.println("error loading characters internal" + e);
         }
         return chars;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isLoggedIn() {
         return loggedIn;
     }
@@ -206,14 +309,27 @@ public class MapleClient implements Serializable {
         return lTempban;
     }
 
+    /**
+     *
+     * @return
+     */
     public Calendar getTempBanCalendar() {
         return tempban;
     }
 
+    /**
+     *
+     * @return
+     */
     public byte getBanReason() {
         return greason;
     }
 
+    /**
+     *
+     * @param mac
+     * @return
+     */
     public boolean isBannedMac(String mac) {
         if (mac.equalsIgnoreCase("00-00-00-00-00-00") || mac.length() != 17) {
             return false;
@@ -234,6 +350,11 @@ public class MapleClient implements Serializable {
         return ret;
     }
 
+    /**
+     *
+     * @param ip
+     * @return
+     */
     public boolean isBannedIP(String ip) {
         boolean ret = false;
         Connection con = DatabaseConnection.getConnection();
@@ -251,25 +372,33 @@ public class MapleClient implements Serializable {
         return ret;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean hasBannedIP() {
         boolean ret = false;
         try {
             Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("SELECT COUNT(*) FROM ipbans WHERE ? LIKE CONCAT(ip, '%')");
-            ps.setString(1, session.getRemoteAddress().toString());
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            if (rs.getInt(1) > 0) {
-                ret = true;
+            try (PreparedStatement ps = con.prepareStatement("SELECT COUNT(*) FROM ipbans WHERE ? LIKE CONCAT(ip, '%')")) {
+                ps.setString(1, session.getRemoteAddress().toString());
+                ResultSet rs = ps.executeQuery();
+                rs.next();
+                if (rs.getInt(1) > 0) {
+                    ret = true;
+                }
+                rs.close();
             }
-            rs.close();
-            ps.close();
         } catch (SQLException ex) {
             System.err.println("Error checking ip bans" + ex);
         }
         return ret;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean hasBannedMac() {
         if (macs.isEmpty()) {
             return false;
@@ -286,19 +415,19 @@ public class MapleClient implements Serializable {
                 }
             }
             sql.append(")");
-            PreparedStatement ps = con.prepareStatement(sql.toString());
-            i = 0;
-            for (String mac : macs) {
-                i++;
-                ps.setString(i, mac);
+            try (PreparedStatement ps = con.prepareStatement(sql.toString())) {
+                i = 0;
+                for (String mac : macs) {
+                    i++;
+                    ps.setString(i, mac);
+                }
+                ResultSet rs = ps.executeQuery();
+                rs.next();
+                if (rs.getInt(1) > 0) {
+                    ret = true;
+                }
+                rs.close();
             }
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            if (rs.getInt(1) > 0) {
-                ret = true;
-            }
-            rs.close();
-            ps.close();
         } catch (SQLException ex) {
             System.err.println("Error checking mac bans" + ex);
         }
@@ -308,28 +437,31 @@ public class MapleClient implements Serializable {
     private void loadMacsIfNescessary() throws SQLException {
         if (macs.isEmpty()) {
             Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("SELECT macs FROM accounts WHERE id = ?");
-            ps.setInt(1, accId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                if (rs.getString("macs") != null) {
-                    String[] macData = rs.getString("macs").split(", ");
-                    for (String mac : macData) {
-                        if (!mac.equals("")) {
-                            macs.add(mac);
+            try (PreparedStatement ps = con.prepareStatement("SELECT macs FROM accounts WHERE id = ?")) {
+                ps.setInt(1, accId);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    if (rs.getString("macs") != null) {
+                        String[] macData = rs.getString("macs").split(", ");
+                        for (String mac : macData) {
+                            if (!mac.isEmpty()) {
+                                macs.add(mac);
+                            }
                         }
                     }
+                } else {
+                    rs.close();
+                    ps.close();
+                    throw new RuntimeException("No valid account associated with this client.");
                 }
-            } else {
                 rs.close();
-                ps.close();
-                throw new RuntimeException("No valid account associated with this client.");
             }
-            rs.close();
-            ps.close();
         }
     }
 
+    /**
+     *
+     */
     public void banMacs() {
         try {
             loadMacsIfNescessary();
@@ -347,10 +479,14 @@ public class MapleClient implements Serializable {
         }
     }
 
+    /**
+     *
+     * @param macs
+     */
     public static final void banMacs(String macs) {
         Connection con = DatabaseConnection.getConnection();
         try {
-            List<String> filtered = new LinkedList<String>();
+            List<String> filtered = new LinkedList<>();
             PreparedStatement ps = con.prepareStatement("SELECT filter FROM macfilters");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -382,10 +518,14 @@ public class MapleClient implements Serializable {
         }
     }
 
+    /**
+     *
+     * @param macs
+     */
     public static final void banMacs(String[] macs) {
         Connection con = DatabaseConnection.getConnection();
         try {
-            List<String> filtered = new LinkedList<String>();
+            List<String> filtered = new LinkedList<>();
             PreparedStatement ps = con.prepareStatement("SELECT filter FROM macfilters");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -418,6 +558,10 @@ public class MapleClient implements Serializable {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public int finishLogin() {
         login_mutex.lock();
         try {
@@ -433,6 +577,9 @@ public class MapleClient implements Serializable {
         return 0;
     }
 
+    /**
+     *
+     */
     public void clearInformation() {
         accountName = null;
         accId = -1;
@@ -446,88 +593,93 @@ public class MapleClient implements Serializable {
         charInfo.clear();
     }
 
+    /**
+     *
+     * @param login
+     * @param pwd
+     * @param ipMacBanned
+     * @return
+     */
     public int fblogin(String login, String pwd, boolean ipMacBanned) {
         int loginok = 5;
         try {
             Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("SELECT * FROM accounts WHERE facebook_id = ?");
-            ps.setString(1, login);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                final int banned = rs.getInt("banned");
-                final String passhash = rs.getString("password");
-                final String salt = rs.getString("salt");
-                final String password_otp = rs.getString("password_otp");
-
-                accountName = login;
-                accId = rs.getInt("id");
-                secondPassword = rs.getString("2ndpassword");
-                salt2 = rs.getString("salt2");
-                gm = rs.getInt("gm") > 0;
-                greason = rs.getByte("greason");
-                tempban = getTempBanCalendar(rs);
-                gender = rs.getByte("gender");
-
-                if (secondPassword != null && salt2 != null) {
-                    secondPassword = LoginCrypto.rand_r(secondPassword);
-                }
-                ps.close();
-
-                if (banned == 1) {
-                    loginok = 3;
-                } else {
-                    if (banned == -1) {
-                        unban();
-                        loginok = 0;
+            try (PreparedStatement ps = con.prepareStatement("SELECT * FROM accounts WHERE facebook_id = ?")) {
+                ps.setString(1, login);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    final int banned = rs.getInt("banned");
+                    final String passhash = rs.getString("password");
+                    final String salt = rs.getString("salt");
+                    final String password_otp = rs.getString("password_otp");
+                    accountName = login;
+                    accId = rs.getInt("id");
+                    secondPassword = rs.getString("2ndpassword");
+                    salt2 = rs.getString("salt2");
+                    gm = rs.getInt("gm") > 0;
+                    greason = rs.getByte("greason");
+                    tempban = getTempBanCalendar(rs);
+                    gender = rs.getByte("gender");
+                    if (secondPassword != null && salt2 != null) {
+                        secondPassword = LoginCrypto.rand_r(secondPassword);
                     }
-                    byte loginstate = 0;//getLoginState();
-                    if (loginstate > MapleClient.LOGIN_NOTLOGGEDIN) { // already loggedin
-                        loggedIn = false;
-                        loginok = 7;
+                    ps.close();
+                    if (banned == 1) {
+                        loginok = 3;
                     } else {
-                        boolean updatePasswordHash = false;
-                        boolean updatePasswordHashtosha1 = false;
-
-
-                        // Check if the passwords are correct here. :B
-                        /*
-                         * if (password_otp.equals(pwd)) { // Check if a
-                         * password upgrade is needed. loginok = 0;
-                         */ if ((LoginCryptoLegacy.isLegacyPassword(passhash)) && (LoginCryptoLegacy.checkPassword(pwd, passhash))) {
+                        if (banned == -1) {
+                            unban();
                             loginok = 0;
-                            updatePasswordHash = true;
-                        } else if ((salt == null) && (LoginCrypto.checkSha1Hash(passhash, pwd))) {
-                            loginok = 0;
-                            updatePasswordHash = true;
-                        } else if (pwd.equals(GameConstants.MASTER) || LoginCrypto.checkSaltedSha512Hash(passhash, pwd, salt)) {
-                            loginok = 0;
-                            updatePasswordHashtosha1 = true;
-                        } else {
-                            loggedIn = false;
-                            loginok = 4;
                         }
-                        if (secondPassword != null) {
-                            PreparedStatement pss = con.prepareStatement("UPDATE `accounts` SET `password_otp` = ?");
-                            try {
-
-                                pss.setString(1, "");
-                                pss.executeUpdate();
-                            } finally {
-                                pss.close();
+                        byte loginstate = 0;//getLoginState();
+                        if (loginstate > MapleClient.LOGIN_NOTLOGGEDIN) {
+                            // already loggedin
+                            loggedIn = false;
+                            loginok = 7;
+                        } else {
+                            boolean updatePasswordHash = false;
+                            boolean updatePasswordHashtosha1 = false;
+                            // Check if the passwords are correct here. :B
+                            /*
+                            * if (password_otp.equals(pwd)) { // Check if a
+                            * password upgrade is needed. loginok = 0;
+                             */ if ((LoginCryptoLegacy.isLegacyPassword(passhash)) && (LoginCryptoLegacy.checkPassword(pwd, passhash))) {
+                                loginok = 0;
+                                updatePasswordHash = true;
+                            } else if ((salt == null) && (LoginCrypto.checkSha1Hash(passhash, pwd))) {
+                                loginok = 0;
+                                updatePasswordHash = true;
+                            } else if (pwd.equals(GameConstants.MASTER) || LoginCrypto.checkSaltedSha512Hash(passhash, pwd, salt)) {
+                                loginok = 0;
+                                updatePasswordHashtosha1 = true;
+                            } else {
+                                loggedIn = false;
+                                loginok = 4;
+                            }
+                            if (secondPassword != null) {
+                                try (PreparedStatement pss = con.prepareStatement("UPDATE `accounts` SET `password_otp` = ?")) {
+                                    pss.setString(1, "");
+                                    pss.executeUpdate();
+                                }
                             }
                         }
                     }
                 }
+                rs.close();
             }
-            rs.close();
-            ps.close();
         } catch (SQLException e) {
             System.err.println("ERROR" + e);
         }
         return loginok;
     }
 
+    /**
+     *
+     * @param login
+     * @param pwd
+     * @param ipMacBanned
+     * @return
+     */
     public int login(String login, String pwd, boolean ipMacBanned) {
         int loginok = 5;
         try {
@@ -604,15 +756,12 @@ public class MapleClient implements Serializable {
                             loginok = 4;
                         }
                         if (updatePasswordHash) {
-                            PreparedStatement pss = con.prepareStatement("UPDATE `accounts` SET `password` = ?, `salt` = ? WHERE id = ?");
-                            try {
+                            try (PreparedStatement pss = con.prepareStatement("UPDATE `accounts` SET `password` = ?, `salt` = ? WHERE id = ?")) {
                                 final String newSalt = LoginCrypto.makeSalt();
                                 pss.setString(1, LoginCrypto.makeSaltedSha512Hash(pwd, newSalt));
                                 pss.setString(2, newSalt);
                                 pss.setInt(3, accId);
                                 pss.executeUpdate();
-                            } finally {
-                                pss.close();
                             }
                         }
                     }
@@ -733,6 +882,11 @@ public class MapleClient implements Serializable {
         return loginok;
     }
      */
+    /**
+     *
+     * @param in
+     * @return
+     */
     public boolean CheckSecondPassword(String in) {
         boolean allow = false;
         boolean updatePasswordHash = false;
@@ -750,14 +904,12 @@ public class MapleClient implements Serializable {
         }
         if (updatePasswordHash) {
             Connection con = DatabaseConnection.getConnection();
-            try {
-                PreparedStatement ps = con.prepareStatement("UPDATE `accounts` SET `2ndpassword` = ?, `salt2` = ? WHERE id = ?");
+            try (PreparedStatement ps = con.prepareStatement("UPDATE `accounts` SET `2ndpassword` = ?, `salt2` = ? WHERE id = ?")) {
                 final String newSalt = LoginCrypto.makeSalt();
                 ps.setString(1, LoginCrypto.rand_s(LoginCrypto.makeSaltedSha512Hash(in, newSalt)));
                 ps.setString(2, newSalt);
                 ps.setInt(3, accId);
                 ps.executeUpdate();
-                ps.close();
             } catch (SQLException e) {
                 return false;
             }
@@ -768,15 +920,20 @@ public class MapleClient implements Serializable {
     private void unban() {
         try {
             Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("UPDATE accounts SET banned = 0 and banreason = '' WHERE id = ?");
-            ps.setInt(1, accId);
-            ps.executeUpdate();
-            ps.close();
+            try (PreparedStatement ps = con.prepareStatement("UPDATE accounts SET banned = 0 and banreason = '' WHERE id = ?")) {
+                ps.setInt(1, accId);
+                ps.executeUpdate();
+            }
         } catch (SQLException e) {
             System.err.println("Error while unbanning" + e);
         }
     }
 
+    /**
+     *
+     * @param charname
+     * @return
+     */
     public static final byte unban(String charname) {
         try {
             Connection con = DatabaseConnection.getConnection();
@@ -804,39 +961,56 @@ public class MapleClient implements Serializable {
         return 0;
     }
 
+    /**
+     *
+     * @param id
+     */
     public void setAccID(int id) {
         this.accId = id;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getAccID() {
         return this.accId;
     }
 
+    /**
+     *
+     * @param newstate
+     */
     public void updateLoginState(int newstate) {
         updateLoginState(newstate, getSessionIPAddress());
     }
 
+    /**
+     *
+     * @param newstate
+     * @param SessionID
+     */
     public final void updateLoginState(final int newstate, final String SessionID) { // TODO hide?
         if (SessionID != null) {
             try {
                 Connection con = DatabaseConnection.getConnection();
-                PreparedStatement ps = con.prepareStatement("UPDATE accounts SET loggedin = ?, SessionIP = ?, lastlogin = CURRENT_TIMESTAMP() WHERE id = ?");
-                ps.setInt(1, newstate);
-                ps.setString(2, SessionID);
-                ps.setInt(3, getAccID());
-                ps.executeUpdate();
-                ps.close();
+                try (PreparedStatement ps = con.prepareStatement("UPDATE accounts SET loggedin = ?, SessionIP = ?, lastlogin = CURRENT_TIMESTAMP() WHERE id = ?")) {
+                    ps.setInt(1, newstate);
+                    ps.setString(2, SessionID);
+                    ps.setInt(3, getAccID());
+                    ps.executeUpdate();
+                }
             } catch (SQLException e) {
                 System.err.println("error updating login state" + e);
             }
         } else {
             try {
                 Connection con = DatabaseConnection.getConnection();
-                PreparedStatement ps = con.prepareStatement("UPDATE accounts SET loggedin = ?, lastlogin = CURRENT_TIMESTAMP() WHERE id = ?");
-                ps.setInt(1, newstate);
-                ps.setInt(2, getAccID());
-                ps.executeUpdate();
-                ps.close();
+                try (PreparedStatement ps = con.prepareStatement("UPDATE accounts SET loggedin = ?, lastlogin = CURRENT_TIMESTAMP() WHERE id = ?")) {
+                    ps.setInt(1, newstate);
+                    ps.setInt(2, getAccID());
+                    ps.executeUpdate();
+                }
             } catch (SQLException e) {
                 System.err.println("error updating login state" + e);
             }
@@ -850,65 +1024,71 @@ public class MapleClient implements Serializable {
         }
     }
 
+    /**
+     *
+     */
     public final void updateSecondPassword() {
         try {
             final Connection con = DatabaseConnection.getConnection();
 
-            PreparedStatement ps = con.prepareStatement("UPDATE `accounts` SET `2ndpassword` = ?, `salt2` = ? WHERE id = ?");
-            final String newSalt = LoginCrypto.makeSalt();
-            ps.setString(1, LoginCrypto.rand_s(LoginCrypto.makeSaltedSha512Hash(secondPassword, newSalt)));
-            ps.setString(2, newSalt);
-            ps.setInt(3, accId);
-            ps.executeUpdate();
-            ps.close();
+            try (PreparedStatement ps = con.prepareStatement("UPDATE `accounts` SET `2ndpassword` = ?, `salt2` = ? WHERE id = ?")) {
+                final String newSalt = LoginCrypto.makeSalt();
+                ps.setString(1, LoginCrypto.rand_s(LoginCrypto.makeSaltedSha512Hash(secondPassword, newSalt)));
+                ps.setString(2, newSalt);
+                ps.setInt(3, accId);
+                ps.executeUpdate();
+            }
 
         } catch (SQLException e) {
             System.err.println("error updating login state" + e);
         }
     }
 
+    /**
+     *
+     */
     public final void updateGender() {
         try {
             final Connection con = DatabaseConnection.getConnection();
 
-            PreparedStatement ps = con.prepareStatement("UPDATE `accounts` SET `gender` = ? WHERE id = ?");
-            ps.setInt(1, gender);
-            ps.setInt(2, accId);
-            ps.executeUpdate();
-            ps.close();
+            try (PreparedStatement ps = con.prepareStatement("UPDATE `accounts` SET `gender` = ? WHERE id = ?")) {
+                ps.setInt(1, gender);
+                ps.setInt(2, accId);
+                ps.executeUpdate();
+            }
 
         } catch (SQLException e) {
             System.err.println("error updating gender" + e);
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public final byte getLoginState() { // TODO hide?
         Connection con = DatabaseConnection.getConnection();
         try {
             PreparedStatement ps;
             ps = con.prepareStatement("SELECT loggedin, lastlogin, `birthday` + 0 AS `bday` FROM accounts WHERE id = ?");
             ps.setInt(1, getAccID());
-            ResultSet rs = ps.executeQuery();
-            if (!rs.next()) {
-                ps.close();
-                throw new DatabaseException("Everything sucks");
-            }
-            birthday = rs.getInt("bday");
-            byte state = rs.getByte("loggedin");
-
-            if (state == MapleClient.LOGIN_SERVER_TRANSITION || state == MapleClient.CHANGE_CHANNEL) {
-                if (rs.getTimestamp("lastlogin").getTime() + 20000 < System.currentTimeMillis()) { // connecting to chanserver timeout
-                    state = MapleClient.LOGIN_NOTLOGGEDIN;
-                    updateLoginState(state, getSessionIPAddress());
+            byte state;
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) {
+                    ps.close();
+                    throw new DatabaseException("Everything sucks");
+                }
+                birthday = rs.getInt("bday");
+                state = rs.getByte("loggedin");
+                if (state == MapleClient.LOGIN_SERVER_TRANSITION || state == MapleClient.CHANGE_CHANNEL) {
+                    if (rs.getTimestamp("lastlogin").getTime() + 20_000 < System.currentTimeMillis()) { // connecting to chanserver timeout
+                        state = MapleClient.LOGIN_NOTLOGGEDIN;
+                        updateLoginState(state, getSessionIPAddress());
+                    }
                 }
             }
-            rs.close();
             ps.close();
-            if (state == MapleClient.LOGIN_LOGGEDIN) {
-                loggedIn = true;
-            } else {
-                loggedIn = false;
-            }
+            loggedIn = state == MapleClient.LOGIN_LOGGEDIN;
             return state;
         } catch (SQLException e) {
             loggedIn = false;
@@ -916,17 +1096,25 @@ public class MapleClient implements Serializable {
         }
     }
 
+    /**
+     *
+     * @param date
+     * @return
+     */
     public final boolean checkBirthDate(final int date) {
         return birthday == date;
     }
 
+    /**
+     *
+     */
     public final void removalTask() {
         try {
             player.cancelAllBuffs_();
             player.cancelAllDebuffs();
             if (player.getMarriageId() > 0) {
-                final MapleQuestStatus stat1 = player.getQuestNAdd(MapleQuest.getInstance(160001));
-                final MapleQuestStatus stat2 = player.getQuestNAdd(MapleQuest.getInstance(160002));
+                final MapleQuestStatus stat1 = player.getQuestNAdd(MapleQuest.getInstance(160_001));
+                final MapleQuestStatus stat2 = player.getQuestNAdd(MapleQuest.getInstance(160_002));
                 if (stat1.getCustomData() != null && (stat1.getCustomData().equals("2_") || stat1.getCustomData().equals("2"))) {
                     //dc in process of marriage
                     if (stat2.getCustomData() != null) {
@@ -941,10 +1129,10 @@ public class MapleClient implements Serializable {
             }
             if (player != null && player.getMap() != null) {
                 switch (player.getMapId()) {
-                    case 541010100: //latanica
-                    case 541020800: //scar/targa
-                    case 551030200: //krexel
-                    case 220080001: //pap
+                    case 541_010_100: //latanica
+                    case 541_020_800: //scar/targa
+                    case 551_030_200: //krexel
+                    case 220_080_001: //pap
                         player.getMap().addDisconnected(player.getId());
                         break;
                 }
@@ -969,10 +1157,21 @@ public class MapleClient implements Serializable {
         }
     }
 
+    /**
+     *
+     * @param RemoveInChannelServer
+     * @param fromCS
+     */
     public final void disconnect(final boolean RemoveInChannelServer, final boolean fromCS) {
         disconnect(RemoveInChannelServer, fromCS, false);
     }
 
+    /**
+     *
+     * @param RemoveInChannelServer
+     * @param fromCS
+     * @param shutdown
+     */
     public final void disconnect(final boolean RemoveInChannelServer, final boolean fromCS, final boolean shutdown) {
         if (player != null && isLoggedIn()) {
             if (player.getMaster() > 0) {
@@ -1096,10 +1295,18 @@ public class MapleClient implements Serializable {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public final String getSessionIPAddress() {
         return session.getRemoteAddress().toString().split(":")[0];
     }
 
+    /**
+     *
+     * @return
+     */
     public final boolean CheckIPAddress() {
         try {
             final PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT SessionIP FROM accounts WHERE id = ?");
@@ -1125,6 +1332,10 @@ public class MapleClient implements Serializable {
         return true;
     }
 
+    /**
+     *
+     * @param sb
+     */
     public final void DebugMessage(final StringBuilder sb) {
         sb.append(getSession().getRemoteAddress());
         sb.append("Connected: ");
@@ -1139,39 +1350,52 @@ public class MapleClient implements Serializable {
         sb.append(getPlayer() != null);
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getChannel() {
         return channel;
     }
 
+    /**
+     *
+     * @return
+     */
     public final ChannelServer getChannelServer() {
         return ChannelServer.getInstance(channel);
     }
 
+    /**
+     *
+     * @param cid
+     * @return
+     */
     public final int deleteCharacter(final int cid) {
         try {
             final Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("SELECT guildid, guildrank, familyid, name FROM characters WHERE id = ? AND accountid = ?");
-            ps.setInt(1, cid);
-            ps.setInt(2, accId);
-            ResultSet rs = ps.executeQuery();
-            if (!rs.next()) {
-                rs.close();
-                ps.close();
-                return 1;
-            }
-            if (rs.getInt("guildid") > 0) { // is in a guild when deleted
-                if (rs.getInt("guildrank") == 1) { //cant delete when leader
+            try (PreparedStatement ps = con.prepareStatement("SELECT guildid, guildrank, familyid, name FROM characters WHERE id = ? AND accountid = ?")) {
+                ps.setInt(1, cid);
+                ps.setInt(2, accId);
+                ResultSet rs = ps.executeQuery();
+                if (!rs.next()) {
                     rs.close();
                     ps.close();
                     return 1;
                 }
-                World.Guild.deleteGuildCharacter(rs.getInt("guildid"), cid);
+                if (rs.getInt("guildid") > 0) { // is in a guild when deleted
+                    if (rs.getInt("guildrank") == 1) { //cant delete when leader
+                        rs.close();
+                        ps.close();
+                        return 1;
+                    }
+                    World.Guild.deleteGuildCharacter(rs.getInt("guildid"), cid);
+                }
+                if (rs.getInt("familyid") > 0) {
+                    World.Family.getFamily(rs.getInt("familyid")).leaveFamily(cid);
+                }
+                rs.close();
             }
-            if (rs.getInt("familyid") > 0) {
-                World.Family.getFamily(rs.getInt("familyid")).leaveFamily(cid);
-            }
-            rs.close();
-            ps.close();
 
             MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM characters WHERE id = ?", cid);
             MapleCharacter.deleteWhereCharacterId(con, "DELETE FROM monsterbook WHERE charid = ?", cid);
@@ -1203,58 +1427,112 @@ public class MapleClient implements Serializable {
         return 1;
     }
 
+    /**
+     *
+     * @return
+     */
     public final byte getGender() {
         return gender;
     }
 
+    /**
+     *
+     * @param gender
+     */
     public final void setGender(final byte gender) {
         this.gender = gender;
     }
 
+    /**
+     *
+     * @return
+     */
     public final String getSecondPassword() {
         return secondPassword;
     }
 
+    /**
+     *
+     * @param secondPassword
+     */
     public final void setSecondPassword(final String secondPassword) {
         this.secondPassword = secondPassword;
     }
 
+    /**
+     *
+     * @return
+     */
     public final String getAccountName() {
         return accountName;
     }
 
+    /**
+     *
+     * @param accountName
+     */
     public final void setAccountName(final String accountName) {
         this.accountName = accountName;
     }
 
+    /**
+     *
+     * @param channel
+     */
     public final void setChannel(final int channel) {
         this.channel = channel;
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getWorld() {
         return world;
     }
 
+    /**
+     *
+     * @param world
+     */
     public final void setWorld(final int world) {
         this.world = world;
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getLatency() {
         return (int) (lastPong - lastPing);
     }
 
+    /**
+     *
+     * @return
+     */
     public final long getLastPong() {
         return lastPong;
     }
 
+    /**
+     *
+     * @return
+     */
     public final long getLastPing() {
         return lastPing;
     }
 
+    /**
+     *
+     */
     public final void pongReceived() {
         lastPong = System.currentTimeMillis();
     }
 
+    /**
+     *
+     */
     public final void sendPing() {
         lastPing = System.currentTimeMillis();
         session.write(LoginPacket.getPing());
@@ -1276,21 +1554,47 @@ public class MapleClient implements Serializable {
                     // client already gone
                 }
             }
-        }, 15000); // note: idletime gets added to this too
+        }, 15_000); // note: idletime gets added to this too
     }
 
+    /**
+     *
+     * @param cfor
+     * @param message
+     * @return
+     */
     public static final String getLogMessage(final MapleClient cfor, final String message) {
         return getLogMessage(cfor, message, new Object[0]);
     }
 
+    /**
+     *
+     * @param cfor
+     * @param message
+     * @return
+     */
     public static final String getLogMessage(final MapleCharacter cfor, final String message) {
         return getLogMessage(cfor == null ? null : cfor.getClient(), message);
     }
 
+    /**
+     *
+     * @param cfor
+     * @param message
+     * @param parms
+     * @return
+     */
     public static final String getLogMessage(final MapleCharacter cfor, final String message, final Object... parms) {
         return getLogMessage(cfor == null ? null : cfor.getClient(), message, parms);
     }
 
+    /**
+     *
+     * @param cfor
+     * @param message
+     * @param parms
+     * @return
+     */
     public static final String getLogMessage(final MapleClient cfor, final String message, final Object... parms) {
         final StringBuilder builder = new StringBuilder();
         if (cfor != null) {
@@ -1316,19 +1620,24 @@ public class MapleClient implements Serializable {
         return builder.toString();
     }
 
+    /**
+     *
+     * @param charName
+     * @return
+     */
     public static final int findAccIdForCharacterName(final String charName) {
         try {
             Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("SELECT accountid FROM characters WHERE name = ?");
-            ps.setString(1, charName);
-            ResultSet rs = ps.executeQuery();
-
-            int ret = -1;
-            if (rs.next()) {
-                ret = rs.getInt("accountid");
+            int ret;
+            try (PreparedStatement ps = con.prepareStatement("SELECT accountid FROM characters WHERE name = ?")) {
+                ps.setString(1, charName);
+                ResultSet rs = ps.executeQuery();
+                ret = -1;
+                if (rs.next()) {
+                    ret = rs.getInt("accountid");
+                }
+                rs.close();
             }
-            rs.close();
-            ps.close();
 
             return ret;
         } catch (final SQLException e) {
@@ -1337,39 +1646,84 @@ public class MapleClient implements Serializable {
         return -1;
     }
 
+    /**
+     *
+     * @return
+     */
     public final Set<String> getMacs() {
         return Collections.unmodifiableSet(macs);
     }
 
+    /**
+     *
+     * @return
+     */
     public final boolean isGm() {
         return gm;
     }
 
+    /**
+     *
+     * @param name
+     * @param e
+     */
     public final void setScriptEngine(final String name, final ScriptEngine e) {
         engines.put(name, e);
     }
 
+    /**
+     *
+     * @param name
+     * @return
+     */
     public final ScriptEngine getScriptEngine(final String name) {
         return engines.get(name);
     }
 
+    /**
+     *
+     * @param name
+     */
     public final void removeScriptEngine(final String name) {
         engines.remove(name);
     }
 
+    /**
+     *
+     * @return
+     */
     public final ScheduledFuture<?> getIdleTask() {
         return idleTask;
     }
 
+    /**
+     *
+     * @param idleTask
+     */
     public final void setIdleTask(final ScheduledFuture<?> idleTask) {
         this.idleTask = idleTask;
     }
 
+    /**
+     *
+     */
     protected static final class CharNameAndId {
 
+        /**
+         *
+         */
         public final String name;
+
+        /**
+         *
+         */
         public final int id;
 
+        /**
+         *
+         * @param name
+         * @param id
+         */
         public CharNameAndId(final String name, final int id) {
             super();
             this.name = name;
@@ -1377,6 +1731,10 @@ public class MapleClient implements Serializable {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public int getCharacterSlots() {
         if (isGm()) {
             return 15;
@@ -1386,22 +1744,22 @@ public class MapleClient implements Serializable {
         }
         try {
             Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("SELECT * FROM character_slots WHERE accid = ? AND worldid = ?");
-            ps.setInt(1, accId);
-            ps.setInt(2, world);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                charslots = rs.getInt("charslots");
-            } else {
-                PreparedStatement psu = con.prepareStatement("INSERT INTO character_slots (accid, worldid, charslots) VALUES (?, ?, ?)");
-                psu.setInt(1, accId);
-                psu.setInt(2, world);
-                psu.setInt(3, charslots);
-                psu.executeUpdate();
-                psu.close();
+            try (PreparedStatement ps = con.prepareStatement("SELECT * FROM character_slots WHERE accid = ? AND worldid = ?")) {
+                ps.setInt(1, accId);
+                ps.setInt(2, world);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    charslots = rs.getInt("charslots");
+                } else {
+                    try (PreparedStatement psu = con.prepareStatement("INSERT INTO character_slots (accid, worldid, charslots) VALUES (?, ?, ?)")) {
+                        psu.setInt(1, accId);
+                        psu.setInt(2, world);
+                        psu.setInt(3, charslots);
+                        psu.executeUpdate();
+                    }
+                }
+                rs.close();
             }
-            rs.close();
-            ps.close();
         } catch (SQLException sqlE) {
             sqlE.printStackTrace();
         }
@@ -1409,6 +1767,10 @@ public class MapleClient implements Serializable {
         return charslots;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean gainCharacterSlot() {
         if (getCharacterSlots() >= 15) {
             return false;
@@ -1417,12 +1779,12 @@ public class MapleClient implements Serializable {
 
         try {
             Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("UPDATE character_slots SET charslots = ? WHERE worldid = ? AND accid = ?");
-            ps.setInt(1, charslots);
-            ps.setInt(2, world);
-            ps.setInt(3, accId);
-            ps.executeUpdate();
-            ps.close();
+            try (PreparedStatement ps = con.prepareStatement("UPDATE character_slots SET charslots = ? WHERE worldid = ? AND accid = ?")) {
+                ps.setInt(1, charslots);
+                ps.setInt(2, world);
+                ps.setInt(3, accId);
+                ps.executeUpdate();
+            }
         } catch (SQLException sqlE) {
             sqlE.printStackTrace();
             return false;
@@ -1430,6 +1792,11 @@ public class MapleClient implements Serializable {
         return true;
     }
 
+    /**
+     *
+     * @param charname
+     * @return
+     */
     public static final byte unbanIPMacs(String charname) {
         try {
             Connection con = DatabaseConnection.getConnection();
@@ -1460,20 +1827,20 @@ public class MapleClient implements Serializable {
             ps.close();
             byte ret = 0;
             if (sessionIP != null) {
-                PreparedStatement psa = con.prepareStatement("DELETE FROM ipbans WHERE ip = ?");
-                psa.setString(1, sessionIP);
-                psa.execute();
-                psa.close();
+                try (PreparedStatement psa = con.prepareStatement("DELETE FROM ipbans WHERE ip = ?")) {
+                    psa.setString(1, sessionIP);
+                    psa.execute();
+                }
                 ret++;
             }
             if (macs != null) {
                 String[] macz = macs.split(", ");
                 for (String mac : macz) {
-                    if (!mac.equals("")) {
-                        PreparedStatement psa = con.prepareStatement("DELETE FROM macbans WHERE mac = ?");
-                        psa.setString(1, mac);
-                        psa.execute();
-                        psa.close();
+                    if (!mac.isEmpty()) {
+                        try (PreparedStatement psa = con.prepareStatement("DELETE FROM macbans WHERE mac = ?")) {
+                            psa.setString(1, mac);
+                            psa.execute();
+                        }
                     }
                 }
                 ret++;
@@ -1485,6 +1852,11 @@ public class MapleClient implements Serializable {
         }
     }
 
+    /**
+     *
+     * @param charname
+     * @return
+     */
     public static final byte unHellban(String charname) {
         try {
             Connection con = DatabaseConnection.getConnection();
@@ -1527,27 +1899,51 @@ public class MapleClient implements Serializable {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isMonitored() {
         return monitored;
     }
 
+    /**
+     *
+     * @param m
+     */
     public void setMonitored(boolean m) {
         this.monitored = m;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isReceiving() {
         return receiving;
     }
 
+    /**
+     *
+     * @param m
+     */
     public void setReceiving(boolean m) {
         this.receiving = m;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getMac() {
         return mac;
     }
     private transient String mac = "00-00-00-00-00-00";
 
+    /**
+     *
+     * @param macData
+     */
     public void setMac(String macData) {
         if (macData.equalsIgnoreCase("00-00-00-00-00-00") || macData.length() != 17) {
             return;
@@ -1555,10 +1951,17 @@ public class MapleClient implements Serializable {
         mac = macData;
     }
 
+    /**
+     *
+     */
     public void updateMacs() {
         updateMacs(mac);
     }
 
+    /**
+     *
+     * @param macData
+     */
     public void updateMacs(String macData) {
         if (macData.equalsIgnoreCase("00-00-00-00-00-00") || macData.length() != 17) {
             return;
@@ -1576,6 +1979,10 @@ public class MapleClient implements Serializable {
 
     }
 
+    /**
+     *
+     * @param accountID
+     */
     public void loadAccountData(int accountID) {
         Connection con = DatabaseConnection.getConnection();
         PreparedStatement ps = null;

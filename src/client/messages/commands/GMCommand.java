@@ -1,10 +1,11 @@
 package client.messages.commands;
 
 import client.MapleCharacter;
-import constants.ServerConstants.PlayerGMRank;
 import client.MapleClient;
 import client.inventory.IItem;
 import client.inventory.MapleInventoryType;
+import com.mysql.jdbc.Connection;
+import constants.ServerConstants.PlayerGMRank;
 import database.DatabaseConnection;
 import handling.channel.ChannelServer;
 import handling.world.World;
@@ -22,7 +23,6 @@ import tools.ArrayMap;
 import tools.MaplePacketCreator;
 import tools.Pair;
 import tools.StringUtil;
-import com.mysql.jdbc.Connection;
 
 /**
  *
@@ -30,39 +30,74 @@ import com.mysql.jdbc.Connection;
  */
 public class GMCommand {
 
+    /**
+     *
+     * @return
+     */
     public static PlayerGMRank getPlayerLevelRequired() {
         return PlayerGMRank.GM;
     }
 
+    /**
+     *
+     */
     public static class 拉 extends WarpHere {
     }
 
+    /**
+     *
+     */
     public static class 等级 extends Level {
     }
 
+    /**
+     *
+     */
     public static class 转职 extends Job {
     }
 
+    /**
+     *
+     */
     public static class 清空 extends ClearInv {
     }
 
+    /**
+     *
+     */
     public static class 踢人 extends DC {
     }
 
+    /**
+     *
+     */
     public static class 读取玩家 extends spy {
     }
 
+    /**
+     *
+     */
     public static class 在线人数 extends online {
     }
 
+    /**
+     *
+     */
     public static class 解除封号 extends UnBan {
     }
 
+    /**
+     *
+     */
     public static class 刷钱 extends GainMeso {
     }
 
+    /**
+     *
+     */
     public static class WarpHere extends CommandExecute {
 
+        @Override
         public int execute(MapleClient c, String splitted[]) {
             MapleCharacter victim = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted[1]);
             if (victim != null) {
@@ -88,8 +123,14 @@ public class GMCommand {
 
     }
 
+    /**
+     *
+     */
     public static class Ban extends CommandExecute {
 
+        /**
+         *
+         */
         protected boolean hellban = false;
 
         private String getCommand() {
@@ -132,8 +173,14 @@ public class GMCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class UnBan extends CommandExecute {
 
+        /**
+         *
+         */
         protected boolean hellban = false;
 
         private String getCommand() {
@@ -178,6 +225,9 @@ public class GMCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class 双倍经验 extends CommandExecute {
 
         private int change = 0;
@@ -197,13 +247,13 @@ public class GMCommand {
                 if (this.change == 0) {
                     for (ChannelServer cserv1 : ChannelServer.getAllInstances()) {
                         for (MapleCharacter mch : cserv1.getPlayerStorage().getAllCharacters()) {
-                            mch.startMapEffect(ServerProperties.getProperty("ZeroMS.WorldName") + "管理员关闭【双倍经验】活动！快感谢管理员吧！", 5120000);
+                            mch.startMapEffect(ServerProperties.getProperty("ZeroMS.WorldName") + "管理员关闭【双倍经验】活动！快感谢管理员吧！", 5_120_000);
                         }
                     }
                 } else if (this.change == 1) {
                     for (ChannelServer cserv1 : ChannelServer.getAllInstances()) {
                         for (MapleCharacter mch : cserv1.getPlayerStorage().getAllCharacters()) {
-                            mch.startMapEffect(ServerProperties.getProperty("ZeroMS.WorldName") + "管理员开启【双倍经验】活动！快感谢管理员吧！", 5120000);
+                            mch.startMapEffect(ServerProperties.getProperty("ZeroMS.WorldName") + "管理员开启【双倍经验】活动！快感谢管理员吧！", 5_120_000);
                         }
                     }
                 }
@@ -214,6 +264,9 @@ public class GMCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class 双倍经验time extends CommandExecute {
 
         private int time = 0;
@@ -230,11 +283,12 @@ public class GMCommand {
                     if (chr == null) {
                         continue;
                     }
-                    chr.startMapEffect(ServerProperties.getProperty("ZeroMS.WorldName") + "管理员开启【双倍经验】活动！", 5120000);
+                    chr.startMapEffect(ServerProperties.getProperty("ZeroMS.WorldName") + "管理员开启【双倍经验】活动！", 5_120_000);
                 }
             }
             Timer.WorldTimer.getInstance().register(new Runnable() {
 
+                @Override
                 public void run() {
                     for (ChannelServer cserv : ChannelServer.getAllInstances()) {
                         cserv.setDoubleExp(0);
@@ -242,15 +296,18 @@ public class GMCommand {
                             if (chr == null) {
                                 continue;
                             }
-                            chr.startMapEffect(ServerProperties.getProperty("ZeroMS.WorldName") + "管理员关闭【双倍经验】活动！期待下次活动！", 5120000);
+                            chr.startMapEffect(ServerProperties.getProperty("ZeroMS.WorldName") + "管理员关闭【双倍经验】活动！期待下次活动！", 5_120_000);
                         }
                     }
                 }
-            }, 60000 * time);
+            }, 60_000 * time);
             return 0;
         }
     }
 
+    /**
+     *
+     */
     public static class 双倍爆率 extends CommandExecute {
 
         private int change = 0;
@@ -270,13 +327,13 @@ public class GMCommand {
                 if (this.change == 1) {
                     for (ChannelServer cserv1 : ChannelServer.getAllInstances()) {
                         for (MapleCharacter mch : cserv1.getPlayerStorage().getAllCharacters()) {
-                            mch.startMapEffect(ServerProperties.getProperty("ZeroMS.WorldName") + "管理员关闭【双倍爆率】活动！快感谢管理员吧！", 5121009);
+                            mch.startMapEffect(ServerProperties.getProperty("ZeroMS.WorldName") + "管理员关闭【双倍爆率】活动！快感谢管理员吧！", 5_121_009);
                         }
                     }
                 } else if (this.change == 2) {
                     for (ChannelServer cserv1 : ChannelServer.getAllInstances()) {
                         for (MapleCharacter mch : cserv1.getPlayerStorage().getAllCharacters()) {
-                            mch.startMapEffect(ServerProperties.getProperty("ZeroMS.WorldName") + "管理员开启【双倍爆率】活动！快感谢管理员吧！", 5121009);
+                            mch.startMapEffect(ServerProperties.getProperty("ZeroMS.WorldName") + "管理员开启【双倍爆率】活动！快感谢管理员吧！", 5_121_009);
                         }
                     }
                 }
@@ -287,6 +344,9 @@ public class GMCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class 给所有人物品 extends CommandExecute {
 
         @Override
@@ -310,10 +370,10 @@ public class GMCommand {
             for (ChannelServer cserv1 : ChannelServer.getAllInstances()) {
                 for (MapleCharacter mch : cserv1.getPlayerStorage().getAllCharacters()) {
                     if (quantity <= 1) {
-                        mch.startMapEffect(ServerProperties.getProperty("ZeroMS.WorldName") + "管理员发放【" + mz + "】物品给在线的所以玩家！快感谢管理员吧！", 5120000);
+                        mch.startMapEffect(ServerProperties.getProperty("ZeroMS.WorldName") + "管理员发放【" + mz + "】物品给在线的所以玩家！快感谢管理员吧！", 5_120_000);
 
                     } else {
-                        mch.startMapEffect(ServerProperties.getProperty("ZeroMS.WorldName") + "管理员发放【" + mz + "】物品【" + quantity + "】个给在线的所以玩家！快感谢管理员吧！", 5120000);
+                        mch.startMapEffect(ServerProperties.getProperty("ZeroMS.WorldName") + "管理员发放【" + mz + "】物品【" + quantity + "】个给在线的所以玩家！快感谢管理员吧！", 5_120_000);
 
                     }
                 }
@@ -322,6 +382,9 @@ public class GMCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class 删除道具 extends CommandExecute {
 
         @Override
@@ -344,6 +407,9 @@ public class GMCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class 查看当前地图信息 extends CommandExecute {
 
         @Override
@@ -356,8 +422,12 @@ public class GMCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class 断开玩家连接 extends CommandExecute {
 
+        @Override
         public int execute(MapleClient c, String[] splitted) {
             if (!c.getPlayer().isAdmin()) {
                 return 0;
@@ -374,6 +444,9 @@ public class GMCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class 拉玩家id extends CommandExecute {
 
         @Override
@@ -389,13 +462,17 @@ public class GMCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class 检查玩家物品信息 extends CommandExecute {
 
+        @Override
         public int execute(MapleClient c, String[] splitted) {
             if (!c.getPlayer().isAdmin()) {
                 return 0;
             }
-            if ((splitted.length < 3) || (splitted[1] == null) || (splitted[1].equals("")) || (splitted[2] == null) || (splitted[2].equals(""))) {
+            if ((splitted.length < 3) || (splitted[1] == null) || (splitted[1].isEmpty()) || (splitted[2] == null) || (splitted[2].isEmpty())) {
                 c.getPlayer().dropMessage(6, "用法: !检查玩家物品信息 <玩家名字> <道具ID>");
                 return 0;
             }
@@ -412,6 +489,9 @@ public class GMCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class onlines extends CommandExecute {
 
         @Override
@@ -436,7 +516,7 @@ public class GMCommand {
                         ret.append(chr.getJob());
                         if (chr.getMap() != null) {
                             ret.append(" 地图: ");
-                            ret.append(chr.getMapId() + " - " + chr.getMap().getMapName().toString());
+                            ret.append(chr.getMapId()).append(" - ").append(chr.getMap().getMapName());
                             c.getPlayer().dropMessage(6, ret.toString());
                         }
                         p++;
@@ -449,6 +529,9 @@ public class GMCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class Warpid extends CommandExecute {
 
         @Override
@@ -489,6 +572,9 @@ public class GMCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class 重载跑商 extends CommandExecute {
 
         @Override
@@ -516,6 +602,10 @@ public class GMCommand {
 //            return 1;
 //        }
 //    }
+
+    /**
+     *
+     */
     public static class 公告 extends CommandExecute {
 
         @Override
@@ -538,6 +628,9 @@ public class GMCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class 临时NPC extends CommandExecute {
 
         @Override
@@ -562,6 +655,9 @@ public class GMCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class 永久NPC extends CommandExecute {
 
         @Override
@@ -612,6 +708,9 @@ public class GMCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class DC extends CommandExecute {
 
         @Override
@@ -622,6 +721,9 @@ public class GMCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class Job extends CommandExecute {
 
         @Override
@@ -631,6 +733,9 @@ public class GMCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class GainMeso extends CommandExecute {
 
         @Override
@@ -640,6 +745,9 @@ public class GMCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class Level extends CommandExecute {
 
         @Override
@@ -653,6 +761,9 @@ public class GMCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class spy extends CommandExecute {
 
         @Override
@@ -668,7 +779,7 @@ public class GMCommand {
                 if (victim != null) {
                     c.getPlayer().dropMessage(5, "此玩家(" + victim.getId() + ")状态:");
                     c.getPlayer().dropMessage(5, "等級: " + victim.getLevel() + "职业: " + victim.getJob() + "名声: " + victim.getFame());
-                    c.getPlayer().dropMessage(5, "地图: " + victim.getMapId() + " - " + victim.getMap().getMapName().toString());
+                    c.getPlayer().dropMessage(5, "地图: " + victim.getMapId() + " - " + victim.getMap().getMapName());
                     c.getPlayer().dropMessage(5, "力量: " + victim.getStat().getStr() + "  ||  敏捷: " + victim.getStat().getDex() + "  ||  智力: " + victim.getStat().getInt() + "  ||  运气: " + victim.getStat().getLuk());
                     c.getPlayer().dropMessage(5, "拥有 " + victim.getMeso() + " 金币.");
                 } else {
@@ -679,6 +790,9 @@ public class GMCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class online extends CommandExecute {
 
         @Override
@@ -723,43 +837,55 @@ public class GMCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class ClearInv extends CommandExecute {
 
         @Override
         public int execute(MapleClient c, String[] splitted) {
-            java.util.Map<Pair<Short, Short>, MapleInventoryType> eqs = new ArrayMap<Pair<Short, Short>, MapleInventoryType>();
-            if (splitted[1].equals("全部")) {
-                for (MapleInventoryType type : MapleInventoryType.values()) {
-                    for (IItem item : c.getPlayer().getInventory(type)) {
-                        eqs.put(new Pair<Short, Short>(item.getPosition(), item.getQuantity()), type);
+            java.util.Map<Pair<Short, Short>, MapleInventoryType> eqs = new ArrayMap<>();
+            switch (splitted[1]) {
+                case "全部":
+                    for (MapleInventoryType type : MapleInventoryType.values()) {
+                        for (IItem item : c.getPlayer().getInventory(type)) {
+                            eqs.put(new Pair<>(item.getPosition(), item.getQuantity()), type);
+                        }
                     }
-                }
-            } else if (splitted[1].equals("已装备道具")) {
-                for (IItem item : c.getPlayer().getInventory(MapleInventoryType.EQUIPPED)) {
-                    eqs.put(new Pair<Short, Short>(item.getPosition(), item.getQuantity()), MapleInventoryType.EQUIPPED);
-                }
-            } else if (splitted[1].equals("武器")) {
-                for (IItem item : c.getPlayer().getInventory(MapleInventoryType.EQUIP)) {
-                    eqs.put(new Pair<Short, Short>(item.getPosition(), item.getQuantity()), MapleInventoryType.EQUIP);
-                }
-            } else if (splitted[1].equals("消耗")) {
-                for (IItem item : c.getPlayer().getInventory(MapleInventoryType.USE)) {
-                    eqs.put(new Pair<Short, Short>(item.getPosition(), item.getQuantity()), MapleInventoryType.USE);
-                }
-            } else if (splitted[1].equals("装饰")) {
-                for (IItem item : c.getPlayer().getInventory(MapleInventoryType.SETUP)) {
-                    eqs.put(new Pair<Short, Short>(item.getPosition(), item.getQuantity()), MapleInventoryType.SETUP);
-                }
-            } else if (splitted[1].equals("其他")) {
-                for (IItem item : c.getPlayer().getInventory(MapleInventoryType.ETC)) {
-                    eqs.put(new Pair<Short, Short>(item.getPosition(), item.getQuantity()), MapleInventoryType.ETC);
-                }
-            } else if (splitted[1].equals("特殊")) {
-                for (IItem item : c.getPlayer().getInventory(MapleInventoryType.CASH)) {
-                    eqs.put(new Pair<Short, Short>(item.getPosition(), item.getQuantity()), MapleInventoryType.CASH);
-                }
-            } else {
-                c.getPlayer().dropMessage(6, "[全部/已装备道具/武器/消耗/装饰/其他/特殊]");
+                    break;
+                case "已装备道具":
+                    for (IItem item : c.getPlayer().getInventory(MapleInventoryType.EQUIPPED)) {
+                        eqs.put(new Pair<>(item.getPosition(), item.getQuantity()), MapleInventoryType.EQUIPPED);
+                    }
+                    break;
+                case "武器":
+                    for (IItem item : c.getPlayer().getInventory(MapleInventoryType.EQUIP)) {
+                        eqs.put(new Pair<>(item.getPosition(), item.getQuantity()), MapleInventoryType.EQUIP);
+                    }
+                    break;
+                case "消耗":
+                    for (IItem item : c.getPlayer().getInventory(MapleInventoryType.USE)) {
+                        eqs.put(new Pair<>(item.getPosition(), item.getQuantity()), MapleInventoryType.USE);
+                    }
+                    break;
+                case "装饰":
+                    for (IItem item : c.getPlayer().getInventory(MapleInventoryType.SETUP)) {
+                        eqs.put(new Pair<>(item.getPosition(), item.getQuantity()), MapleInventoryType.SETUP);
+                    }
+                    break;
+                case "其他":
+                    for (IItem item : c.getPlayer().getInventory(MapleInventoryType.ETC)) {
+                        eqs.put(new Pair<>(item.getPosition(), item.getQuantity()), MapleInventoryType.ETC);
+                    }
+                    break;
+                case "特殊":
+                    for (IItem item : c.getPlayer().getInventory(MapleInventoryType.CASH)) {
+                        eqs.put(new Pair<>(item.getPosition(), item.getQuantity()), MapleInventoryType.CASH);
+                    }
+                    break;
+                default:
+                    c.getPlayer().dropMessage(6, "[全部/已装备道具/武器/消耗/装饰/其他/特殊]");
+                    break;
             }
             for (Entry<Pair<Short, Short>, MapleInventoryType> eq : eqs.entrySet()) {
                 MapleInventoryManipulator.removeFromSlot(c, eq.getValue(), eq.getKey().left, eq.getKey().right, false, false);

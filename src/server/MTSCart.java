@@ -21,13 +21,13 @@
  */
 package server;
 
-import constants.GameConstants;
 import client.inventory.IItem;
 import client.inventory.ItemLoader;
 import client.inventory.MapleInventoryType;
-import java.sql.Connection;
+import constants.GameConstants;
 import database.DatabaseConnection;
 import java.io.Serializable;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,18 +35,27 @@ import java.util.ArrayList;
 import java.util.List;
 import tools.Pair;
 
+/**
+ *
+ * @author zjj
+ */
 public class MTSCart implements Serializable {
 
-    private static final long serialVersionUID = 231541893513373578L;
+    private static final long serialVersionUID = 231_541_893_513_373_578L;
     private int characterId, tab = 1, type = 0, page = 0;
     //tab; 1 = buy now, 2 = wanted, 3 = auction, 4 = cart
     //type = inventorytype; 0 = anything
     //page = whatever
-    private List<IItem> transfer = new ArrayList<IItem>();
-    private List<Integer> cart = new ArrayList<Integer>();
-    private List<Integer> notYetSold = new ArrayList<Integer>(10);
+    private List<IItem> transfer = new ArrayList<>();
+    private List<Integer> cart = new ArrayList<>();
+    private List<Integer> notYetSold = new ArrayList<>(10);
     private int owedNX = 0;
 
+    /**
+     *
+     * @param characterId
+     * @throws SQLException
+     */
     public MTSCart(int characterId) throws SQLException {
         this.characterId = characterId;
         for (Pair<IItem, MapleInventoryType> item : ItemLoader.MTS_TRANSFER.loadItems(false, characterId).values()) {
@@ -56,22 +65,43 @@ public class MTSCart implements Serializable {
         loadNotYetSold();
     }
 
+    /**
+     *
+     * @return
+     */
     public List<IItem> getInventory() {
         return transfer;
     }
 
+    /**
+     *
+     * @param item
+     */
     public void addToInventory(IItem item) {
         transfer.add(item);
     }
 
+    /**
+     *
+     * @param item
+     */
     public void removeFromInventory(IItem item) {
         transfer.remove(item);
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Integer> getCart() {
         return cart;
     }
 
+    /**
+     *
+     * @param car
+     * @return
+     */
     public boolean addToCart(final int car) {
         if (!cart.contains(car)) {
             cart.add(car);
@@ -80,6 +110,10 @@ public class MTSCart implements Serializable {
         return false;
     }
 
+    /**
+     *
+     * @param car
+     */
     public void removeFromCart(final int car) {
         for (int i = 0; i < cart.size(); i++) {
             if (cart.get(i) == car) {
@@ -88,14 +122,26 @@ public class MTSCart implements Serializable {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Integer> getNotYetSold() {
         return notYetSold;
     }
 
+    /**
+     *
+     * @param car
+     */
     public void addToNotYetSold(final int car) {
         notYetSold.add(car);
     }
 
+    /**
+     *
+     * @param car
+     */
     public void removeFromNotYetSold(final int car) {
         for (int i = 0; i < notYetSold.size(); i++) {
             if (notYetSold.get(i) == car) {
@@ -104,21 +150,33 @@ public class MTSCart implements Serializable {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getSetOwedNX() {
         final int on = owedNX;
         owedNX = 0;
         return on;
     }
 
+    /**
+     *
+     * @param newNX
+     */
     public void increaseOwedNX(final int newNX) {
         owedNX += newNX;
     }
 
+    /**
+     *
+     * @throws SQLException
+     */
     public void save() throws SQLException {
-        List<Pair<IItem, MapleInventoryType>> itemsWithType = new ArrayList<Pair<IItem, MapleInventoryType>>();
+        List<Pair<IItem, MapleInventoryType>> itemsWithType = new ArrayList<>();
 
         for (IItem item : getInventory()) {
-            itemsWithType.add(new Pair<IItem, MapleInventoryType>(item, GameConstants.getInventoryType(item.getItemId())));
+            itemsWithType.add(new Pair<>(item, GameConstants.getInventoryType(item.getItemId())));
         }
 
         ItemLoader.MTS_TRANSFER.saveItems(itemsWithType, characterId);
@@ -141,52 +199,78 @@ public class MTSCart implements Serializable {
         //notYetSold shouldnt be saved here
     }
 
+    /**
+     *
+     * @throws SQLException
+     */
     public void loadCart() throws SQLException {
-        final PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM mts_cart WHERE characterid = ?");
-        ps.setInt(1, characterId);
-        final ResultSet rs = ps.executeQuery();
-        int iId;
-        while (rs.next()) {
-            iId = rs.getInt("itemid");
-            if (iId < 0) {
-                owedNX -= iId;
-            } else if (MTSStorage.getInstance().check(iId)) {
-                cart.add(iId);
+        try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM mts_cart WHERE characterid = ?")) {
+            ps.setInt(1, characterId);
+            final ResultSet rs = ps.executeQuery();
+            int iId;
+            while (rs.next()) {
+                iId = rs.getInt("itemid");
+                if (iId < 0) {
+                    owedNX -= iId;
+                } else if (MTSStorage.getInstance().check(iId)) {
+                    cart.add(iId);
+                }
             }
+            rs.close();
         }
-        rs.close();
-        ps.close();
     }
 
+    /**
+     *
+     * @throws SQLException
+     */
     public void loadNotYetSold() throws SQLException {
-        final PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM mts_items WHERE characterid = ?");
-        ps.setInt(1, characterId);
-        final ResultSet rs = ps.executeQuery();
-        int pId;
-        while (rs.next()) {
-            pId = rs.getInt("id");
-            if (MTSStorage.getInstance().check(pId)) {
-                notYetSold.add(pId);
+        try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM mts_items WHERE characterid = ?")) {
+            ps.setInt(1, characterId);
+            final ResultSet rs = ps.executeQuery();
+            int pId;
+            while (rs.next()) {
+                pId = rs.getInt("id");
+                if (MTSStorage.getInstance().check(pId)) {
+                    notYetSold.add(pId);
+                }
             }
+            rs.close();
         }
-        rs.close();
-        ps.close();
     }
 
+    /**
+     *
+     * @param tab
+     * @param type
+     * @param page
+     */
     public void changeInfo(final int tab, final int type, final int page) {
         this.tab = tab;
         this.type = type;
         this.page = page;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getTab() {
         return tab;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getType() {
         return type;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getPage() {
         return page;
     }

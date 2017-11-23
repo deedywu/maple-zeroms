@@ -2,15 +2,12 @@ package database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import server.ServerProperties;
@@ -27,13 +24,20 @@ public class DatabaseConnection {
     private static final HashMap<Integer, ConWrapper> connections = new HashMap();
     private final static Logger log = LoggerFactory.getLogger(DatabaseConnection.class);
     private static String dbDriver = "", dbUrl = "", dbUser = "", dbPass = "";
-    private static final long connectionTimeOut = 30 * 60 * 1000;
+    private static final long connectionTimeOut = 30 * 60 * 1_000;
     private static final ReentrantLock lock = new ReentrantLock();
 
+    /**
+     *
+     * @return
+     */
     public static int getConnectionsCount() {
         return connections.size();
     }
 
+    /**
+     *
+     */
     public static void close() {
         try {
             Thread cThread = Thread.currentThread();
@@ -56,6 +60,10 @@ public class DatabaseConnection {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public static Connection getConnection() {
 
         Thread cThread = Thread.currentThread();
@@ -181,10 +189,17 @@ public class DatabaseConnection {
 
     }
 
+    /**
+     *
+     * @return
+     */
     public static boolean isInitialized() {
-        return !dbUser.equals("");
+        return !dbUser.isEmpty();
     }
 
+    /**
+     *
+     */
     public static void closeTimeout() {
         int i = 0;
         lock.lock();
@@ -201,6 +216,9 @@ public class DatabaseConnection {
         }
     }
 
+    /**
+     *
+     */
     public static void closeAll() {
         synchronized (connections) {
             for (ConWrapper con : connections.values()) {
@@ -211,6 +229,10 @@ public class DatabaseConnection {
             }
         }
     }
+
+    /**
+     *
+     */
     public final static Runnable CloseSQLConnections = new Runnable() {
 
         @Override

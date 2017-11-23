@@ -1,5 +1,14 @@
 package server;
 
+import client.MapleClient;
+import client.SkillFactory;
+import client.inventory.IItem;
+import client.inventory.Item;
+import client.inventory.MapleInventoryIdentifier;
+import client.inventory.MapleInventoryType;
+import client.inventory.MaplePet;
+import constants.GameConstants;
+import database.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,52 +18,46 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import client.inventory.IItem;
-import client.inventory.Item;
-import client.SkillFactory;
-import constants.GameConstants;
-import client.inventory.MapleInventoryIdentifier;
-import client.MapleClient;
-import client.inventory.MapleInventoryType;
-import client.inventory.MaplePet;
-import database.DatabaseConnection;
 import server.life.MapleLifeFactory;
 import server.life.MapleNPC;
 import tools.MaplePacketCreator;
 
+/**
+ *
+ * @author zjj
+ */
 public class MapleShop {
 
-    private static final Set<Integer> rechargeableItems = new LinkedHashSet<Integer>();
+    private static final Set<Integer> rechargeableItems = new LinkedHashSet<>();
     private int id;
     private int npcId;
     private List<MapleShopItem> items;
 
     static {
-        for (int i = 2070000; i <= 2070021; i++) {
+        for (int i = 2_070_000; i <= 2_070_021; i++) {
             rechargeableItems.add(Integer.valueOf(i));
         }
-        for (int i = 2070023; i <= 2070026; i++) {
+        for (int i = 2_070_023; i <= 2_070_026; i++) {
             rechargeableItems.add(Integer.valueOf(i));
         }
-        rechargeableItems.remove(Integer.valueOf(2070014));
-        rechargeableItems.remove(Integer.valueOf(2070015));
-        rechargeableItems.remove(Integer.valueOf(2070016));
-        rechargeableItems.remove(Integer.valueOf(2070017));
-        rechargeableItems.remove(Integer.valueOf(2070018));
-        rechargeableItems.remove(Integer.valueOf(2070019));
-        rechargeableItems.remove(Integer.valueOf(2070020));
-        rechargeableItems.remove(Integer.valueOf(2070021));
-        rechargeableItems.remove(Integer.valueOf(2070023));
-        rechargeableItems.remove(Integer.valueOf(2070024));
-        rechargeableItems.remove(Integer.valueOf(2070025));
-        rechargeableItems.remove(Integer.valueOf(2070026));
+        rechargeableItems.remove(Integer.valueOf(2_070_014));
+        rechargeableItems.remove(Integer.valueOf(2_070_015));
+        rechargeableItems.remove(Integer.valueOf(2_070_016));
+        rechargeableItems.remove(Integer.valueOf(2_070_017));
+        rechargeableItems.remove(Integer.valueOf(2_070_018));
+        rechargeableItems.remove(Integer.valueOf(2_070_019));
+        rechargeableItems.remove(Integer.valueOf(2_070_020));
+        rechargeableItems.remove(Integer.valueOf(2_070_021));
+        rechargeableItems.remove(Integer.valueOf(2_070_023));
+        rechargeableItems.remove(Integer.valueOf(2_070_024));
+        rechargeableItems.remove(Integer.valueOf(2_070_025));
+        rechargeableItems.remove(Integer.valueOf(2_070_026));
 
-        for (int i = 2330000; i <= 2330008; i++) {
+        for (int i = 2_330_000; i <= 2_330_008; i++) {
             rechargeableItems.add(Integer.valueOf(i));
         }
-        rechargeableItems.add(Integer.valueOf(2331000));
-        rechargeableItems.add(Integer.valueOf(2332000));
+        rechargeableItems.add(Integer.valueOf(2_331_000));
+        rechargeableItems.add(Integer.valueOf(2_332_000));
         /*
          * rechargeableItems.add(2070000); rechargeableItems.add(2070001);
          * rechargeableItems.add(2070002); rechargeableItems.add(2070003);
@@ -86,13 +89,21 @@ public class MapleShop {
     private MapleShop(int id, int npcId) {
         this.id = id;
         this.npcId = npcId;
-        items = new LinkedList<MapleShopItem>();
+        items = new LinkedList<>();
     }
 
+    /**
+     *
+     * @param item
+     */
     public void addItem(MapleShopItem item) {
         items.add(item);
     }
 
+    /**
+     *
+     * @param c
+     */
     public void sendShop(MapleClient c) {
         MapleNPC npc = MapleLifeFactory.getNPC(getNpcId());
         if (npc == null || npc.getName().equals("MISSINGNO")) {
@@ -105,9 +116,15 @@ public class MapleShop {
         c.getSession().write(MaplePacketCreator.getNPCShop(c, getNpcId(), items));
     }
 
+    /**
+     *
+     * @param c
+     * @param itemId
+     * @param quantity
+     */
     public void buy(MapleClient c, int itemId, short quantity) {
         if (quantity <= 0) {
-            AutobanManager.getInstance().addPoints(c, 1000, 0, "Buying " + quantity + " " + itemId);
+            AutobanManager.getInstance().addPoints(c, 1_000, 0, "Buying " + quantity + " " + itemId);
             return;
         }
         if (!GameConstants.isMountItemAvailable(itemId, c.getPlayer().getJob())) {
@@ -159,6 +176,13 @@ public class MapleShop {
          */
     }
 
+    /**
+     *
+     * @param c
+     * @param type
+     * @param slot
+     * @param quantity
+     */
     public void sell(MapleClient c, MapleInventoryType type, byte slot, short quantity) {
         if (quantity == 0xFFFF || quantity == 0) {
             quantity = 1;
@@ -172,7 +196,7 @@ public class MapleShop {
             quantity = item.getQuantity();
         }
         if (quantity < 0) {
-            AutobanManager.getInstance().addPoints(c, 1000, 0, "Selling " + quantity + " " + item.getItemId() + " (" + type.name() + "/" + slot + ")");
+            AutobanManager.getInstance().addPoints(c, 1_000, 0, "Selling " + quantity + " " + item.getItemId() + " (" + type.name() + "/" + slot + ")");
             return;
         }
         short iQuant = item.getQuantity();
@@ -199,6 +223,11 @@ public class MapleShop {
         }
     }
 
+    /**
+     *
+     * @param c
+     * @param slot
+     */
     public void recharge(final MapleClient c, final byte slot) {
         final IItem item = c.getPlayer().getInventory(MapleInventoryType.USE).getItem(slot);
 
@@ -223,6 +252,11 @@ public class MapleShop {
         }
     }
 
+    /**
+     *
+     * @param itemId
+     * @return
+     */
     protected MapleShopItem findById(int itemId) {
         for (MapleShopItem item : items) {
             if (item.getItemId() == itemId) {
@@ -232,6 +266,12 @@ public class MapleShop {
         return null;
     }
 
+    /**
+     *
+     * @param id
+     * @param isShopId
+     * @return
+     */
     public static MapleShop createFromDB(int id, boolean isShopId) {
         MapleShop ret = null;
         int shopId;
@@ -255,7 +295,7 @@ public class MapleShop {
             ps = con.prepareStatement("SELECT * FROM shopitems WHERE shopid = ? ORDER BY position ASC");
             ps.setInt(1, shopId);
             rs = ps.executeQuery();
-            List<Integer> recharges = new ArrayList<Integer>(rechargeableItems);
+            List<Integer> recharges = new ArrayList<>(rechargeableItems);
             while (rs.next()) {
                 if (GameConstants.isThrowingStar(rs.getInt("itemid")) || GameConstants.isBullet(rs.getInt("itemid"))) {
                     MapleShopItem starItem = new MapleShopItem((short) 1, rs.getInt("itemid"), rs.getInt("price"));
@@ -264,11 +304,11 @@ public class MapleShop {
                         recharges.remove(Integer.valueOf(starItem.getItemId()));
                     }
                 } else {
-                    ret.addItem(new MapleShopItem((short) 1000, rs.getInt("itemid"), rs.getInt("price")));
+                    ret.addItem(new MapleShopItem((short) 1_000, rs.getInt("itemid"), rs.getInt("price")));
                 }
             }
             for (Integer recharge : recharges) {
-                ret.addItem(new MapleShopItem((short) 1000, recharge.intValue(), 0));
+                ret.addItem(new MapleShopItem((short) 1_000, recharge, 0));
             }
             rs.close();
             ps.close();
@@ -278,10 +318,18 @@ public class MapleShop {
         return ret;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getNpcId() {
         return npcId;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getId() {
         return id;
     }

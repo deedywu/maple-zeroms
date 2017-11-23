@@ -95,6 +95,10 @@ public class GenericLittleEndianWriter implements LittleEndianWriter {
         bos.writeByte(b);
     }
 
+    /**
+     *
+     * @param b
+     */
     @Override
     public void write(int b) {
         bos.writeByte((byte) b);
@@ -111,6 +115,10 @@ public class GenericLittleEndianWriter implements LittleEndianWriter {
         bos.writeByte((byte) ((i >>> 8) & 0xFF));
     }
 
+    /**
+     *
+     * @param i
+     */
     @Override
     public void writeShort(int i) {
         bos.writeByte((byte) (i & 0xFF));
@@ -140,6 +148,11 @@ public class GenericLittleEndianWriter implements LittleEndianWriter {
         write(s.getBytes(ASCII));
     }
 
+    /**
+     *
+     * @param s
+     * @param max
+     */
     @Override
     public void writeAsciiString(String s, int max) {
         if (s.getBytes(ASCII).length > max) {

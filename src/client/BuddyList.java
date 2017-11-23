@@ -1,5 +1,7 @@
 package client;
 
+import database.DatabaseConnection;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,9 +11,6 @@ import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.io.Serializable;
-
-import database.DatabaseConnection;
 import tools.MaplePacketCreator;
 
 public class BuddyList implements Serializable {

@@ -1,8 +1,6 @@
 package handling.world.party;
 
 //import handling.world.WorldPartyService;
-import server.Timer.EtcTimer;
-
 import java.util.concurrent.ScheduledFuture;
 
 public class PartySearch {

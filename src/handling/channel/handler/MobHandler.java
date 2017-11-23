@@ -1,33 +1,35 @@
 package handling.channel.handler;
 
+import client.MapleCharacter;
+import client.MapleClient;
+import client.inventory.MapleInventoryType;
 import java.awt.Point;
 import java.util.List;
-
-import client.MapleClient;
-import client.MapleCharacter;
-import client.anticheat.CheatingOffense;
-import client.inventory.MapleInventoryType;
-import constants.GameConstants;
-import handling.world.World;
 import server.MapleInventoryManipulator;
 import server.Randomizer;
-import server.maps.MapleMap;
 import server.life.MapleMonster;
 import server.life.MobSkill;
 import server.life.MobSkillFactory;
+import server.maps.MapleMap;
 import server.maps.MapleNodes.MapleNodeInfo;
-import server.movement.AbstractLifeMovement;
-import server.movement.LifeMovement;
 import server.movement.LifeMovementFragment;
-import tools.FileoutputUtil;
 import tools.MaplePacketCreator;
-import tools.Pair;
 import tools.Triple;
-import tools.packet.MobPacket;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packet.MobPacket;
 
+/**
+ *
+ * @author zjj
+ */
 public class MobHandler {
 
+    /**
+     *
+     * @param slea
+     * @param c
+     * @param chr
+     */
     public static final void MoveMonster(final SeekableLittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
         if (chr == null || chr.getMap() == null) {
             return;
@@ -141,6 +143,11 @@ public class MobHandler {
          */
     }
 
+    /**
+     *
+     * @param slea
+     * @param chr
+     */
     public static final void FriendlyDamage(final SeekableLittleEndianAccessor slea, final MapleCharacter chr) {
         final MapleMap map = chr.getMap();
         if (map == null) {
@@ -158,13 +165,19 @@ public class MobHandler {
         }
     }
 
+    /**
+     *
+     * @param chr
+     * @param mobto
+     * @param map
+     */
     public static final void checkShammos(final MapleCharacter chr, final MapleMonster mobto, final MapleMap map) {
-        if (!mobto.isAlive() && mobto.getId() == 9300275) { //shammos
+        if (!mobto.isAlive() && mobto.getId() == 9_300_275) { //shammos
             for (MapleCharacter chrz : map.getCharactersThreadsafe()) { //check for 2022698
                 if (chrz.getParty() != null && chrz.getParty().getLeader().getId() == chrz.getId()) {
                     //leader
-                    if (chrz.haveItem(2022698)) {
-                        MapleInventoryManipulator.removeById(chrz.getClient(), MapleInventoryType.USE, 2022698, 1, false, true);
+                    if (chrz.haveItem(2_022_698)) {
+                        MapleInventoryManipulator.removeById(chrz.getClient(), MapleInventoryType.USE, 2_022_698, 1, false, true);
                         mobto.heal((int) mobto.getMobMaxHp(), mobto.getMobMaxMp(), true);
                         return;
                     }
@@ -172,15 +185,20 @@ public class MobHandler {
                 }
             }
             map.broadcastMessage(MaplePacketCreator.serverNotice(6, "未能保护好这个怪物."));
-            final MapleMap mapp = chr.getClient().getChannelServer().getMapFactory().getMap(921120001);
+            final MapleMap mapp = chr.getClient().getChannelServer().getMapFactory().getMap(921_120_001);
             for (MapleCharacter chrz : map.getCharactersThreadsafe()) {
                 chrz.changeMap(mapp, mapp.getPortal(0));
             }
-        } else if (mobto.getId() == 9300275 && mobto.getEventInstance() != null) {
+        } else if (mobto.getId() == 9_300_275 && mobto.getEventInstance() != null) {
             mobto.getEventInstance().setProperty("HP", String.valueOf(mobto.getHp()));
         }
     }
 
+    /**
+     *
+     * @param oid
+     * @param chr
+     */
     public static final void MonsterBomb(final int oid, final MapleCharacter chr) {
         final MapleMonster monster = chr.getMap().getMonsterByOid(oid);
 
@@ -193,13 +211,18 @@ public class MobHandler {
         }
     }
 
+    /**
+     *
+     * @param monsteroid
+     * @param chr
+     */
     public static final void AutoAggro(final int monsteroid, final MapleCharacter chr) {
         if (chr == null || chr.getMap() == null || chr.isHidden()) { //no evidence :)
             return;
         }
         final MapleMonster monster = chr.getMap().getMonsterByOid(monsteroid);
 
-        if (monster != null && chr.getPosition().distanceSq(monster.getPosition()) < 200000) {
+        if (monster != null && chr.getPosition().distanceSq(monster.getPosition()) < 200_000) {
             if (monster.getController() != null) {
                 if (chr.getMap().getCharacterById(monster.getController().getId()) == null) {
                     monster.switchController(chr, true);
@@ -212,6 +235,11 @@ public class MobHandler {
         }
     }
 
+    /**
+     *
+     * @param slea
+     * @param chr
+     */
     public static final void HypnotizeDmg(final SeekableLittleEndianAccessor slea, final MapleCharacter chr) {
         final MapleMonster mob_from = chr.getMap().getMonsterByOid(slea.readInt()); // From
         slea.skip(4); // Player ID
@@ -224,7 +252,7 @@ public class MobHandler {
         final MapleMonster mob_to = chr.getMap().getMonsterByOid(to);
 
         if (mob_from != null && mob_to != null && mob_to.getStats().isFriendly()) { //temp for now
-            if (damage > 30000) {
+            if (damage > 30_000) {
                 return;
             }
             mob_to.damage(chr, damage, true);
@@ -232,6 +260,11 @@ public class MobHandler {
         }
     }
 
+    /**
+     *
+     * @param slea
+     * @param chr
+     */
     public static final void DisplayNode(final SeekableLittleEndianAccessor slea, final MapleCharacter chr) {
         final MapleMonster mob_from = chr.getMap().getMonsterByOid(slea.readInt()); // From
         if (mob_from != null) {
@@ -239,6 +272,11 @@ public class MobHandler {
         }
     }
 
+    /**
+     *
+     * @param slea
+     * @param chr
+     */
     public static final void MobNode(final SeekableLittleEndianAccessor slea, final MapleCharacter chr) {
         final MapleMonster mob_from = chr.getMap().getMonsterByOid(slea.readInt()); // From
         final int newNode = slea.readInt();
@@ -249,7 +287,7 @@ public class MobHandler {
                 return;
             }
             if (mni.attr == 2) { //talk
-                chr.getMap().talkMonster("请小心地护送我.", 5120035, mob_from.getObjectId()); //temporary for now. itemID is located in WZ file
+                chr.getMap().talkMonster("请小心地护送我.", 5_120_035, mob_from.getObjectId()); //temporary for now. itemID is located in WZ file
             }
             if (mob_from.getLastNode() >= newNode) {
                 return;
@@ -258,19 +296,19 @@ public class MobHandler {
             if (nodeSize == newNode) { //the last node on the map.
                 int newMap = -1;
                 switch (chr.getMapId() / 100) {
-                    case 9211200:
-                        newMap = 921120100;
+                    case 9_211_200:
+                        newMap = 921_120_100;
                         break;
-                    case 9211201:
-                        newMap = 921120200;
+                    case 9_211_201:
+                        newMap = 921_120_200;
                         break;
-                    case 9211202:
-                        newMap = 921120300;
+                    case 9_211_202:
+                        newMap = 921_120_300;
                         break;
-                    case 9211203:
-                        newMap = 921120400;
+                    case 9_211_203:
+                        newMap = 921_120_400;
                         break;
-                    case 9211204:
+                    case 9_211_204:
                         chr.getMap().removeMonster(mob_from);
                         break;
 

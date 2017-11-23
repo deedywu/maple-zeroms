@@ -1,7 +1,5 @@
 package server;
 
-import java.sql.SQLException;
-
 import database.DatabaseConnection;
 import handling.cashshop.CashShopServer;
 import handling.channel.ChannelServer;
@@ -11,16 +9,30 @@ import handling.world.World.Broadcast;
 import handling.world.World.Family;
 import handling.world.World.Guild;
 import java.util.Set;
-
-import server.Timer.*;
 import tools.MaplePacketCreator;
 
+/**
+ *
+ * @author zjj
+ */
 public class ShutdownServer implements Runnable {
 
     private static final ShutdownServer instance = new ShutdownServer();
+
+    /**
+     *
+     */
     public static boolean running = false;
+
+    /**
+     *
+     */
     public int mode = 0;
 
+    /**
+     *
+     * @return
+     */
     public static ShutdownServer getInstance() {
         return instance;
     }
@@ -46,6 +58,11 @@ public class ShutdownServer implements Runnable {
      * try { Thread.sleep(5000); } catch (Exception e) { //shutdown }
      * System.exit(0); //not sure if this is really needed for ChannelServer }
      */
+
+    /**
+     *
+     */
+
     public void shutdown() {
         run();
     }
@@ -116,7 +133,7 @@ public class ShutdownServer implements Runnable {
         //Timer.PingTimer.getInstance().stop();
         System.out.println("服务端关闭事件 2 已完成.");
         try {
-            Thread.sleep(1000);
+            Thread.sleep(1_000);
         } catch (Exception e) {
             System.out.println("关闭服务端错误 - 2" + e);
 

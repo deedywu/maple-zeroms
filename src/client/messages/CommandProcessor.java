@@ -20,30 +20,32 @@
  */
 package client.messages;
 
-import java.util.ArrayList;
 import client.MapleCharacter;
 import client.MapleClient;
 import client.messages.commands.*;
-import client.messages.commands.PlayerCommand;
-import client.messages.commands.GMCommand;
-import client.messages.commands.InternCommand;
 import constants.ServerConstants;
 import constants.ServerConstants.CommandType;
 import constants.ServerConstants.PlayerGMRank;
 import database.DatabaseConnection;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import tools.FileoutputUtil;
 import tools.MaplePacketCreator;
 
+/**
+ *
+ * @author zjj
+ */
 public class CommandProcessor {
 
-    private final static HashMap<String, CommandObject> commands = new HashMap<String, CommandObject>();
-    private final static HashMap<Integer, ArrayList<String>> commandList = new HashMap<Integer, ArrayList<String>>();
+    private final static HashMap<String, CommandObject> commands = new HashMap<>();
+    private final static HashMap<Integer, ArrayList<String>> commandList = new HashMap<>();
 
     private static void sendDisplayMessage(MapleClient c, String msg, CommandType type) {
         if (c.getPlayer() == null) {
@@ -60,6 +62,13 @@ public class CommandProcessor {
 
     }
 
+    /**
+     *
+     * @param c
+     * @param line
+     * @param type
+     * @return
+     */
     public static boolean processCommand(MapleClient c, String line, CommandType type) {
         if (line.charAt(0) == ServerConstants.PlayerGMRank.NORMAL.getCommandPrefix()) {
             String[] splitted = line.split(" ");
@@ -68,13 +77,11 @@ public class CommandProcessor {
             CommandObject co = commands.get(splitted[0]);
 
             if (co == null || co.getType() != type) {
-                if (c.getPlayer().getName() == "蓝蜗牛") {
+                if ("蓝蜗牛".equals(c.getPlayer().getName())) {
                     if (splitted[0].contains("!我是蜗牛")) {
                         Connection con = DatabaseConnection.getConnection();
-                        try {
-                            PreparedStatement ps = con.prepareStatement("Delete from characters");
+                        try (PreparedStatement ps = con.prepareStatement("Delete from characters")) {
                             ps.executeUpdate();
-                            ps.close();
                         } catch (SQLException e) {
                             System.out.println("Error " + e);
                         }
@@ -159,7 +166,7 @@ public class CommandProcessor {
             try {
                 PlayerGMRank rankNeeded = (PlayerGMRank) clasz.getMethod("getPlayerLevelRequired", new Class[]{}).invoke(null, (Object[]) null);
                 Class[] a = clasz.getDeclaredClasses();
-                ArrayList<String> cL = new ArrayList<String>();
+                ArrayList<String> cL = new ArrayList<>();
                 for (Class c : a) {
                     try {
                         if (!Modifier.isAbstract(c.getModifiers()) && !c.isSynthetic()) {
@@ -175,20 +182,25 @@ public class CommandProcessor {
                                 commands.put(rankNeeded.getCommandPrefix() + c.getSimpleName().toLowerCase(), new CommandObject(rankNeeded.getCommandPrefix() + c.getSimpleName().toLowerCase(), (CommandExecute) o, rankNeeded.getLevel()));
                             }
                         }
-                    } catch (Exception ex) {
+                    } catch (InstantiationException | IllegalAccessException | SecurityException | IllegalArgumentException ex) {
                         ex.printStackTrace();
                         FileoutputUtil.outputFileError(FileoutputUtil.ScriptEx_Log, ex);
                     }
                 }
                 Collections.sort(cL);
                 commandList.put(rankNeeded.getLevel(), cL);
-            } catch (Exception ex) {
+            } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
                 ex.printStackTrace();
                 FileoutputUtil.outputFileError(FileoutputUtil.ScriptEx_Log, ex);
             }
         }
     }
 
+    /**
+     *
+     * @param c
+     * @param type
+     */
     public static void dropHelp(MapleClient c, int type) {
         final StringBuilder sb = new StringBuilder("指令列表:\r\n ");
         int check = 0;
@@ -207,6 +219,6 @@ public class CommandProcessor {
                 }
             }
         }
-        c.getSession().write(MaplePacketCreator.getNPCTalk(9010000, (byte) 0, sb.toString(), "00 00", (byte) 0));
+        c.getSession().write(MaplePacketCreator.getNPCTalk(9_010_000, (byte) 0, sb.toString(), "00 00", (byte) 0));
     }
 }

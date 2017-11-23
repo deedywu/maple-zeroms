@@ -21,8 +21,6 @@
 package client.status;
 
 import java.util.concurrent.ScheduledFuture;
-
-import client.ISkill;
 import server.life.MobSkill;
 
 public class MonsterStatusEffect {

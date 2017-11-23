@@ -1,24 +1,4 @@
-/*
- This file is part of the ZeroFusion MapleStory Server
- Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc> 
- Matthias Butz <matze@odinms.de>
- Jan Christian Meyer <vimes@odinms.de>
- ZeroFusion organized by "RMZero213" <RMZero213@hotmail.com>
 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License version 3
- as published by the Free Software Foundation. You may not use, modify
- or distribute this program under any other version of the
- GNU Affero General Public License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package server.events;
 
 import client.MapleCharacter;
@@ -27,17 +7,28 @@ import java.util.concurrent.ScheduledFuture;
 import server.Timer.EventTimer;
 import server.life.MobSkillFactory;
 import server.maps.MapleMap;
-import server.maps.SavedLocationType;
 import tools.MaplePacketCreator;
 
+/**
+ *
+ * @author zjj
+ */
 public class MapleSnowball extends MapleEvent {
 
     private MapleSnowballs[] balls = new MapleSnowballs[2];
 
+    /**
+     *
+     * @param channel
+     * @param mapid
+     */
     public MapleSnowball(final int channel, final int[] mapid) {
         super(channel, mapid);
     }
 
+    /**
+     *
+     */
     @Override
     public void unreset() {
         super.unreset();
@@ -47,6 +38,9 @@ public class MapleSnowball extends MapleEvent {
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void reset() {
         super.reset();
@@ -54,6 +48,9 @@ public class MapleSnowball extends MapleEvent {
         makeSnowBall(1);
     }
 
+    /**
+     *
+     */
     @Override
     public void startEvent() {
         for (int i = 0; i < 2; i++) {
@@ -65,19 +62,35 @@ public class MapleSnowball extends MapleEvent {
         }
     }
 
+    /**
+     *
+     * @param teamz
+     */
     public void resetSnowBall(int teamz) {
         balls[teamz] = null;
     }
 
+    /**
+     *
+     * @param teamz
+     */
     public void makeSnowBall(int teamz) {
         resetSnowBall(teamz);
         balls[teamz] = new MapleSnowballs(teamz);
     }
 
+    /**
+     *
+     * @param teamz
+     * @return
+     */
     public MapleSnowballs getSnowBall(int teamz) {
         return balls[teamz];
     }
 
+    /**
+     *
+     */
     public static class MapleSnowballs {
 
         private int position = 0;
@@ -85,13 +98,20 @@ public class MapleSnowball extends MapleEvent {
         private int startPoint = 0;
         private boolean invis = true;
         private boolean hittable = true;
-        private int snowmanhp = 7500;
+        private int snowmanhp = 7_500;
         private ScheduledFuture<?> snowmanSchedule = null;
 
+        /**
+         *
+         * @param team_
+         */
         public MapleSnowballs(int team_) {
             this.team = team_;
         }
 
+        /**
+         *
+         */
         public void resetSchedule() {
             if (snowmanSchedule != null) {
                 snowmanSchedule.cancel(false);
@@ -99,47 +119,92 @@ public class MapleSnowball extends MapleEvent {
             }
         }
 
+        /**
+         *
+         * @return
+         */
         public int getTeam() {
             return team;
         }
 
+        /**
+         *
+         * @return
+         */
         public int getPosition() {
             return position;
         }
 
+        /**
+         *
+         * @param pos
+         */
         public void setPositionX(int pos) {
             this.position = pos;
         }
 
+        /**
+         *
+         * @param map
+         */
         public void setStartPoint(MapleMap map) {
             this.startPoint++;
             broadcast(map, startPoint);
         }
 
+        /**
+         *
+         * @return
+         */
         public boolean isInvis() {
             return invis;
         }
 
+        /**
+         *
+         * @param i
+         */
         public void setInvis(boolean i) {
             this.invis = i;
         }
 
+        /**
+         *
+         * @return
+         */
         public boolean isHittable() {
             return hittable && !invis;
         }
 
+        /**
+         *
+         * @param b
+         */
         public void setHittable(boolean b) {
             this.hittable = b;
         }
 
+        /**
+         *
+         * @return
+         */
         public int getSnowmanHP() {
             return snowmanhp;
         }
 
+        /**
+         *
+         * @param shp
+         */
         public void setSnowmanHP(int shp) {
             this.snowmanhp = shp;
         }
 
+        /**
+         *
+         * @param map
+         * @param message
+         */
         public void broadcast(MapleMap map, int message) {
             for (MapleCharacter chr : map.getCharactersThreadsafe()) {
                 if ((team == 0 && chr.getPosition().y > -80) || (team == 1 && chr.getPosition().y <= -80)) {
@@ -150,14 +215,27 @@ public class MapleSnowball extends MapleEvent {
 
         //0 ballpos = 329,469
         //900 = 3042,3172
+
+        /**
+         *
+         * @return
+         */
         public int getLeftX() {
             return position * 3 + 175;
         }
 
+        /**
+         *
+         * @return
+         */
         public int getRightX() {
             return getLeftX() + 275; //exact pos where you cant hit it, as it should knockback
         }
 
+        /**
+         *
+         * @param chr
+         */
         public static void hitSnowball(final MapleCharacter chr) {
             /*                             	TEAM
              0 - bottom snowball
@@ -233,7 +311,7 @@ public class MapleSnowball extends MapleEvent {
                     if (damage > 0) {
                         chr.getMap().broadcastMessage(MaplePacketCreator.rollSnowball(0, sb.getSnowBall(0), sb.getSnowBall(1))); //not sure
                         if (ball.getSnowmanHP() <= 0) {
-                            ball.setSnowmanHP(7500);
+                            ball.setSnowmanHP(7_500);
                             final MapleSnowballs oBall = sb.getSnowBall(team == 0 ? 1 : 0);
                             oBall.setHittable(false);
                             final MapleMap map = chr.getMap();
@@ -245,7 +323,7 @@ public class MapleSnowball extends MapleEvent {
                                     oBall.setHittable(true);
                                     oBall.broadcast(map, 5);
                                 }
-                            }, 10000);
+                            }, 10_000);
                             for (MapleCharacter chrz : chr.getMap().getCharactersThreadsafe()) {
                                 if ((ball.getTeam() == 0 && chr.getPosition().y < -80) || (ball.getTeam() == 1 && chr.getPosition().y > -80)) {
                                     chrz.giveDebuff(MapleDisease.SEDUCE, MobSkillFactory.getMobSkill(128, 1)); //go left

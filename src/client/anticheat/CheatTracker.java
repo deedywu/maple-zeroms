@@ -20,20 +20,19 @@
  */
 package client.anticheat;
 
+import client.MapleCharacter;
+import client.MapleCharacterUtil;
+import constants.GameConstants;
+import handling.world.World;
 import java.awt.Point;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
-
-import constants.GameConstants;
-import client.MapleCharacter;
-import client.MapleCharacterUtil;
-import handling.world.World;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import server.AutobanManager;
@@ -42,11 +41,15 @@ import tools.FileoutputUtil;
 import tools.MaplePacketCreator;
 import tools.StringUtil;
 
+/**
+ *
+ * @author zjj
+ */
 public class CheatTracker {
 
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private final Lock rL = lock.readLock(), wL = lock.writeLock();
-    private final Map<CheatingOffense, CheatingOffenseEntry> offenses = new LinkedHashMap<CheatingOffense, CheatingOffenseEntry>();
+    private final Map<CheatingOffense, CheatingOffenseEntry> offenses = new EnumMap<CheatingOffense, CheatingOffenseEntry>(CheatingOffense.class);
     private final WeakReference<MapleCharacter> chr;
     // For keeping track of speed attack hack.
     private int lastAttackTickCount = 0;
@@ -73,12 +76,21 @@ public class CheatTracker {
     private long lastASmegaTime = 0;
     private long[] lastTime = new long[6];
 
+    /**
+     *
+     * @param chr
+     */
     public CheatTracker(final MapleCharacter chr) {
-        this.chr = new WeakReference<MapleCharacter>(chr);
-        invalidationTask = CheatTimer.getInstance().register(new InvalidationTask(), 60000);
+        this.chr = new WeakReference<>(chr);
+        invalidationTask = CheatTimer.getInstance().register(new InvalidationTask(), 60_000);
         takingDamageSince = System.currentTimeMillis();
     }
 
+    /**
+     *
+     * @param skillId
+     * @param tickcount
+     */
     public final void checkAttack(final int skillId, final int tickcount) {
         final short AtkDelay = GameConstants.getAttackDelay(skillId);
         if ((tickcount - lastAttackTickCount) < AtkDelay) {
@@ -102,6 +114,10 @@ public class CheatTracker {
         lastAttackTickCount = tickcount;
     }
 
+    /**
+     *
+     * @param damage
+     */
     public final void checkTakeDamage(final int damage) {
         numSequentialDamage++;
         lastDamageTakenTime = System.currentTimeMillis();
@@ -112,7 +128,7 @@ public class CheatTracker {
         if (lastDamageTakenTime - takingDamageSince / 500 < numSequentialDamage) {
             registerOffense(CheatingOffense.怪物碰撞过快);
         }
-        if (lastDamageTakenTime - takingDamageSince > 4500) {
+        if (lastDamageTakenTime - takingDamageSince > 4_500) {
             takingDamageSince = lastDamageTakenTime;
             numSequentialDamage = 0;
         }
@@ -131,8 +147,12 @@ public class CheatTracker {
         }
     }
 
+    /**
+     *
+     * @param dmg
+     */
     public final void checkSameDamage(final int dmg) {
-        if (dmg > 2000 && lastDamage == dmg) {
+        if (dmg > 2_000 && lastDamage == dmg) {
             numSameDamage++;
 
             if (numSameDamage > 5) {
@@ -145,6 +165,11 @@ public class CheatTracker {
         }
     }
 
+    /**
+     *
+     * @param pos
+     * @param chr
+     */
     public final void checkMoveMonster(final Point pos, MapleCharacter chr) {
 
         //double dis = Math.abs(pos.distance(lastMonsterMove));
@@ -170,28 +195,42 @@ public class CheatTracker {
         }
     }
 
+    /**
+     *
+     */
     public final void resetSummonAttack() {
         summonSummonTime = System.currentTimeMillis();
         numSequentialSummonAttack = 0;
     }
 
+    /**
+     *
+     * @return
+     */
     public final boolean checkSummonAttack() {
         numSequentialSummonAttack++;
         //estimated
         // System.out.println(numMPRegens + "/" + allowedRegens);
-        if ((System.currentTimeMillis() - summonSummonTime) / (2000 + 1) < numSequentialSummonAttack) {
+        if ((System.currentTimeMillis() - summonSummonTime) / (2_000 + 1) < numSequentialSummonAttack) {
             registerOffense(CheatingOffense.召唤兽快速攻击);
             return false;
         }
         return true;
     }
 
+    /**
+     *
+     */
     public final void checkDrop() {
         checkDrop(false);
     }
 
+    /**
+     *
+     * @param dc
+     */
     public final void checkDrop(final boolean dc) {
-        if ((System.currentTimeMillis() - lastDropTime) < 1000) {
+        if ((System.currentTimeMillis() - lastDropTime) < 1_000) {
             dropsPerSecond++;
             if (dropsPerSecond >= (dc ? 32 : 16) && chr.get() != null) {
 //                if (dc) {
@@ -206,14 +245,24 @@ public class CheatTracker {
         lastDropTime = System.currentTimeMillis();
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean canAvatarSmega2() {
-        if (lastASmegaTime + 10000 > System.currentTimeMillis() && chr.get() != null && !chr.get().isGM()) {
+        if (lastASmegaTime + 10_000 > System.currentTimeMillis() && chr.get() != null && !chr.get().isGM()) {
             return false;
         }
         lastASmegaTime = System.currentTimeMillis();
         return true;
     }
 
+    /**
+     *
+     * @param limit
+     * @param type
+     * @return
+     */
     public synchronized boolean GMSpam(int limit, int type) {
         if (type < 0 || lastTime.length < type) {
             type = 1; // default xD
@@ -225,8 +274,11 @@ public class CheatTracker {
         return false;
     }
 
+    /**
+     *
+     */
     public final void checkMsg() { //ALL types of msg. caution with number of  msgsPerSecond
-        if ((System.currentTimeMillis() - lastMsgTime) < 1000) { //luckily maplestory has auto-check for too much msging
+        if ((System.currentTimeMillis() - lastMsgTime) < 1_000) { //luckily maplestory has auto-check for too much msging
             msgsPerSecond++;
             /*
              * if (msgsPerSecond > 10 && chr.get() != null) {
@@ -238,10 +290,18 @@ public class CheatTracker {
         lastMsgTime = System.currentTimeMillis();
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getAttacksWithoutHit() {
         return attacksWithoutHit;
     }
 
+    /**
+     *
+     * @param increase
+     */
     public final void setAttacksWithoutHit(final boolean increase) {
         if (increase) {
             this.attacksWithoutHit++;
@@ -250,10 +310,19 @@ public class CheatTracker {
         }
     }
 
+    /**
+     *
+     * @param offense
+     */
     public final void registerOffense(final CheatingOffense offense) {
         registerOffense(offense, null);
     }
 
+    /**
+     *
+     * @param offense
+     * @param param
+     */
     public final void registerOffense(final CheatingOffense offense, final String param) {
         final MapleCharacter chrhardref = chr.get();
         if (chrhardref == null || !offense.isEnabled() || chrhardref.isClone() || chrhardref.isGM()) {
@@ -279,16 +348,22 @@ public class CheatTracker {
         entry.incrementCount();
         if (offense.shouldAutoban(entry.getCount())) {
             final byte type = offense.getBanType();
-            if (type == 1) {
-                AutobanManager.getInstance().autoban(chrhardref.getClient(), StringUtil.makeEnumHumanReadable(offense.name()));
-            } else if (type == 2) {
-                //怪物碰撞过快 回避率过高 快速攻击 快速攻击2 怪物移动 伤害相同
-                String outputFileName = "断线";
-                World.Broadcast.broadcastGMMessage(MaplePacketCreator.serverNotice(6, "[GM信息] " + chrhardref.getName() + " 自动断线 类别: " + offense.toString() + " 原因: " + (param == null ? "" : (" - " + param))).getBytes());
-                FileoutputUtil.logToFile_chr(chrhardref, "logs/Hack/" + outputFileName + ".txt", "\r\n " + FileoutputUtil.NowTime() + " 类别" + offense.toString() + " 原因 " + (param == null ? "" : (" - " + param)));
-                chrhardref.getClient().getSession().close();
-                //chrhardref.getClient().getSession().close();
-            } else if (type == 3) {
+            switch (type) {
+                case 1:
+                    AutobanManager.getInstance().autoban(chrhardref.getClient(), StringUtil.makeEnumHumanReadable(offense.name()));
+                    break;
+                case 2:
+                    //怪物碰撞过快 回避率过高 快速攻击 快速攻击2 怪物移动 伤害相同
+                    String outputFileName = "断线";
+                    World.Broadcast.broadcastGMMessage(MaplePacketCreator.serverNotice(6, "[GM信息] " + chrhardref.getName() + " 自动断线 类别: " + offense.toString() + " 原因: " + (param == null ? "" : (" - " + param))).getBytes());
+                    FileoutputUtil.logToFile_chr(chrhardref, "logs/Hack/" + outputFileName + ".txt", "\r\n " + FileoutputUtil.NowTime() + " 类别" + offense.toString() + " 原因 " + (param == null ? "" : (" - " + param)));
+                    chrhardref.getClient().getSession().close();
+                    //chrhardref.getClient().getSession().close();
+                    break;
+                case 3:
+                    break;
+                default:
+                    break;
             }
             gm_message = 50;
             return;
@@ -343,6 +418,10 @@ public class CheatTracker {
         CheatingOffensePersister.getInstance().persistEntry(entry);
     }
 
+    /**
+     *
+     * @param newTick
+     */
     public void updateTick(int newTick) {
         if (newTick == lastTickCount) { //definitely packet spamming
 /*
@@ -358,6 +437,10 @@ public class CheatTracker {
         lastTickCount = newTick;
     }
 
+    /**
+     *
+     * @param coe
+     */
     public final void expireEntry(final CheatingOffenseEntry coe) {
         wL.lock();
         try {
@@ -367,6 +450,10 @@ public class CheatTracker {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getPoints() {
         int ret = 0;
         CheatingOffenseEntry[] offenses_copy;
@@ -386,13 +473,21 @@ public class CheatTracker {
         return ret;
     }
 
+    /**
+     *
+     * @return
+     */
     public final Map<CheatingOffense, CheatingOffenseEntry> getOffenses() {
         return Collections.unmodifiableMap(offenses);
     }
 
+    /**
+     *
+     * @return
+     */
     public final String getSummary() {
         final StringBuilder ret = new StringBuilder();
-        final List<CheatingOffenseEntry> offenseList = new ArrayList<CheatingOffenseEntry>();
+        final List<CheatingOffenseEntry> offenseList = new ArrayList<>();
         rL.lock();
         try {
             for (final CheatingOffenseEntry entry : offenses.values()) {
@@ -424,6 +519,9 @@ public class CheatTracker {
         return ret.toString();
     }
 
+    /**
+     *
+     */
     public final void dispose() {
         if (invalidationTask != null) {
             invalidationTask.cancel(false);

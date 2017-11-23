@@ -1,38 +1,28 @@
-/*
- This file is part of the OdinMS Maple Story Server
- Copyright (C) 2008 ~ 2010 Patrick Huy <patrick.huy@frz.cc> 
- Matthias Butz <matze@odinms.de>
- Jan Christian Meyer <vimes@odinms.de>
 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License version 3
- as published by the Free Software Foundation. You may not use, modify
- or distribute this program under any other version of the
- GNU Affero General Public License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package server.quest;
 
+import database.DatabaseConnection;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.sql.Blob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.LinkedList;
-import database.DatabaseConnection;
+import java.sql.SQLException;
 
+/**
+ *
+ * @author zjj
+ */
 public class MapleCustomQuest extends MapleQuest implements Serializable {
 
-    private static final long serialVersionUID = 9179541993413738569L;
+    private static final long serialVersionUID = 9_179_541_993_413_738_569L;
 
+    /**
+     *
+     * @param id
+     */
     public MapleCustomQuest(int id) {
         super(id);
         try {
@@ -75,7 +65,7 @@ public class MapleCustomQuest extends MapleQuest implements Serializable {
             }
             rs.close();
             ps.close();
-        } catch (Exception ex) {
+        } catch (SQLException | IOException | ClassNotFoundException ex) {
             ex.printStackTrace();
             System.err.println("Error loading custom quest from SQL." + ex);
         }

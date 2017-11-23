@@ -20,18 +20,25 @@
  */
 package handling.world;
 
+import client.MapleCharacter;
 import java.io.Serializable;
 
-import client.MapleCharacter;
-
+/**
+ *
+ * @author zjj
+ */
 public class MapleMessengerCharacter implements Serializable {
 
-    private static final long serialVersionUID = 6215463252132450750L;
+    private static final long serialVersionUID = 6_215_463_252_132_450_750L;
     private String name = "";
     private int id = -1;
     private int channel = -1;
     private boolean online = false;
 
+    /**
+     *
+     * @param maplechar
+     */
     public MapleMessengerCharacter(MapleCharacter maplechar) {
         this.name = maplechar.getName();
         this.channel = maplechar.getClient().getChannel();
@@ -39,25 +46,48 @@ public class MapleMessengerCharacter implements Serializable {
         this.online = true;
     }
 
+    /**
+     *
+     */
     public MapleMessengerCharacter() {
     }
 
+    /**
+     *
+     * @return
+     */
     public int getChannel() {
         return channel;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isOnline() {
         return online;
     }
 
+    /**
+     *
+     * @param online
+     */
     public void setOnline(boolean online) {
         this.online = online;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getId() {
         return id;
     }

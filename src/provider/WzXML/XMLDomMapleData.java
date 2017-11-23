@@ -8,21 +8,22 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
-import provider.MapleData;
-import provider.MapleDataEntity;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import provider.MapleData;
+import provider.MapleDataEntity;
 import tools.FileoutputUtil;
 
+/**
+ *
+ * @author zjj
+ */
 public class XMLDomMapleData implements MapleData, Serializable {
 
     private Node node;
@@ -32,6 +33,11 @@ public class XMLDomMapleData implements MapleData, Serializable {
         this.node = node;
     }
 
+    /**
+     *
+     * @param fis
+     * @param imageDataDir
+     */
     public XMLDomMapleData(final FileInputStream fis, final File imageDataDir) {
         try {
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -39,36 +45,37 @@ public class XMLDomMapleData implements MapleData, Serializable {
             Document document = documentBuilder.parse(fis);
             this.node = document.getFirstChild();
 
-        } catch (ParserConfigurationException e) {
-            throw new RuntimeException(e);
-        } catch (SAXException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new RuntimeException(e);
         }
         this.imageDataDir = imageDataDir;
     }
 
+    /**
+     *
+     * @param path
+     * @return
+     */
     @Override
     public MapleData getChildByPath(final String path) {
         final String segments[] = path.split("/");
         if (segments[0].equals("..")) {
-            return ((MapleData) getParent()).getChildByPath(path.substring(path.indexOf("/") + 1));
+            return ((MapleData) getParent()).getChildByPath(path.substring(path.indexOf('/') + 1));
         }
 
         Node myNode = node;
-        for (int x = 0; x < segments.length; x++) {
+        for (String segment : segments) {
             NodeList childNodes = myNode.getChildNodes();
             boolean foundChild = false;
             for (int i = 0; i < childNodes.getLength(); i++) {
                 try {
                     final Node childNode = childNodes.item(i);
-                    if (childNode != null && childNode.getNodeType() == Node.ELEMENT_NODE && childNode.getAttributes().getNamedItem("name").getNodeValue().equals(segments[x])) {
+                    if (childNode != null && childNode.getNodeType() == Node.ELEMENT_NODE && childNode.getAttributes().getNamedItem("name").getNodeValue().equals(segment)) {
                         myNode = childNode;
                         foundChild = true;
                         break;
                     }
-                } catch (NullPointerException e) {
+                }catch (NullPointerException e) {
                     FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e); //ugh.
                 }
             }
@@ -81,9 +88,13 @@ public class XMLDomMapleData implements MapleData, Serializable {
         return ret;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public List<MapleData> getChildren() {
-        final List<MapleData> ret = new ArrayList<MapleData>();
+        final List<MapleData> ret = new ArrayList<>();
         final NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             final Node childNode = childNodes.item(i);
@@ -96,22 +107,26 @@ public class XMLDomMapleData implements MapleData, Serializable {
         return ret;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Object getData() {
         final NamedNodeMap attributes = node.getAttributes();
         final MapleDataType type = getType();
         switch (type) {
             case DOUBLE: {
-                return Double.valueOf(Double.parseDouble(attributes.getNamedItem("value").getNodeValue()));
+                return Double.parseDouble(attributes.getNamedItem("value").getNodeValue());
             }
             case FLOAT: {
-                return Float.valueOf(Float.parseFloat(attributes.getNamedItem("value").getNodeValue()));
+                return Float.parseFloat(attributes.getNamedItem("value").getNodeValue());
             }
             case INT: {
-                return Integer.valueOf(Integer.parseInt(attributes.getNamedItem("value").getNodeValue()));
+                return Integer.parseInt(attributes.getNamedItem("value").getNodeValue());
             }
             case SHORT: {
-                return Short.valueOf(Short.parseShort(attributes.getNamedItem("value").getNodeValue()));
+                return Short.parseShort(attributes.getNamedItem("value").getNodeValue());
             }
             case STRING:
             case UOL: {
@@ -127,36 +142,48 @@ public class XMLDomMapleData implements MapleData, Serializable {
         return null;
     }
 
+    /**
+     *
+     * @return
+     */
+    @Override
     public final MapleDataType getType() {
         final String nodeName = node.getNodeName();
-        if (nodeName.equals("imgdir")) {
-            return MapleDataType.PROPERTY;
-        } else if (nodeName.equals("canvas")) {
-            return MapleDataType.CANVAS;
-        } else if (nodeName.equals("convex")) {
-            return MapleDataType.CONVEX;
-        } else if (nodeName.equals("sound")) {
-            return MapleDataType.SOUND;
-        } else if (nodeName.equals("uol")) {
-            return MapleDataType.UOL;
-        } else if (nodeName.equals("double")) {
-            return MapleDataType.DOUBLE;
-        } else if (nodeName.equals("float")) {
-            return MapleDataType.FLOAT;
-        } else if (nodeName.equals("int")) {
-            return MapleDataType.INT;
-        } else if (nodeName.equals("short")) {
-            return MapleDataType.SHORT;
-        } else if (nodeName.equals("string")) {
-            return MapleDataType.STRING;
-        } else if (nodeName.equals("vector")) {
-            return MapleDataType.VECTOR;
-        } else if (nodeName.equals("null")) {
-            return MapleDataType.IMG_0x00;
+        switch (nodeName) {
+            case "imgdir":
+                return MapleDataType.PROPERTY;
+            case "canvas":
+                return MapleDataType.CANVAS;
+            case "convex":
+                return MapleDataType.CONVEX;
+            case "sound":
+                return MapleDataType.SOUND;
+            case "uol":
+                return MapleDataType.UOL;
+            case "double":
+                return MapleDataType.DOUBLE;
+            case "float":
+                return MapleDataType.FLOAT;
+            case "int":
+                return MapleDataType.INT;
+            case "short":
+                return MapleDataType.SHORT;
+            case "string":
+                return MapleDataType.STRING;
+            case "vector":
+                return MapleDataType.VECTOR;
+            case "null":
+                return MapleDataType.IMG_0x00;
+            default:
+                break;
         }
         return null;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public MapleDataEntity getParent() {
         final Node parentNode = node.getParentNode();
@@ -168,6 +195,10 @@ public class XMLDomMapleData implements MapleData, Serializable {
         return parentData;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getName() {
         return node.getAttributes().getNamedItem("name").getNodeValue();

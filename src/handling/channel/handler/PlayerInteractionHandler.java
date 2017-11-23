@@ -20,31 +20,34 @@
  */
 package handling.channel.handler;
 
-import java.util.Arrays;
-
+import client.MapleCharacter;
+import client.MapleClient;
 import client.inventory.IItem;
 import client.inventory.ItemFlag;
-import constants.GameConstants;
-import client.MapleClient;
-import client.MapleCharacter;
 import client.inventory.MapleInventoryType;
+import constants.GameConstants;
 import constants.OtherSettings;
+import java.util.Arrays;
+import scripting.NPCScriptManager;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
 import server.MapleTrade;
 import server.maps.FieldLimitType;
-import server.shops.HiredMerchant;
-import server.shops.IMaplePlayerShop;
-import server.shops.MaplePlayerShop;
-import server.shops.MaplePlayerShopItem;
 import server.maps.MapleMapObject;
 import server.maps.MapleMapObjectType;
+import server.shops.HiredMerchant;
+import server.shops.IMaplePlayerShop;
 import server.shops.MapleMiniGame;
+import server.shops.MaplePlayerShop;
+import server.shops.MaplePlayerShopItem;
 import tools.MaplePacketCreator;
-import tools.packet.PlayerShopPacket;
 import tools.data.input.SeekableLittleEndianAccessor;
-import scripting.NPCScriptManager;
+import tools.packet.PlayerShopPacket;
 
+/**
+ *
+ * @author zjj
+ */
 public class PlayerInteractionHandler {
 
     private static final byte CREATE = 0x00,
@@ -91,6 +94,12 @@ public class PlayerInteractionHandler {
             MOVE_OMOK = 0x3F,
             SELECT_CARD = 0x43;
 
+    /**
+     *
+     * @param slea
+     * @param c
+     * @param chr
+     */
     public static final void PlayerInteraction(final SeekableLittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
         //System.out.println(slea.toString());
         if (chr == null) {
@@ -107,7 +116,7 @@ public class PlayerInteractionHandler {
                         c.getSession().write(MaplePacketCreator.enableActions());
                         return;
                     }
-                    if (chr.getMap().getMapObjectsInRange(chr.getPosition(), 20000, Arrays.asList(MapleMapObjectType.SHOP, MapleMapObjectType.HIRED_MERCHANT)).size() != 0) {
+                    if (!chr.getMap().getMapObjectsInRange(chr.getPosition(), 20_000, Arrays.asList(MapleMapObjectType.SHOP, MapleMapObjectType.HIRED_MERCHANT)).isEmpty()) {
                         chr.dropMessage(1, "你不可能在这里建立一个商店.");
                         c.getSession().write(MaplePacketCreator.enableActions());
                         return;
@@ -125,8 +134,8 @@ public class PlayerInteractionHandler {
                     }
                     if (createType == 1 || createType == 2) {
                         final int piece = slea.readByte();
-                        final int itemId = createType == 1 ? (4080000 + piece) : 4080100;
-                        if (!chr.haveItem(itemId) || (c.getPlayer().getMapId() >= 910000001 && c.getPlayer().getMapId() <= 910000022)) {
+                        final int itemId = createType == 1 ? (4_080_000 + piece) : 4_080_100;
+                        if (!chr.haveItem(itemId) || (c.getPlayer().getMapId() >= 910_000_001 && c.getPlayer().getMapId() <= 910_000_022)) {
                             return;
                         }
                         MapleMiniGame game = new MapleMiniGame(chr, itemId, desc, pass, createType); //itemid
@@ -143,7 +152,7 @@ public class PlayerInteractionHandler {
                         // if (shop == null || shop.getQuantity() <= 0 || shop.getItemId() != 雇佣ID || c.getPlayer().getMapId() < 910000000 || c.getPlayer().getMapId() > 910000022) {
                         //     return;
                         //  }
-                        if (shop == null || shop.getQuantity() <= 0 || shop.getItemId() != slea.readInt() || c.getPlayer().getMapId() < 910000000 || c.getPlayer().getMapId() > 910000022) {
+                        if (shop == null || shop.getQuantity() <= 0 || shop.getItemId() != slea.readInt() || c.getPlayer().getMapId() < 910_000_000 || c.getPlayer().getMapId() > 910_000_022) {
                             return;
                         }
                         if (createType == 4) {
@@ -245,7 +254,6 @@ public class PlayerInteractionHandler {
                             }
                         } else if (ips instanceof MaplePlayerShop && ((MaplePlayerShop) ips).isBanned(chr.getName())) {
                             chr.dropMessage(1, "你被这家商店加入黑名单了,所以不能进入.");
-                            return;
                         } else if (ips.getFreeSlot() < 0 || ips.getVisitorSlot(chr) > -1 || !ips.isOpen() || !ips.isAvailable()) {
                             c.getSession().write(PlayerShopPacket.getMiniGameFull());
                         } else {
@@ -304,7 +312,6 @@ public class PlayerInteractionHandler {
                             }
                         } else if (ips instanceof MaplePlayerShop && ((MaplePlayerShop) ips).isBanned(chr.getName())) {
                             chr.dropMessage(1, "你被这家商店加入黑名单了,所以不能进入.");
-                            return;
                         } else if (ips.getFreeSlot() < 0 || ips.getVisitorSlot(chr) > -1 || !ips.isOpen() || !ips.isAvailable()) {
                             c.getSession().write(PlayerShopPacket.getMiniGameFull());
                         } else {
@@ -398,13 +405,13 @@ public class PlayerInteractionHandler {
                 final short quantity = slea.readShort();
                 final byte targetSlot = slea.readByte();
 
-                for (int i = 0; i < itemgy_id.length; i++) {
-                    if (item.getItemId() == Integer.parseInt(itemgy_id[i])) {
-                        c.getPlayer().dropMessage(1, "这个物品是禁止雇佣贩卖的.");
-                        c.getSession().write(MaplePacketCreator.enableActions());
-                        return;
-                    }
+            for (String itemgy_id1 : itemgy_id) {
+                if (item.getItemId() == Integer.parseInt(itemgy_id1)) {
+                    c.getPlayer().dropMessage(1, "这个物品是禁止雇佣贩卖的.");
+                    c.getSession().write(MaplePacketCreator.enableActions());
+                    return;
                 }
+            }
                 if (chr.getTrade() != null && item != null) {
                     if ((quantity <= item.getQuantity() && quantity >= 0) || GameConstants.isThrowingStar(item.getItemId()) || GameConstants.isBullet(item.getItemId())) {
                         chr.getTrade().setItems(c, item, targetSlot, quantity);
@@ -454,7 +461,7 @@ public class PlayerInteractionHandler {
                 final MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
                 if (ivItem != null) {
                     long check = bundles * perBundle;
-                    if (check > 32767 || check <= 0) { //This is the better way to check.
+                    if (check > 32_767 || check <= 0) { //This is the better way to check.
                         return;
                     }
                     final short bundles_perbundle = (short) (bundles * perBundle);
@@ -540,14 +547,14 @@ public class PlayerInteractionHandler {
                 long check = tobuy.bundles * quantity;
                 long check2 = tobuy.price * quantity;
                 long check3 = tobuy.item.getQuantity() * quantity;
-                if (check <= 0 || check2 > 2147483647 || check2 <= 0 || check3 > 32767 || check3 < 0) { //This is the better way to check.
+                if (check <= 0 || check2 > 2_147_483_647 || check2 <= 0 || check3 > 32_767 || check3 < 0) { //This is the better way to check.
                     return;
                 }
                 if (tobuy.bundles < quantity || (tobuy.bundles % quantity != 0 && GameConstants.isEquip(tobuy.item.getItemId())) // Buying
-                        || chr.getMeso() - (check2) < 0 || chr.getMeso() - (check2) > 2147483647 || shop.getMeso() + (check2) < 0 || shop.getMeso() + (check2) > 2147483647) {
+                        || chr.getMeso() - (check2) < 0 || chr.getMeso() - (check2) > 2_147_483_647 || shop.getMeso() + (check2) < 0 || shop.getMeso() + (check2) > 2_147_483_647) {
                     return;
                 }
-                if (quantity >= 50 && tobuy.item.getItemId() == 2340000) {
+                if (quantity >= 50 && tobuy.item.getItemId() == 2_340_000) {
                     //    c.setMonitored(true); //hack check
                 }
                 shop.buy(c, item, quantity);
@@ -568,7 +575,7 @@ public class PlayerInteractionHandler {
                     if (item.bundles > 0) {
                         IItem item_get = item.item.copy();
                         long check = item.bundles * item.item.getQuantity();
-                        if (check <= 0 || check > 32767) {
+                        if (check <= 0 || check > 32_767) {
                             return;
                         }
                         item_get.setQuantity((short) check);

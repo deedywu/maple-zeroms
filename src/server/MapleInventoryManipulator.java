@@ -1,30 +1,33 @@
 package server;
 
+import client.MapleBuffStat;
+import client.MapleCharacter;
+import client.MapleClient;
+import client.PlayerStats;
+import client.inventory.*;
+import constants.GameConstants;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import client.inventory.MapleInventoryIdentifier;
-import constants.GameConstants;
-import client.inventory.Equip;
-import client.inventory.IItem;
-import client.inventory.InventoryException;
-import client.inventory.Item;
-import client.inventory.ItemFlag;
-import client.PlayerStats;
-import client.MapleBuffStat;
-import client.inventory.MaplePet;
-import client.MapleCharacter;
-import client.MapleClient;
-import client.inventory.*;
-import java.util.ArrayList;
 import server.maps.AramiaFireWorks;
-import tools.packet.MTSCSPacket;
 import tools.MaplePacketCreator;
+import tools.packet.MTSCSPacket;
 
+/**
+ *
+ * @author zjj
+ */
 public class MapleInventoryManipulator {
 
+    /**
+     *
+     * @param chr
+     * @param itemId
+     * @param ringId
+     * @param sn
+     */
     public static void addRing(MapleCharacter chr, int itemId, int ringId, int sn) {
         CashItemInfo csi = CashItemFactory.getInstance().getItem(sn);
         if (csi == null) {
@@ -39,10 +42,23 @@ public class MapleInventoryManipulator {
         chr.getClient().getSession().write(MTSCSPacket.showBoughtCSItem(ring, sn, chr.getClient().getAccID()));
     }
 
+    /**
+     *
+     * @param c
+     * @param item
+     * @return
+     */
     public static boolean addbyItem(final MapleClient c, final IItem item) {
         return addbyItem(c, item, false) >= 0;
     }
 
+    /**
+     *
+     * @param c
+     * @param item
+     * @param fromcs
+     * @return
+     */
     public static short addbyItem(final MapleClient c, final IItem item, final boolean fromcs) {
         final MapleInventoryType type = GameConstants.getInventoryType(item.getItemId());
         final short newSlot = c.getPlayer().getInventory(type).addItem(item);
@@ -60,6 +76,12 @@ public class MapleInventoryManipulator {
         return newSlot;
     }
 
+    /**
+     *
+     * @param itemId
+     * @param pet
+     * @return
+     */
     public static int getUniqueId(int itemId, MaplePet pet) {
         int uniqueid = -1;
         if (GameConstants.isPet(itemId)) {
@@ -74,26 +96,84 @@ public class MapleInventoryManipulator {
         return uniqueid;
     }
 
+    /**
+     *
+     * @param c
+     * @param itemId
+     * @param quantity
+     * @param Flag
+     * @return
+     */
     public static boolean addById(MapleClient c, int itemId, short quantity, byte Flag) {
         return addById(c, itemId, quantity, null, null, 0, Flag);
     }
 
+    /**
+     *
+     * @param c
+     * @param itemId
+     * @param quantity
+     * @param owner
+     * @param Flag
+     * @return
+     */
     public static boolean addById(MapleClient c, int itemId, short quantity, String owner, byte Flag) {
         return addById(c, itemId, quantity, owner, null, 0, Flag);
     }
 
+    /**
+     *
+     * @param c
+     * @param itemId
+     * @param quantity
+     * @param owner
+     * @param Flag
+     * @return
+     */
     public static byte addId(MapleClient c, int itemId, short quantity, String owner, byte Flag) {
         return addId(c, itemId, quantity, owner, null, 0, Flag);
     }
 
+    /**
+     *
+     * @param c
+     * @param itemId
+     * @param quantity
+     * @param owner
+     * @param pet
+     * @param Flag
+     * @return
+     */
     public static boolean addById(MapleClient c, int itemId, short quantity, String owner, MaplePet pet, byte Flag) {
         return addById(c, itemId, quantity, owner, pet, 0, Flag);
     }
 
+    /**
+     *
+     * @param c
+     * @param itemId
+     * @param quantity
+     * @param owner
+     * @param pet
+     * @param period
+     * @param Flag
+     * @return
+     */
     public static boolean addById(MapleClient c, int itemId, short quantity, String owner, MaplePet pet, long period, byte Flag) {
         return addId(c, itemId, quantity, owner, pet, period, Flag) >= 0;
     }
 
+    /**
+     *
+     * @param c
+     * @param itemId
+     * @param quantity
+     * @param owner
+     * @param pet
+     * @param period
+     * @param Flag
+     * @return
+     */
     public static byte addId(MapleClient c, int itemId, short quantity, String owner, MaplePet pet, long period, byte Flag) {
         final MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         if (ii.isPickupRestricted(itemId) && c.getPlayer().haveItem(itemId, 1, true, false)) {
@@ -148,7 +228,7 @@ public class MapleInventoryManipulator {
                             nItem.setFlag(flag);
                         }
                         if (period > 0) {
-                            nItem.setExpiration(System.currentTimeMillis() + (period * 24 * 60 * 60 * 1000));
+                            nItem.setExpiration(System.currentTimeMillis() + (period * 24 * 60 * 60 * 1_000));
                         }
                         if (pet != null) {
                             nItem.setPet(pet);
@@ -176,7 +256,7 @@ public class MapleInventoryManipulator {
                     return -1;
                 }
                 if (period > 0) {
-                    nItem.setExpiration(System.currentTimeMillis() + (period * 24 * 60 * 60 * 1000));
+                    nItem.setExpiration(System.currentTimeMillis() + (period * 24 * 60 * 60 * 1_000));
                 }
 
                 c.getSession().write(MaplePacketCreator.addInventorySlot(type, nItem));
@@ -194,7 +274,7 @@ public class MapleInventoryManipulator {
                 nEquip.setFlag(flag);
             }
             if (period > 0) {
-                nEquip.setExpiration(System.currentTimeMillis() + (period * 24 * 60 * 60 * 1000));
+                nEquip.setExpiration(System.currentTimeMillis() + (period * 24 * 60 * 60 * 1_000));
             }
             newSlot = c.getPlayer().getInventory(type).addItem(nEquip);
             if (newSlot == -1) {
@@ -210,6 +290,13 @@ public class MapleInventoryManipulator {
         return (byte) newSlot;
     }
 
+    /**
+     *
+     * @param c
+     * @param itemId
+     * @param quantity
+     * @return
+     */
     public static IItem addbyId_Gachapon(final MapleClient c, final int itemId, short quantity) {
         if (c.getPlayer().getInventory(MapleInventoryType.EQUIP).getNextFreeSlot() == -1 || c.getPlayer().getInventory(MapleInventoryType.USE).getNextFreeSlot() == -1 || c.getPlayer().getInventory(MapleInventoryType.ETC).getNextFreeSlot() == -1 || c.getPlayer().getInventory(MapleInventoryType.SETUP).getNextFreeSlot() == -1) {
             return null;
@@ -303,10 +390,25 @@ public class MapleInventoryManipulator {
         return null;
     }
 
+    /**
+     *
+     * @param c
+     * @param item
+     * @param show
+     * @return
+     */
     public static boolean addFromDrop(final MapleClient c, final IItem item, final boolean show) {
         return addFromDrop(c, item, show, false);
     }
 
+    /**
+     *
+     * @param c
+     * @param item
+     * @param show
+     * @param enhance
+     * @return
+     */
     public static boolean addFromDrop(final MapleClient c, IItem item, final boolean show, final boolean enhance) {
         final MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
 
@@ -415,10 +517,25 @@ public class MapleInventoryManipulator {
         return true;
     }
 
+    /**
+     *
+     * @param c
+     * @param item
+     * @param show
+     * @return
+     */
     public static boolean 商店防止复制(final MapleClient c, final IItem item, final boolean show) {
         return 商店防止复制(c, item, show, false);
     }
 
+    /**
+     *
+     * @param c
+     * @param item
+     * @param show
+     * @param enhance
+     * @return
+     */
     public static boolean 商店防止复制(final MapleClient c, IItem item, final boolean show, final boolean enhance) {
         final MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
 
@@ -528,6 +645,14 @@ public class MapleInventoryManipulator {
         return true;
     }
 
+    /**
+     *
+     * @param c
+     * @param item
+     * @param show
+     * @param enhance
+     * @return
+     */
     public static boolean pet_addFromDrop(final MapleClient c, IItem item, final boolean show, final boolean enhance) {
         final MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
 
@@ -651,6 +776,14 @@ public class MapleInventoryManipulator {
         return Math.abs((int) Randomizer.rand(min, max));
     }
 
+    /**
+     *
+     * @param c
+     * @param itemid
+     * @param quantity
+     * @param owner
+     * @return
+     */
     public static boolean checkSpace(final MapleClient c, final int itemid, int quantity, final String owner) {
         final MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         if ((c.getPlayer() == null) || ii.isPickupRestricted(itemid) && c.getPlayer().haveItem(itemid, 1, true, false) || (!ii.itemExists(itemid))) {
@@ -694,10 +827,27 @@ public class MapleInventoryManipulator {
         }
     }
 
+    /**
+     *
+     * @param c
+     * @param type
+     * @param slot
+     * @param quantity
+     * @param fromDrop
+     */
     public static void removeFromSlot(final MapleClient c, final MapleInventoryType type, final short slot, final short quantity, final boolean fromDrop) {
         removeFromSlot(c, type, slot, quantity, fromDrop, false);
     }
 
+    /**
+     *
+     * @param c
+     * @param type
+     * @param slot
+     * @param quantity
+     * @param fromDrop
+     * @param consume
+     */
     public static void removeFromSlot(final MapleClient c, final MapleInventoryType type, final short slot, short quantity, final boolean fromDrop, final boolean consume) {
         if (c.getPlayer() == null || c.getPlayer().getInventory(type) == null) {
             return;
@@ -715,6 +865,16 @@ public class MapleInventoryManipulator {
         }
     }
 
+    /**
+     *
+     * @param c
+     * @param type
+     * @param itemId
+     * @param quantity
+     * @param fromDrop
+     * @param consume
+     * @return
+     */
     public static boolean removeById(final MapleClient c, final MapleInventoryType type, final int itemId, final int quantity, final boolean fromDrop, final boolean consume) {
         int remremove = quantity;
         for (IItem item : c.getPlayer().getInventory(type).listById(itemId)) {
@@ -730,6 +890,13 @@ public class MapleInventoryManipulator {
         return remremove <= 0;
     }
 
+    /**
+     *
+     * @param c
+     * @param type
+     * @param src
+     * @param dst
+     */
     public static void move(final MapleClient c, final MapleInventoryType type, final short src, final short dst) {
         if (src < 0 || dst < 0) {
             return;
@@ -792,6 +959,12 @@ public class MapleInventoryManipulator {
          */
     }
 
+    /**
+     *
+     * @param c
+     * @param src
+     * @param dst
+     */
     public static void equip(final MapleClient c, final short src, short dst) {
         final MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         final MapleCharacter chr = c.getPlayer();
@@ -835,7 +1008,7 @@ public class MapleInventoryManipulator {
         if (GameConstants.isKatara(source.getItemId())) {
             dst = (byte) -10; //shield slot
         }
-        if (GameConstants.isEvanDragonItem(source.getItemId()) && (chr.getJob() < 2200 || chr.getJob() > 2218)) {
+        if (GameConstants.isEvanDragonItem(source.getItemId()) && (chr.getJob() < 2_200 || chr.getJob() > 2_218)) {
             c.getSession().write(MaplePacketCreator.enableActions());
             return;
         }
@@ -959,13 +1132,19 @@ public class MapleInventoryManipulator {
          } else if (GameConstants.isTimelessItem(source.getItemId())) {
          chr.finishAchievement(10);
          } else */
-        if (source.getItemId() == 1122017) {
+        if (source.getItemId() == 1_122_017) {
             chr.startFairySchedule(true, true);
         }
         c.getSession().write(MaplePacketCreator.moveInventoryItem(MapleInventoryType.EQUIP, src, dst, (byte) 2));
         chr.equipChanged();
     }
 
+    /**
+     *
+     * @param c
+     * @param src
+     * @param dst
+     */
     public static void unequip(final MapleClient c, final short src, final short dst) {
         Equip source = (Equip) c.getPlayer().getInventory(MapleInventoryType.EQUIPPED).getItem(src);
         Equip target = (Equip) c.getPlayer().getInventory(MapleInventoryType.EQUIP).getItem(dst);
@@ -1004,17 +1183,34 @@ public class MapleInventoryManipulator {
                 c.getPlayer().cancelBuffStats(MapleBuffStat.WK_CHARGE);
             }
         }
-        if (source.getItemId() == 1122017) {
+        if (source.getItemId() == 1_122_017) {
             c.getPlayer().cancelFairySchedule(true);
         }
         c.getSession().write(MaplePacketCreator.moveInventoryItem(MapleInventoryType.EQUIP, src, dst, (byte) 1));
         c.getPlayer().equipChanged();
     }
 
+    /**
+     *
+     * @param c
+     * @param type
+     * @param src
+     * @param quantity
+     * @return
+     */
     public static boolean drop(final MapleClient c, MapleInventoryType type, final short src, final short quantity) {
         return drop(c, type, src, quantity, false);
     }
 
+    /**
+     *
+     * @param c
+     * @param type
+     * @param src
+     * @param quantity
+     * @param npcInduced
+     * @return
+     */
     public static boolean drop(final MapleClient c, MapleInventoryType type, final short src, short quantity, final boolean npcInduced) {
         final MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         if (src < 0) {

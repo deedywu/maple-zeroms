@@ -1,17 +1,20 @@
 package handling.world.party;
 
-import client.MapleCharacter;
-import server.MapleStatEffect;
-
 import java.io.Serializable;
 import java.util.*;
 
 /*
  * 组队
  */
+
+/**
+ *
+ * @author zjj
+ */
+
 public class MapleParty implements Serializable {
 
-    private static final long serialVersionUID = 9179541993413738569L;
+    private static final long serialVersionUID = 9_179_541_993_413_738_569L;
     private final List<MaplePartyCharacter> members = new LinkedList<>();
     private MaplePartyCharacter leader;
     private int partyId, expeditionLink = -1;
@@ -20,9 +23,19 @@ public class MapleParty implements Serializable {
     private boolean hidden = false; //是否隐藏队伍信息
     private Map<Integer, Map<Integer, List<Integer>>> partybuffs = new HashMap<>();
 
+    /**
+     *
+     */
     public MapleParty() {
     }
 
+    /**
+     *
+     * @param partyId
+     * @param chrfor
+     * @param partyName
+     * @param isHidden
+     */
     public MapleParty(int partyId, MaplePartyCharacter chrfor, String partyName, boolean isHidden) {
         this.leader = chrfor;
         this.members.add(this.leader);
@@ -31,6 +44,12 @@ public class MapleParty implements Serializable {
         this.hidden = isHidden;
     }
 
+    /**
+     *
+     * @param partyId
+     * @param chrfor
+     * @param expeditionLink
+     */
     public MapleParty(int partyId, MaplePartyCharacter chrfor, int expeditionLink) {
         this.leader = chrfor;
         this.members.add(this.leader);
@@ -43,6 +62,13 @@ public class MapleParty implements Serializable {
     /*
      * 是否在队伍中有这个角色
      */
+
+    /**
+     *
+     * @param member
+     * @return
+     */
+
     public boolean containsMembers(MaplePartyCharacter member) {
         return members.contains(member);
     }
@@ -50,6 +76,12 @@ public class MapleParty implements Serializable {
     /*
      * 添加队伍成员
      */
+
+    /**
+     *
+     * @param member
+     */
+
     public void addMember(MaplePartyCharacter member) {
         members.add(member);
     }
@@ -57,6 +89,12 @@ public class MapleParty implements Serializable {
     /*
      * 移除队伍成员
      */
+
+    /**
+     *
+     * @param member
+     */
+
     public void removeMember(MaplePartyCharacter member) {
         members.remove(member);
     }
@@ -64,6 +102,12 @@ public class MapleParty implements Serializable {
     /*
      * 更新队伍成员
      */
+
+    /**
+     *
+     * @param member
+     */
+
     public void updateMember(MaplePartyCharacter member) {
         for (int i = 0; i < members.size(); i++) {
             MaplePartyCharacter chr = members.get(i);
@@ -76,6 +120,13 @@ public class MapleParty implements Serializable {
     /*
      * 通过角色ID获取1个队伍成员的信息
      */
+
+    /**
+     *
+     * @param chrId
+     * @return
+     */
+
     public MaplePartyCharacter getMemberById(int chrId) {
         for (MaplePartyCharacter chr : members) {
             if (chr.getId() == chrId) {
@@ -88,6 +139,13 @@ public class MapleParty implements Serializable {
     /*
      * 通过位置获取队伍成员信息
      */
+
+    /**
+     *
+     * @param index
+     * @return
+     */
+
     public MaplePartyCharacter getMemberByIndex(int index) {
         return members.get(index);
     }
@@ -95,6 +153,12 @@ public class MapleParty implements Serializable {
     /*
      * 队伍成员全部信息
      */
+
+    /**
+     *
+     * @return
+     */
+
     public Collection<MaplePartyCharacter> getMembers() {
         return new LinkedList<>(members);
     }
@@ -102,6 +166,12 @@ public class MapleParty implements Serializable {
     /*
      * 队伍的ID
      */
+
+    /**
+     *
+     * @return
+     */
+
     public int getPartyId() {
         return partyId;
     }
@@ -109,6 +179,12 @@ public class MapleParty implements Serializable {
     /*
      * 设置队伍的ID
      */
+
+    /**
+     *
+     * @param id
+     */
+
     public void setPartyId(int id) {
         this.partyId = id;
     }
@@ -116,6 +192,12 @@ public class MapleParty implements Serializable {
     /*
      * 获取队长信息
      */
+
+    /**
+     *
+     * @return
+     */
+
     public MaplePartyCharacter getLeader() {
         return leader;
     }
@@ -123,6 +205,12 @@ public class MapleParty implements Serializable {
     /*
      * 设置新的队长
      */
+
+    /**
+     *
+     * @param nLeader
+     */
+
     public void setLeader(MaplePartyCharacter nLeader) {
         leader = nLeader;
     }
@@ -130,6 +218,12 @@ public class MapleParty implements Serializable {
     /*
      * 队伍在远征中的队伍ID
      */
+
+    /**
+     *
+     * @return
+     */
+
     public int getExpeditionId() {
         return expeditionLink;
     }
@@ -160,6 +254,12 @@ public class MapleParty implements Serializable {
     /*
      * 队伍是否解散
      */
+
+    /**
+     *
+     * @return
+     */
+
     public boolean isDisbanded() {
         return disbanded;
     }
@@ -167,6 +267,11 @@ public class MapleParty implements Serializable {
     /*
      * 解散队伍
      */
+
+    /**
+     *
+     */
+
     public void disband() {
         this.disbanded = true;
     }
@@ -174,10 +279,20 @@ public class MapleParty implements Serializable {
     /*
      * 队伍的名字
      */
+
+    /**
+     *
+     * @return
+     */
+
     public String getName() {
         return name;
     }
 
+    /**
+     *
+     * @param name
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -185,14 +300,28 @@ public class MapleParty implements Serializable {
     /*
      * 队伍是否隐藏
      */
+
+    /**
+     *
+     * @return
+     */
+
     public boolean isHidden() {
         return hidden;
     }
 
+    /**
+     *
+     * @param hidden
+     */
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getAverageLevel() {
         int n2 = 0;
         for (MaplePartyCharacter d2 : members) {
@@ -201,6 +330,12 @@ public class MapleParty implements Serializable {
         return n2 / members.size();
     }
 
+    /**
+     *
+     * @param n2
+     * @param n3
+     * @param n4
+     */
     public void givePartyBuff(int n2, int n3, int n4) {
         if (partybuffs.containsKey(n2)) {
             if (partybuffs.get(n2).containsKey(n3)) {
@@ -231,6 +366,11 @@ public class MapleParty implements Serializable {
         }
     }
 
+    /**
+     *
+     * @param n2
+     * @return
+     */
     public int getPartyBuffs(int n2) {
         ArrayList<Integer> arrayList = new ArrayList<>();
         for (Map<Integer, List<Integer>> integerListMap : partybuffs.values()) {
@@ -247,6 +387,12 @@ public class MapleParty implements Serializable {
         return arrayList.size();
     }
 
+    /**
+     *
+     * @param n2
+     * @param n3
+     * @return
+     */
     public int cancelPartyBuff(int n2, int n3) {
         if (partybuffs.containsKey(n2)) {
             if (partybuffs.get(n2).isEmpty()) {

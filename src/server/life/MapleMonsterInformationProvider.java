@@ -1,54 +1,48 @@
-/*
- This file is part of the OdinMS Maple Story Server
- Copyright (C) 2008 ~ 2010 Patrick Huy <patrick.huy@frz.cc> 
- Matthias Butz <matze@odinms.de>
- Jan Christian Meyer <vimes@odinms.de>
 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License version 3
- as published by the Free Software Foundation. You may not use, modify
- or distribute this program under any other version of the
- GNU Affero General Public License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package server.life;
 
+import client.inventory.MapleInventoryType;
 import constants.GameConstants;
+import database.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 
-import client.MapleCharacter;
-import client.inventory.MapleInventoryType;
-import database.DatabaseConnection;
-
+/**
+ *
+ * @author zjj
+ */
 public class MapleMonsterInformationProvider {
 
     private static final MapleMonsterInformationProvider instance = new MapleMonsterInformationProvider();
-    private final Map<Integer, List<MonsterDropEntry>> drops = new HashMap<Integer, List<MonsterDropEntry>>();
-    private final List<MonsterGlobalDropEntry> globaldrops = new ArrayList<MonsterGlobalDropEntry>();
+    private final Map<Integer, List<MonsterDropEntry>> drops = new HashMap<>();
+    private final List<MonsterGlobalDropEntry> globaldrops = new ArrayList<>();
 
+    /**
+     *
+     */
     protected MapleMonsterInformationProvider() {
         retrieveGlobal();
     }
 
+    /**
+     *
+     * @return
+     */
     public static final MapleMonsterInformationProvider getInstance() {
         return instance;
     }
 
+    /**
+     *
+     * @return
+     */
     public final List<MonsterGlobalDropEntry> getGlobalDrop() {
         return globaldrops;
     }
@@ -90,11 +84,16 @@ public class MapleMonsterInformationProvider {
         }
     }
 
+    /**
+     *
+     * @param monsterId
+     * @return
+     */
     public final List<MonsterDropEntry> retrieveDrop(final int monsterId) {
         if (drops.containsKey(monsterId)) {
             return drops.get(monsterId);
         }
-        final List<MonsterDropEntry> ret = new LinkedList<MonsterDropEntry>();
+        final List<MonsterDropEntry> ret = new LinkedList<>();
 
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -135,6 +134,9 @@ public class MapleMonsterInformationProvider {
         return ret;
     }
 
+    /**
+     *
+     */
     public final void clearDrops() {
         drops.clear();
         globaldrops.clear();

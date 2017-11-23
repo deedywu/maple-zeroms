@@ -1,37 +1,14 @@
-/*
- This file is part of the OdinMS Maple Story Server
- Copyright (C) 2008 ~ 2010 Patrick Huy <patrick.huy@frz.cc> 
- Matthias Butz <matze@odinms.de>
- Jan Christian Meyer <vimes@odinms.de>
 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License version 3
- as published by the Free Software Foundation. You may not use, modify
- or distribute this program under any other version of the
- GNU Affero General Public License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package handling.channel.handler;
 
 import client.*;
-import constants.GameConstants;
-import java.util.List;
-
 import handling.MaplePacket;
 import handling.cashshop.CashShopServer;
 import handling.channel.ChannelServer;
-import handling.login.LoginServer;
+import handling.world.CharacterIdChannelPair;
 import handling.world.CharacterTransfer;
 import handling.world.MapleMessenger;
 import handling.world.MapleMessengerCharacter;
-import handling.world.CharacterIdChannelPair;
 import handling.world.MaplePartyCharacter;
 import handling.world.PartyOperation;
 import handling.world.PlayerBuffStorage;
@@ -40,21 +17,28 @@ import handling.world.guild.MapleGuild;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collection;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import scripting.NPCScriptManager;
-import server.MapleTrade;
-import server.ServerProperties;
 import server.maps.FieldLimitType;
-import server.shops.IMaplePlayerShop;
 import tools.FileoutputUtil;
 import tools.MaplePacketCreator;
-import tools.Triple;
-import tools.packet.FamilyPacket;
 import tools.data.input.SeekableLittleEndianAccessor;
+import tools.packet.FamilyPacket;
 
+/**
+ *
+ * @author zjj
+ */
 public class InterServerHandler {
 
+    /**
+     *
+     * @param c
+     * @param chr
+     * @param mts
+     */
     public static final void EnterCS(final MapleClient c, final MapleCharacter chr, final boolean mts) {
         try {
             if (c.getPlayer().getBuffedValue(MapleBuffStat.SUMMON) != null) {
@@ -88,6 +72,12 @@ public class InterServerHandler {
         }
     }
 
+    /**
+     *
+     * @param c
+     * @param chr
+     * @param mts
+     */
     public static final void EnterMTS(final MapleClient c, final MapleCharacter chr, final boolean mts) {
 //        if (!chr.isAlive() || chr.getEventInstance() != null || c.getChannelServer() == null) {
         String[] socket = c.getChannelServer().getIP().split(":");
@@ -97,7 +87,7 @@ public class InterServerHandler {
             return;
         }
         if (chr.isGM() == false || chr.isGM() == true) {
-            NPCScriptManager.getInstance().start(c, 9900004);//拍卖npc
+            NPCScriptManager.getInstance().start(c, 9_900_004);//拍卖npc
             c.getSession().write(MaplePacketCreator.enableActions());
             // c.getSession().write(MaplePacketCreator.serverBlocked(2));
             // c.getSession().write(MaplePacketCreator.enableActions());
@@ -130,6 +120,11 @@ public class InterServerHandler {
         }
     }
 
+    /**
+     *
+     * @param playerid
+     * @param c
+     */
     public static void Loggedin(final int playerid, final MapleClient c) {
         final ChannelServer channelServer = c.getChannelServer();
         MapleCharacter player;
@@ -165,7 +160,7 @@ public class InterServerHandler {
         channelServer.addPlayer(player);
         c.getSession().write(MaplePacketCreator.getCharInfo(player));
         if (player.isGM()) {
-            SkillFactory.getSkill(9001004).getEffect(1).applyTo(player);
+            SkillFactory.getSkill(9_001_004).getEffect(1).applyTo(player);
         }
         c.getSession().write(MaplePacketCreator.temporaryStats_Reset()); // .
         player.getMap().addPlayer(player);
@@ -279,6 +274,12 @@ public class InterServerHandler {
         c.getSession().write(MaplePacketCreator.weirdStatUpdate());
     }
 
+    /**
+     *
+     * @param slea
+     * @param c
+     * @param chr
+     */
     public static final void ChangeChannel(final SeekableLittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
         if (c.getPlayer().getTrade() != null || !chr.isAlive() || chr.getEventInstance() != null || chr.getMap() == null || FieldLimitType.ChannelSwitch.check(chr.getMap().getFieldLimit())) {
             c.getSession().write(MaplePacketCreator.enableActions());

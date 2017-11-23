@@ -3,20 +3,27 @@ package server;
 import client.MapleCharacter;
 import client.SkillFactory;
 import constants.ServerConstants;
+import database.DatabaseConnection;
 import handling.MapleServerHandler;
+import handling.cashshop.CashShopServer;
 import handling.channel.ChannelServer;
 import handling.channel.MapleGuildRanking;
-import handling.login.LoginServer;
-import handling.cashshop.CashShopServer;
 import handling.login.LoginInformationProvider;
+import handling.login.LoginServer;
 import handling.world.World;
-import java.sql.SQLException;
-import database.DatabaseConnection;
 import handling.world.family.MapleFamilyBuff;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Map;
-import server.Timer.*;
+import server.Timer.BuffTimer;
+import server.Timer.CheatTimer;
+import server.Timer.CloneTimer;
+import server.Timer.EtcTimer;
+import server.Timer.EventTimer;
+import server.Timer.MapTimer;
+import server.Timer.MobTimer;
+import server.Timer.WorldTimer;
 import server.events.MapleOxQuizFactory;
 import server.life.MapleLifeFactory;
 import server.maps.MapleMapFactory;
@@ -24,12 +31,27 @@ import server.quest.MapleQuest;
 import tools.FileoutputUtil;
 import tools.StringUtil;
 
+/**
+ *
+ * @author zjj
+ */
 public class Start {
 
+    /**
+     *
+     */
     public static boolean Check = true;
+
+    /**
+     *
+     */
     public static final Start instance = new Start();
     private static int maxUsers = 0;
 
+    /**
+     *
+     * @param args
+     */
     public static void main(final String args[]) {
         if (Boolean.parseBoolean(ServerProperties.getProperty("ZeroMS.Admin"))) {
             System.out.println("[!!! Admin Only Mode Active !!!]");
@@ -59,7 +81,7 @@ public class Start {
 //        ItemMakerFactory.getInstance();
         MapleItemInformationProvider.getInstance().load();
         RandomRewards.getInstance();
-        SkillFactory.getSkill(99999999);
+        SkillFactory.getSkill(99_999_999);
         MapleOxQuizFactory.getInstance().initialize();
         MapleCarnivalFactory.getInstance();
         MapleGuildRanking.getInstance().RankingUpdate();
@@ -74,12 +96,12 @@ public class Start {
         //  System.out.println("[加载商城端口启动中]");
         CashShopServer.run_startup_configurations();
         // System.out.println("[加载商城端口完成]");
-        CheatTimer.getInstance().register(AutobanManager.getInstance(), 60000);
+        CheatTimer.getInstance().register(AutobanManager.getInstance(), 60_000);
         在线统计(1);
         //自动存档(1);
         在线时间(1);
         if (Boolean.parseBoolean(ServerProperties.getProperty("ZeroMS.RandDrop"))) {
-            ChannelServer.getInstance(1).getMapFactory().getMap(910000000).spawnRandDrop();
+            ChannelServer.getInstance(1).getMapFactory().getMap(910_000_000).spawnRandDrop();
         }
         Runtime.getRuntime().addShutdownHook(new Thread(new Shutdown()));
         try {
@@ -98,6 +120,10 @@ public class Start {
         // BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     }
 
+    /**
+     *
+     * @throws InterruptedException
+     */
     public void startServer() throws InterruptedException {
         Check = false;
         if (Boolean.parseBoolean(ServerProperties.getProperty("ZeroMS.Admin", "false"))) {
@@ -132,7 +158,7 @@ public class Start {
 //        ItemMakerFactory.getInstance();
         MapleItemInformationProvider.getInstance().load();
         RandomRewards.getInstance();
-        SkillFactory.getSkill(99999999);
+        SkillFactory.getSkill(99_999_999);
         MapleOxQuizFactory.getInstance().initialize();
         MapleCarnivalFactory.getInstance();
         MapleGuildRanking.getInstance().RankingUpdate();
@@ -148,13 +174,13 @@ public class Start {
         //  System.out.println("[加载商城端口启动中]");
         CashShopServer.run_startup_configurations();
         // System.out.println("[加载商城端口完成]");
-        CheatTimer.getInstance().register(AutobanManager.getInstance(), 60000);
+        CheatTimer.getInstance().register(AutobanManager.getInstance(), 60_000);
         // 在线统计(1);
         //自动存档(1);
 
         在线时间(1);
         if (Boolean.parseBoolean(ServerProperties.getProperty("ZeroMS.RandDrop"))) {
-            ChannelServer.getInstance(1).getMapFactory().getMap(910000000).spawnRandDrop();
+            ChannelServer.getInstance(1).getMapFactory().getMap(910_000_000).spawnRandDrop();
         }
         Runtime.getRuntime().addShutdownHook(new Thread(new Shutdown()));
         try {
@@ -165,7 +191,7 @@ public class Start {
         World.registerRespawn();
         LoginServer.setOn();
         MapleMapFactory.loadCustomLife();
-        WorldTimer.getInstance().register(DatabaseConnection.CloseSQLConnections, 600 * 1000);
+        WorldTimer.getInstance().register(DatabaseConnection.CloseSQLConnections, 600 * 1_000);
         System.out.println("\r\n当前经验倍率:" + Integer.parseInt(ServerProperties.getProperty("ZeroMS.Exp")) + "  当前物品倍率：" + Integer.parseInt(ServerProperties.getProperty("ZeroMS.Drop")) + "  当前金币倍率：" + Integer.parseInt(ServerProperties.getProperty("ZeroMS.Meso")));
         System.out.println("\r\n当前开放职业: "
                 + " 冒险家 = " + Boolean.parseBoolean(ServerProperties.getProperty("ZeroMS.冒险家"))
@@ -197,17 +223,23 @@ public class Start {
 //            }
 //        }, 3600000* time);//1小时
 //    }
+
+    /**
+     *
+     * @param time
+     */
     public static void 在线统计(int time) {
         System.out.println("服务端启用在线统计." + time + "分钟统计一次在线的人数信息.");
         Timer.WorldTimer.getInstance().register(new Runnable() {
 
+            @Override
             public void run() {
                 Map connected = World.getConnected();
                 StringBuilder conStr = new StringBuilder(new StringBuilder().append(FileoutputUtil.CurrentReadable_Time()).append(" 在线人数: ").toString());
                 for (Iterator i$ = connected.keySet().iterator(); i$.hasNext();) {
-                    int i = ((Integer) i$.next()).intValue();
+                    int i = ((Integer) i$.next());
                     if (i == 0) {
-                        int users = ((Integer) connected.get(Integer.valueOf(i))).intValue();
+                        int users = ((Integer) connected.get(i));
                         conStr.append(StringUtil.getRightPaddedStr(String.valueOf(users), ' ', 3));
                         if (users > Start.maxUsers) {
                             Start.maxUsers = users;
@@ -222,9 +254,13 @@ public class Start {
                     FileoutputUtil.log("在线统计.txt", conStr.toString() + "\r\n");
                 }
             }
-        }, 60000 * time);//这里是1分钟。
+        }, 60_000 * time);//这里是1分钟。
     }
 
+    /**
+     *
+     * @param time
+     */
     public static void 在线时间(int time) {
         Timer.WorldTimer.getInstance().register(new Runnable() {
 
@@ -247,9 +283,12 @@ public class Start {
                 } catch (Exception e) {
                 }
             }
-        }, 60000 * time);
+        }, 60_000 * time);
     }
 
+    /**
+     *
+     */
     public static class Shutdown implements Runnable {
 
         @Override

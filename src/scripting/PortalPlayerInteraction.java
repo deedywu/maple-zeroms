@@ -23,25 +23,41 @@ package scripting;
 import client.MapleClient;
 import server.MaplePortal;
 
+/**
+ *
+ * @author zjj
+ */
 public class PortalPlayerInteraction extends AbstractPlayerInteraction {
 
     private final MaplePortal portal;
 
+    /**
+     *
+     * @param c
+     * @param portal
+     */
     public PortalPlayerInteraction(final MapleClient c, final MaplePortal portal) {
         super(c);
         this.portal = portal;
     }
 
+    /**
+     *
+     * @return
+     */
     public final MaplePortal getPortal() {
         return portal;
     }
 
+    /**
+     *
+     */
     public final void inFreeMarket() {
 //        if (getMapId() != 910000000) {
         if (getPlayer().getLevel() >= 10) {
             saveLocation("FREE_MARKET");
             playPortalSE();
-            warp(910000000, "st00");
+            warp(910_000_000, "st00");
         } else {
             playerMessage(5, "你需要10级才可以进入自由市场");
         }
@@ -49,12 +65,23 @@ public class PortalPlayerInteraction extends AbstractPlayerInteraction {
     }
 
     // summon one monster on reactor location
+
+    /**
+     *
+     * @param id
+     */
     @Override
     public void spawnMonster(int id) {
         spawnMonster(id, 1, portal.getPosition());
     }
 
     // summon monsters on reactor location
+
+    /**
+     *
+     * @param id
+     * @param qty
+     */
     @Override
     public void spawnMonster(int id, int qty) {
         spawnMonster(id, qty, portal.getPosition());

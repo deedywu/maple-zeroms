@@ -21,27 +21,39 @@
 package client;
 
 import constants.GameConstants;
+import database.DatabaseConnection;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Connection;
-import tools.Pair;
 import java.util.regex.Pattern;
+import tools.Pair;
 
-import database.DatabaseConnection;
-
+/**
+ *
+ * @author zjj
+ */
 public class MapleCharacterUtil {
 
     private static final Pattern namePattern = Pattern.compile("[a-zA-Z0-9_-]{3,12}");
     private static final Pattern petPattern = Pattern.compile("[a-zA-Z0-9_-]{4,12}");
 
+    /**
+     *
+     * @param name
+     * @return
+     */
     public static final boolean canCreateChar(final String name) {
-        if (getIdByName(name) != -1 || !isEligibleCharName(name)) {
-            return false;
-        }
-        return true;
+        return !(getIdByName(name) != -1 || !isEligibleCharName(name));
     }
 
+    /**
+     *
+     * @param name
+     * @return
+     */
     public static final boolean isEligibleCharName(final String name) {
         if (name.length() > 15) {
             return false;
@@ -50,17 +62,22 @@ public class MapleCharacterUtil {
             return false;
         }
         for (String z : GameConstants.RESERVED) {
-            if (name.indexOf(z) != -1) {
+            if (name.contains(z)) {
                 return false;
             }
         }
         return true;
     }
 
+    /**
+     *
+     * @param name
+     * @return
+     */
     public static final boolean canChangePetName(final String name) {
         if (petPattern.matcher(name).matches()) {
             for (String z : GameConstants.RESERVED) {
-                if (name.indexOf(z) != -1) {
+                if (name.contains(z)) {
                     return false;
                 }
             }
@@ -69,6 +86,11 @@ public class MapleCharacterUtil {
         return false;
     }
 
+    /**
+     *
+     * @param in
+     * @return
+     */
     public static final String makeMapleReadable(final String in) {
         String wui = in.replace('I', 'i');
         wui = wui.replace('l', 'L');
@@ -78,6 +100,11 @@ public class MapleCharacterUtil {
         return wui;
     }
 
+    /**
+     *
+     * @param name
+     * @return
+     */
     public static final int getIdByName(final String name) {
         Connection con = DatabaseConnection.getConnection();
         try {
@@ -101,6 +128,11 @@ public class MapleCharacterUtil {
         return -1;
     }
 
+    /**
+     *
+     * @param accountid
+     * @return
+     */
     public static final boolean PromptPoll(final int accountid) {
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -111,7 +143,7 @@ public class MapleCharacterUtil {
             ps.setInt(1, accountid);
 
             rs = ps.executeQuery();
-            prompt = rs.next() ? false : true;
+            prompt = !rs.next();
         } catch (SQLException e) {
         } finally {
             try {
@@ -127,6 +159,12 @@ public class MapleCharacterUtil {
         return prompt;
     }
 
+    /**
+     *
+     * @param accountid
+     * @param selection
+     * @return
+     */
     public static final boolean SetPoll(final int accountid, final int selection) {
         if (!PromptPoll(accountid)) { // Hacking OR spamming the db.
             return false;
@@ -156,39 +194,45 @@ public class MapleCharacterUtil {
     // 0 = You do not have a second password set currently.
     // 1 = The password you have input is wrong
     // 2 = Password Changed successfully
+    /**
+     *
+     * @param accid
+     * @param password
+     * @param newpassword
+     * @return
+     */
     public static final int Change_SecondPassword(final int accid, final String password, final String newpassword) {
         Connection con = DatabaseConnection.getConnection();
         try {
             PreparedStatement ps = con.prepareStatement("SELECT * from accounts where id = ?");
             ps.setInt(1, accid);
-            final ResultSet rs = ps.executeQuery();
-
-            if (!rs.next()) {
-                rs.close();
-                ps.close();
-                return -1;
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) {
+                    rs.close();
+                    ps.close();
+                    return -1;
+                }
+                String secondPassword = rs.getString("2ndpassword");
+                final String salt2 = rs.getString("salt2");
+                if (secondPassword != null && salt2 != null) {
+                    secondPassword = LoginCrypto.rand_r(secondPassword);
+                } else if (secondPassword == null && salt2 == null) {
+                    rs.close();
+                    ps.close();
+                    return 0;
+                }
+                if (!check_ifPasswordEquals(secondPassword, password, salt2)) {
+                    rs.close();
+                    ps.close();
+                    return 1;
+                }
             }
-            String secondPassword = rs.getString("2ndpassword");
-            final String salt2 = rs.getString("salt2");
-            if (secondPassword != null && salt2 != null) {
-                secondPassword = LoginCrypto.rand_r(secondPassword);
-            } else if (secondPassword == null && salt2 == null) {
-                rs.close();
-                ps.close();
-                return 0;
-            }
-            if (!check_ifPasswordEquals(secondPassword, password, salt2)) {
-                rs.close();
-                ps.close();
-                return 1;
-            }
-            rs.close();
             ps.close();
 
             String SHA1hashedsecond;
             try {
                 SHA1hashedsecond = LoginCryptoLegacy.encodeSHA1(newpassword);
-            } catch (Exception e) {
+            } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
                 return -2;
             }
             ps = con.prepareStatement("UPDATE accounts set 2ndpassword = ?, salt2 = ? where id = ?");
@@ -222,22 +266,29 @@ public class MapleCharacterUtil {
     }
 
     //id accountid gender
+    /**
+     *
+     * @param name
+     * @param world
+     * @return
+     */
     public static Pair<Integer, Pair<Integer, Integer>> getInfoByName(String name, int world) {
         try {
 
             Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("SELECT * FROM characters WHERE name = ? AND world = ?");
-            ps.setString(1, name);
-            ps.setInt(2, world);
-            ResultSet rs = ps.executeQuery();
-            if (!rs.next()) {
+            Pair<Integer, Pair<Integer, Integer>> id;
+            try (PreparedStatement ps = con.prepareStatement("SELECT * FROM characters WHERE name = ? AND world = ?")) {
+                ps.setString(1, name);
+                ps.setInt(2, world);
+                ResultSet rs = ps.executeQuery();
+                if (!rs.next()) {
+                    rs.close();
+                    ps.close();
+                    return null;
+                }
+                id = new Pair<>(rs.getInt("id"), new Pair<>(rs.getInt("accountid"), rs.getInt("gender")));
                 rs.close();
-                ps.close();
-                return null;
             }
-            Pair<Integer, Pair<Integer, Integer>> id = new Pair<Integer, Pair<Integer, Integer>>(rs.getInt("id"), new Pair<Integer, Integer>(rs.getInt("accountid"), rs.getInt("gender")));
-            rs.close();
-            ps.close();
             return id;
         } catch (Exception e) {
             e.printStackTrace();
@@ -245,69 +296,101 @@ public class MapleCharacterUtil {
         return null;
     }
 
+    /**
+     *
+     * @param name
+     * @param code
+     * @throws SQLException
+     */
     public static void setNXCodeUsed(String name, String code) throws SQLException {
         Connection con = DatabaseConnection.getConnection();
-        PreparedStatement ps = con.prepareStatement("UPDATE nxcode SET `user` = ?, `valid` = 0 WHERE code = ?");
-        ps.setString(1, name);
-        ps.setString(2, code);
-        ps.execute();
-        ps.close();
+        try (PreparedStatement ps = con.prepareStatement("UPDATE nxcode SET `user` = ?, `valid` = 0 WHERE code = ?")) {
+            ps.setString(1, name);
+            ps.setString(2, code);
+            ps.execute();
+        }
     }
 
+    /**
+     *
+     * @param to
+     * @param name
+     * @param msg
+     * @param fame
+     */
     public static void sendNote(String to, String name, String msg, int fame) {
         try {
             Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("INSERT INTO notes (`to`, `from`, `message`, `timestamp`, `gift`) VALUES (?, ?, ?, ?, ?)");
-            ps.setString(1, to);
-            ps.setString(2, name);
-            ps.setString(3, msg);
-            ps.setLong(4, System.currentTimeMillis());
-            ps.setInt(5, fame);
-            ps.executeUpdate();
-            ps.close();
+            try (PreparedStatement ps = con.prepareStatement("INSERT INTO notes (`to`, `from`, `message`, `timestamp`, `gift`) VALUES (?, ?, ?, ?, ?)")) {
+                ps.setString(1, to);
+                ps.setString(2, name);
+                ps.setString(3, msg);
+                ps.setLong(4, System.currentTimeMillis());
+                ps.setInt(5, fame);
+                ps.executeUpdate();
+            }
         } catch (SQLException e) {
             System.err.println("Unable to send note" + e);
         }
     }
 
+    /**
+     *
+     * @param code
+     * @param validcode
+     * @return
+     * @throws SQLException
+     */
     public static boolean getNXCodeValid(String code, boolean validcode) throws SQLException {
         Connection con = DatabaseConnection.getConnection();
-        PreparedStatement ps = con.prepareStatement("SELECT `valid` FROM nxcode WHERE code = ?");
-        ps.setString(1, code);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            validcode = rs.getInt("valid") > 0;
+        try (PreparedStatement ps = con.prepareStatement("SELECT `valid` FROM nxcode WHERE code = ?")) {
+            ps.setString(1, code);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                validcode = rs.getInt("valid") > 0;
+            }
+            rs.close();
         }
-        rs.close();
-        ps.close();
         return validcode;
     }
 
+    /**
+     *
+     * @param code
+     * @return
+     * @throws SQLException
+     */
     public static int getNXCodeType(String code) throws SQLException {
         int type = -1;
         Connection con = DatabaseConnection.getConnection();
-        PreparedStatement ps = con.prepareStatement("SELECT `type` FROM nxcode WHERE code = ?");
-        ps.setString(1, code);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            type = rs.getInt("type");
+        try (PreparedStatement ps = con.prepareStatement("SELECT `type` FROM nxcode WHERE code = ?")) {
+            ps.setString(1, code);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                type = rs.getInt("type");
+            }
+            rs.close();
         }
-        rs.close();
-        ps.close();
         return type;
     }
 
+    /**
+     *
+     * @param code
+     * @return
+     * @throws SQLException
+     */
     public static int getNXCodeItem(String code) throws SQLException {
         int item = -1;
         Connection con = DatabaseConnection.getConnection();
-        PreparedStatement ps = con.prepareStatement("SELECT `item` FROM nxcode WHERE code = ?");
-        ps.setString(1, code);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            item = rs.getInt("item");
+        try (PreparedStatement ps = con.prepareStatement("SELECT `item` FROM nxcode WHERE code = ?")) {
+            ps.setString(1, code);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                item = rs.getInt("item");
+            }
+            rs.close();
         }
-        rs.close();
-        ps.close();
         return item;
     }
 }

@@ -1,12 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package gui;
 
 import client.LoginCrypto;
 import client.MapleCharacter;
-import client.MapleClient;
 import client.inventory.Equip;
 import client.inventory.ItemFlag;
 import client.inventory.MapleInventoryType;
@@ -20,20 +16,17 @@ import handling.login.handler.AutoRegister;
 import handling.world.World;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.ScheduledFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
 import scripting.PortalScriptManager;
 import scripting.ReactorScriptManager;
 import server.*;
 import server.Timer.EventTimer;
 import server.life.MapleMonsterInformationProvider;
-import server.maps.MapleMap;
 import server.quest.MapleQuest;
 import tools.MaplePacketCreator;
 
@@ -52,6 +45,9 @@ public class ZeroMS extends javax.swing.JFrame {
         return instance;
     }
 
+    /**
+     *
+     */
     public ZeroMS() {
         ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("gui/Icon.png"));
         setIconImage(icon.getImage());
@@ -1069,7 +1065,7 @@ public class ZeroMS extends javax.swing.JFrame {
                         System.out.println("服务器將在 " + minutesLeft + "分钟后关闭.");
                         minutesLeft--;
                     }
-                }, 60000);
+                }, 60_000);
             }
             jTextField22.setText("关闭服务器倒数时间");
             printChatLog(输出);
@@ -1098,47 +1094,60 @@ public class ZeroMS extends javax.swing.JFrame {
             }
             String 输出 = "";
             int ret = 0;
-            if (类型 == 1 || 类型 == 2) {
-                for (ChannelServer cserv1 : ChannelServer.getAllInstances()) {
-                    for (MapleCharacter mch : cserv1.getPlayerStorage().getAllCharacters()) {
-                        mch.modifyCSPoints(类型, 数量);
-                        String cash = null;
-                        if (类型 == 1) {
-                            cash = "点卷";
-                        } else if (类型 == 2) {
-                            cash = "抵用卷";
+            switch (类型) {
+                case 1:
+                case 2:
+                    for (ChannelServer cserv1 : ChannelServer.getAllInstances()) {
+                        for (MapleCharacter mch : cserv1.getPlayerStorage().getAllCharacters()) {
+                            mch.modifyCSPoints(类型, 数量);
+                            String cash = null;
+                            if (类型 == 1) {
+                                cash = "点卷";
+                            } else if (类型 == 2) {
+                                cash = "抵用卷";
+                            }   mch.startMapEffect("管理员发放" + 数量 + cash + "给在线的所有玩家！快感谢管理员吧！", 5_121_009);
+                            ret++;
                         }
-                        mch.startMapEffect("管理员发放" + 数量 + cash + "给在线的所有玩家！快感谢管理员吧！", 5121009);
-                        ret++;
                     }
-                }
-            } else if (类型 == 3) {
-                for (ChannelServer cserv1 : ChannelServer.getAllInstances()) {
-                    for (MapleCharacter mch : cserv1.getPlayerStorage().getAllCharacters()) {
-                        // mch.modifyCSPoints(类型, 数量);
-                        mch.gainMeso(数量, true);
-                        mch.startMapEffect("管理员发放" + 数量 + "冒险币给在线的所有玩家！快感谢管理员吧！", 5121009);
-                        ret++;
+                    break;
+                case 3:
+                    for (ChannelServer cserv1 : ChannelServer.getAllInstances()) {
+                        for (MapleCharacter mch : cserv1.getPlayerStorage().getAllCharacters()) {
+                            // mch.modifyCSPoints(类型, 数量);
+                            mch.gainMeso(数量, true);
+                            mch.startMapEffect("管理员发放" + 数量 + "冒险币给在线的所有玩家！快感谢管理员吧！", 5_121_009);
+                            ret++;
+                        }
                     }
-                }
-            } else if (类型 == 4) {
-                for (ChannelServer cserv1 : ChannelServer.getAllInstances()) {
-                    for (MapleCharacter mch : cserv1.getPlayerStorage().getAllCharacters()) {
-                        mch.gainExp(数量, true, false, true);
-                        mch.startMapEffect("管理员发放" + 数量 + "经验给在线的所有玩家！快感谢管理员吧！", 5121009);
-                        ret++;
+                    break;
+                case 4:
+                    for (ChannelServer cserv1 : ChannelServer.getAllInstances()) {
+                        for (MapleCharacter mch : cserv1.getPlayerStorage().getAllCharacters()) {
+                            mch.gainExp(数量, true, false, true);
+                            mch.startMapEffect("管理员发放" + 数量 + "经验给在线的所有玩家！快感谢管理员吧！", 5_121_009);
+                            ret++;
+                        }
                     }
-                }
+                    break;
+                default:
+                    break;
             }
             String 类型A = "";
-            if (类型 == 1) {
-                类型A = "点卷";
-            } else if (类型 == 2) {
-                类型A = "抵用卷";
-            } else if (类型 == 3) {
-                类型A = "金币";
-            } else if (类型 == 4) {
-                类型A = "经验";
+            switch (类型) {
+                case 1:
+                    类型A = "点卷";
+                    break;
+                case 2:
+                    类型A = "抵用卷";
+                    break;
+                case 3:
+                    类型A = "金币";
+                    break;
+                case 4:
+                    类型A = "经验";
+                    break;
+                default:
+                    break;
             }
             输出 = "一个发放[" + 数量 * ret + "]." + 类型A + "!一共发放给了" + ret + "人！";
             jTextField20.setText("输入数量");
@@ -1329,51 +1338,51 @@ public class ZeroMS extends javax.swing.JFrame {
                                 return;
                             }
                             if (type.equals(MapleInventoryType.EQUIP) && !GameConstants.isThrowingStar(物品ID) && !GameConstants.isBullet(物品ID)
-                                    || type.equals(MapleInventoryType.CASH) && 物品ID >= 5000000 && 物品ID <= 5000100) {
+                                    || type.equals(MapleInventoryType.CASH) && 物品ID >= 5_000_000 && 物品ID <= 5_000_100) {
                                 final Equip item = (Equip) (ii.getEquipById(物品ID));
                                 if (ii.isCash(物品ID)) {
                                     item.setUniqueId(1);
                                 }
-                                if (力量 > 0 && 力量 <= 32767) {
+                                if (力量 > 0 && 力量 <= 32_767) {
                                     item.setStr((short) (力量));
                                 }
-                                if (敏捷 > 0 && 敏捷 <= 32767) {
+                                if (敏捷 > 0 && 敏捷 <= 32_767) {
                                     item.setDex((short) (敏捷));
                                 }
-                                if (智力 > 0 && 智力 <= 32767) {
+                                if (智力 > 0 && 智力 <= 32_767) {
                                     item.setInt((short) (智力));
                                 }
-                                if (运气 > 0 && 运气 <= 32767) {
+                                if (运气 > 0 && 运气 <= 32_767) {
                                     item.setLuk((short) (运气));
                                 }
-                                if (攻击力 > 0 && 攻击力 <= 32767) {
+                                if (攻击力 > 0 && 攻击力 <= 32_767) {
                                     item.setWatk((short) (攻击力));
                                 }
-                                if (魔法力 > 0 && 魔法力 <= 32767) {
+                                if (魔法力 > 0 && 魔法力 <= 32_767) {
                                     item.setMatk((short) (魔法力));
                                 }
-                                if (物理防御 > 0 && 物理防御 <= 32767) {
+                                if (物理防御 > 0 && 物理防御 <= 32_767) {
                                     item.setWdef((short) (物理防御));
                                 }
-                                if (魔法防御 > 0 && 魔法防御 <= 32767) {
+                                if (魔法防御 > 0 && 魔法防御 <= 32_767) {
                                     item.setMdef((short) (魔法防御));
                                 }
-                                if (命中 > 0 && 命中 <= 32767) {
+                                if (命中 > 0 && 命中 <= 32_767) {
                                     item.setAcc((short) (命中));
                                 }
-                                if (回避 > 0 && 回避 <= 32767) {
+                                if (回避 > 0 && 回避 <= 32_767) {
                                     item.setAvoid((short) (回避));
                                 }
-                                if (移动速度 > 0 && 移动速度 <= 32767) {
+                                if (移动速度 > 0 && 移动速度 <= 32_767) {
                                     item.setSpeed((short) (移动速度));
                                 }
-                                if (跳跃力 > 0 && 跳跃力 <= 32767) {
+                                if (跳跃力 > 0 && 跳跃力 <= 32_767) {
                                     item.setJump((short) (跳跃力));
                                 }
-                                if (HP > 0 && HP <= 30000) {
+                                if (HP > 0 && HP <= 30_000) {
                                     item.setHp((short) (HP));
                                 }
-                                if (MP > 0 && MP <= 30000) {
+                                if (MP > 0 && MP <= 30_000) {
                                     item.setMp((short) (MP));
                                 }
                                 if ("可以交易".equals(是否可以交易)) {
@@ -1386,7 +1395,7 @@ public class ZeroMS extends javax.swing.JFrame {
                                     item.setFlag(flag);
                                 }
                                 if (物品可使用时间 > 0) {
-                                    item.setExpiration(System.currentTimeMillis() + (物品可使用时间 * 60 * 60 * 1000));
+                                    item.setExpiration(System.currentTimeMillis() + (物品可使用时间 * 60 * 60 * 1_000));
                                 }
                                 if (可升级次数 > 0) {
                                     item.setUpgradeSlots((byte) (可升级次数));
@@ -1398,7 +1407,7 @@ public class ZeroMS extends javax.swing.JFrame {
                                     item.setOwner(制作人名字);
                                 }
                                 final String name = ii.getName(物品ID);
-                                if (物品ID / 10000 == 114 && name != null && name.length() > 0) { //medal
+                                if (物品ID / 10_000 == 114 && name != null && name.length() > 0) { //medal
                                     final String msg = "你已获得称号 <" + name + ">";
                                     mch.getClient().getPlayer().dropMessage(5, msg);
                                     mch.getClient().getPlayer().dropMessage(5, msg);
@@ -1453,7 +1462,7 @@ public class ZeroMS extends javax.swing.JFrame {
             String 输出 = "";
             for (ChannelServer cserv1 : ChannelServer.getAllInstances()) {
                 for (MapleCharacter mch : cserv1.getPlayerStorage().getAllCharacters()) {
-                    mch.startMapEffect(str, 5121009);
+                    mch.startMapEffect(str, 5_121_009);
                     输出 = "[公告]:" + str;
                 }
             }
@@ -1525,15 +1534,11 @@ public class ZeroMS extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ZeroMS.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ZeroMS.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ZeroMS.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(ZeroMS.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        
         //</editor-fold>
 
         /*
@@ -1541,6 +1546,7 @@ public class ZeroMS extends javax.swing.JFrame {
          */
         java.awt.EventQueue.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 new ZeroMS().setVisible(true);
             }

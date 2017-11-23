@@ -27,24 +27,28 @@ import java.net.InetSocketAddress;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.buffer.SimpleBufferAllocator;
 import org.apache.mina.core.filterchain.IoFilter;
-
 import org.apache.mina.core.service.IoAcceptor;
-
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.SocketSessionConfig;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
-
 import server.ServerProperties;
 
+/**
+ *
+ * @author zjj
+ */
 public class CashShopServer {
 
     private static String ip;
     private static InetSocketAddress InetSocketadd;
-    private final static int PORT = 8596;
+    private final static int PORT = 8_596;
     private static IoAcceptor acceptor;
     private static PlayerStorage players, playersMTS;
     private static boolean finishedShutdown = false;
 
+    /**
+     *
+     */
     public static void run_startup_configurations() {
         //  ip = ServerProperties.getProperty("tms.IP") + ":" + PORT;
         ip = ServerProperties.getProperty("ZeroMS.IP") + ":" + PORT;
@@ -69,18 +73,33 @@ public class CashShopServer {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public static final String getIP() {
         return ip;
     }
 
+    /**
+     *
+     * @return
+     */
     public static final PlayerStorage getPlayerStorage() {
         return players;
     }
 
+    /**
+     *
+     * @return
+     */
     public static final PlayerStorage getPlayerStorageMTS() {
         return playersMTS;
     }
 
+    /**
+     *
+     */
     public static final void shutdown() {
         if (finishedShutdown) {
             return;
@@ -94,6 +113,10 @@ public class CashShopServer {
         finishedShutdown = true;
     }
 
+    /**
+     *
+     * @return
+     */
     public static boolean isShutdown() {
         return finishedShutdown;
     }

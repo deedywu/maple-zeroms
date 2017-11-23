@@ -1,12 +1,11 @@
 package handling.cashshop.handler;
 
-import client.inventory.Equip;
-import constants.GameConstants;
-import client.inventory.IItem;
 import client.MapleClient;
+import client.inventory.Equip;
+import client.inventory.IItem;
 import client.inventory.MapleInventoryType;
+import constants.GameConstants;
 import constants.ServerConstants;
-import java.util.Calendar;
 import server.MTSCart;
 import server.MTSStorage;
 import server.MTSStorage.MTSItemInfo;
@@ -15,8 +14,17 @@ import server.MapleItemInformationProvider;
 import tools.data.input.SeekableLittleEndianAccessor;
 import tools.packet.MTSCSPacket;
 
+/**
+ *
+ * @author zjj
+ */
 public class MTSOperation {
 
+    /**
+     *
+     * @param slea
+     * @param c
+     */
     public static void MTSOperation(final SeekableLittleEndianAccessor slea, final MapleClient c) {
         final MTSCart cart = MTSStorage.getInstance().getCart(c.getPlayer().getId());
         //System.out.println(slea.toString());
@@ -86,7 +94,7 @@ public class MTSOperation {
             if (quantity >= 50 && GameConstants.isUpgradeScroll(item.getItemId())) {
                 c.setMonitored(true); //hack check
             }
-            final long expiration = (System.currentTimeMillis() + (7L * 24 * 60 * 60 * 1000));
+            final long expiration = (System.currentTimeMillis() + (7L * 24 * 60 * 60 * 1_000));
             item.setQuantity(quantity);
             MTSStorage.getInstance().addToBuyNow(cart, item, price, c.getPlayer().getId(), c.getPlayer().getName(), expiration);
             MapleInventoryManipulator.removeFromSlot(c, type, slot, quantity, false);
@@ -171,6 +179,11 @@ public class MTSOperation {
         doMTSPackets(cart, c);
     }
 
+    /**
+     *
+     * @param cart
+     * @param c
+     */
     public static void MTSUpdate(final MTSCart cart, final MapleClient c) {
         c.getPlayer().modifyCSPoints(1, MTSStorage.getInstance().getCart(c.getPlayer().getId()).getSetOwedNX(), false);
         c.getSession().write(MTSCSPacket.getMTSWantedListingOver(0, 0));

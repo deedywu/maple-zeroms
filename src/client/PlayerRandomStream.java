@@ -23,6 +23,10 @@ package client;
 import server.Randomizer;
 import tools.data.output.MaplePacketLittleEndianWriter;
 
+/**
+ *
+ * @author zjj
+ */
 public class PlayerRandomStream {
 
     private transient long seed1, seed2, seed3;
@@ -31,85 +35,114 @@ public class PlayerRandomStream {
     private transient long seed1___, seed2___, seed3___;
 //    private transient int past_s1 = -1, past_s2 = -1, past_s3 = -1;
 
+    /**
+     *
+     */
     public PlayerRandomStream() {
         final int v4 = 5;
-        this.CRand32__Seed(Randomizer.nextLong(), 1170746341 * v4 - 755606699, 1170746341 * v4 - 755606699);
+        this.CRand32__Seed(Randomizer.nextLong(), 1_170_746_341 * v4 - 755_606_699, 1_170_746_341 * v4 - 755_606_699);
     }
 
+    /**
+     *
+     * @param s1
+     * @param s2
+     * @param s3
+     */
     public final void CRand32__Seed(final long s1, final long s2, final long s3) {
-        seed1 = s1 | 0x100000;
+        seed1 = s1 | 0x10_0000;
         seed2 = s2 | 0x1000;
         seed3 = s3 | 0x10;
 
-        seed1_ = s1 | 0x100000;
+        seed1_ = s1 | 0x10_0000;
         seed2_ = s2 | 0x1000;
         seed3_ = s3 | 0x10;
 
-        seed1__ = s1 | 0x100000;
+        seed1__ = s1 | 0x10_0000;
         seed2__ = s2 | 0x1000;
         seed3__ = s3 | 0x10;
     }
 
+    /**
+     *
+     * @return
+     */
     public final long CRand32__Random() {
         long v4 = this.seed1;
         long v5 = this.seed2;
         long v6 = this.seed3;
         long v7 = this.seed1;
 
-        long v8 = ((v4 & 0xFFFFFFFE) << 12) ^ ((v7 & 0x7FFC0 ^ (v4 >> 13)) >> 6);
-        long v9 = 16 * (v5 & 0xFFFFFFF8) ^ (((v5 >> 2) ^ v5 & 0x3F800000) >> 23);
-        long v10 = ((v6 & 0xFFFFFFF0) << 17) ^ (((v6 >> 3) ^ v6 & 0x1FFFFF00) >> 8);
-        this.seed3_ = v10 & 0xffffffffL;
-        this.seed1_ = v8 & 0xffffffffL;
-        this.seed2_ = v9 & 0xffffffffL;
-        return (v8 ^ v9 ^ v10) & 0xffffffffL; // to be confirmed, I am not experienced in converting signed > unsigned
+        long v8 = ((v4 & 0xFFFF_FFFE) << 12) ^ ((v7 & 0x7_FFC0 ^ (v4 >> 13)) >> 6);
+        long v9 = 16 * (v5 & 0xFFFF_FFF8) ^ (((v5 >> 2) ^ v5 & 0x3F80_0000) >> 23);
+        long v10 = ((v6 & 0xFFFF_FFF0) << 17) ^ (((v6 >> 3) ^ v6 & 0x1FFF_FF00) >> 8);
+        this.seed3_ = v10 & 0xffff_ffffL;
+        this.seed1_ = v8 & 0xffff_ffffL;
+        this.seed2_ = v9 & 0xffff_ffffL;
+        return (v8 ^ v9 ^ v10) & 0xffff_ffffL; // to be confirmed, I am not experienced in converting signed > unsigned
     }
 
+    /**
+     *
+     * @return
+     */
     public final long CRand32__Random_Character() {
         long v4 = this.seed1_;
         long v5 = this.seed2_;
         long v6 = this.seed3_;
         long v7 = this.seed1_;
 
-        long v8 = ((v4 & 0xFFFFFFFE) << 12) ^ ((v7 & 0x7FFC0 ^ (v4 >> 13)) >> 6);
-        long v9 = 16 * (v5 & 0xFFFFFFF8) ^ (((v5 >> 2) ^ v5 & 0x3F800000) >> 23);
-        long v10 = ((v6 & 0xFFFFFFF0) << 17) ^ (((v6 >> 3) ^ v6 & 0x1FFFFF00) >> 8);
-        this.seed3_ = v10 & 0xffffffffL;
-        this.seed1_ = v8 & 0xffffffffL;
-        this.seed2_ = v9 & 0xffffffffL;
-        return (v8 ^ v9 ^ v10) & 0xffffffffL;
+        long v8 = ((v4 & 0xFFFF_FFFE) << 12) ^ ((v7 & 0x7_FFC0 ^ (v4 >> 13)) >> 6);
+        long v9 = 16 * (v5 & 0xFFFF_FFF8) ^ (((v5 >> 2) ^ v5 & 0x3F80_0000) >> 23);
+        long v10 = ((v6 & 0xFFFF_FFF0) << 17) ^ (((v6 >> 3) ^ v6 & 0x1FFF_FF00) >> 8);
+        this.seed3_ = v10 & 0xffff_ffffL;
+        this.seed1_ = v8 & 0xffff_ffffL;
+        this.seed2_ = v9 & 0xffff_ffffL;
+        return (v8 ^ v9 ^ v10) & 0xffff_ffffL;
     }
 
+    /**
+     *
+     * @return
+     */
     public final long CRand32__Random_CheckDamageMiss() {
         long v4 = this.seed1__;
         long v5 = this.seed2__;
         long v6 = this.seed3__;
         long v7 = this.seed1__;
 
-        long v8 = ((v4 & 0xFFFFFFFE) << 12) ^ ((v7 & 0x7FFC0 ^ (v4 >> 13)) >> 6);
-        long v9 = 16 * (v5 & 0xFFFFFFF8) ^ (((v5 >> 2) ^ v5 & 0x3F800000) >> 23);
-        long v10 = ((v6 & 0xFFFFFFF0) << 17) ^ (((v6 >> 3) ^ v6 & 0x1FFFFF00) >> 8);
-        this.seed3_ = v10 & 0xffffffffL;
-        this.seed1_ = v8 & 0xffffffffL;
-        this.seed2_ = v9 & 0xffffffffL;
-        return (v8 ^ v9 ^ v10) & 0xffffffffL;
+        long v8 = ((v4 & 0xFFFF_FFFE) << 12) ^ ((v7 & 0x7_FFC0 ^ (v4 >> 13)) >> 6);
+        long v9 = 16 * (v5 & 0xFFFF_FFF8) ^ (((v5 >> 2) ^ v5 & 0x3F80_0000) >> 23);
+        long v10 = ((v6 & 0xFFFF_FFF0) << 17) ^ (((v6 >> 3) ^ v6 & 0x1FFF_FF00) >> 8);
+        this.seed3_ = v10 & 0xffff_ffffL;
+        this.seed1_ = v8 & 0xffff_ffffL;
+        this.seed2_ = v9 & 0xffff_ffffL;
+        return (v8 ^ v9 ^ v10) & 0xffff_ffffL;
     }
 
+    /**
+     *
+     * @return
+     */
     public final long CRand32__Random_ForMonster() {
         long v4 = this.seed1___;
         long v5 = this.seed2___;
         long v6 = this.seed3___;
         long v7 = this.seed1___;
 
-        long v8 = ((v4 & 0xFFFFFFFE) << 12) ^ ((v7 & 0x7FFC0 ^ (v4 >> 13)) >> 6);
-        long v9 = 16 * (v5 & 0xFFFFFFF8) ^ (((v5 >> 2) ^ v5 & 0x3F800000) >> 23);
-        long v10 = ((v6 & 0xFFFFFFF0) << 17) ^ (((v6 >> 3) ^ v6 & 0x1FFFFF00) >> 8);
-        this.seed3_ = v10 & 0xffffffffL;
-        this.seed1_ = v8 & 0xffffffffL;
-        this.seed2_ = v9 & 0xffffffffL;
-        return (v8 ^ v9 ^ v10) & 0xffffffffL;
+        long v8 = ((v4 & 0xFFFF_FFFE) << 12) ^ ((v7 & 0x7_FFC0 ^ (v4 >> 13)) >> 6);
+        long v9 = 16 * (v5 & 0xFFFF_FFF8) ^ (((v5 >> 2) ^ v5 & 0x3F80_0000) >> 23);
+        long v10 = ((v6 & 0xFFFF_FFF0) << 17) ^ (((v6 >> 3) ^ v6 & 0x1FFF_FF00) >> 8);
+        this.seed3_ = v10 & 0xffff_ffffL;
+        this.seed1_ = v8 & 0xffff_ffffL;
+        this.seed2_ = v9 & 0xffff_ffffL;
+        return (v8 ^ v9 ^ v10) & 0xffff_ffffL;
     }
 
+    /**
+     *
+     * @param mplew
+     */
     public final void connectData(final MaplePacketLittleEndianWriter mplew) {
         long v5 = CRand32__Random();
         long s2 = CRand32__Random();

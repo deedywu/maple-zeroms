@@ -1,24 +1,4 @@
-/*
- This file is part of the ZeroFusion MapleStory Server
- Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc> 
- Matthias Butz <matze@odinms.de>
- Jan Christian Meyer <vimes@odinms.de>
- ZeroFusion organized by "RMZero213" <RMZero213@hotmail.com>
 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License version 3
- as published by the Free Software Foundation. You may not use, modify
- or distribute this program under any other version of the
- GNU Affero General Public License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package server.events;
 
 import client.MapleCharacter;
@@ -27,65 +7,112 @@ import handling.channel.ChannelServer;
 import handling.world.World;
 import server.MapleInventoryManipulator;
 import server.RandomRewards;
-import server.Randomizer;
 import server.Timer.EventTimer;
 import server.maps.MapleMap;
 import server.maps.SavedLocationType;
 import tools.MaplePacketCreator;
 
+/**
+ *
+ * @author zjj
+ */
 public abstract class MapleEvent {
 
+    /**
+     *
+     */
     protected int[] mapid;
+
+    /**
+     *
+     */
     protected int channel;
+
+    /**
+     *
+     */
     protected boolean isRunning = false;
 
+    /**
+     *
+     * @param channel
+     * @param mapid
+     */
     public MapleEvent(final int channel, final int[] mapid) {
         this.channel = channel;
         this.mapid = mapid;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isRunning() {
         return isRunning;
     }
 
+    /**
+     *
+     * @param i
+     * @return
+     */
     public MapleMap getMap(final int i) {
         return getChannelServer().getMapFactory().getMap(mapid[i]);
     }
 
+    /**
+     *
+     * @return
+     */
     public ChannelServer getChannelServer() {
         return ChannelServer.getInstance(channel);
     }
 
+    /**
+     *
+     * @param packet
+     */
     public void broadcast(final MaplePacket packet) {
         for (int i = 0; i < mapid.length; i++) {
             getMap(i).broadcastMessage(packet);
         }
     }
 
+    /**
+     *
+     * @param chr
+     */
     public void givePrize(final MapleCharacter chr) {
         final int reward = RandomRewards.getInstance().getEventReward();
-        if (reward == 0) {
-            chr.gainMeso(666666, true, false, false);
-            chr.dropMessage(5, "你获得 666666 冒险币");
-        } else if (reward == 1) {
-            chr.gainMeso(999999, true, false, false);
-            chr.dropMessage(5, "你获得 999999 冒险币");
-        } else if (reward == 2) {
-            chr.modifyCSPoints(0, 500, false);
-            // chr.gainMeso(666666, true, false, false);
-            chr.dropMessage(5, "你获得 500 点卷");
-        } else if (reward == 3) {
-            chr.addFame(5);
-            chr.dropMessage(5, "你获得 5 人气");
+        switch (reward) {
+            case 0:
+                chr.gainMeso(666_666, true, false, false);
+                chr.dropMessage(5, "你获得 666666 冒险币");
+                break;
+            case 1:
+                chr.gainMeso(999_999, true, false, false);
+                chr.dropMessage(5, "你获得 999999 冒险币");
+                break;
+            case 2:
+                chr.modifyCSPoints(0, 500, false);
+                // chr.gainMeso(666666, true, false, false);
+                chr.dropMessage(5, "你获得 500 点卷");
+                break;
+            case 3:
+                chr.addFame(5);
+                chr.dropMessage(5, "你获得 5 人气");
+                break;
+            default:
+                break;
         }
 
         //  final int quantity = (max_quantity > 1 ? Randomizer.nextInt(max_quantity) : 0) + 1;
-        if (MapleInventoryManipulator.checkSpace(chr.getClient(), 4032226, 3, "")) {
-            MapleInventoryManipulator.addById(chr.getClient(), 4032226, (short) 3, (byte) 0);
+        if (MapleInventoryManipulator.checkSpace(chr.getClient(), 4_032_226, 3, "")) {
+            MapleInventoryManipulator.addById(chr.getClient(), 4_032_226, (short) 3, (byte) 0);
             chr.dropMessage(5, "你获得 3 个黄金猪猪");
         } else {
             // givePrize(chr); //do again until they get
-            chr.gainMeso(888888, true, false, false);
+            chr.gainMeso(888_888, true, false, false);
             chr.dropMessage(5, "由于你背包满了。所以只能给予你冒险币！");
         }
         /*     else {
@@ -121,32 +148,58 @@ public abstract class MapleEvent {
         }*/
     }
 
+    /**
+     *
+     * @param chr
+     */
     public void finished(MapleCharacter chr) { //most dont do shit here
     }
 
+    /**
+     *
+     * @param chr
+     */
     public void onMapLoad(MapleCharacter chr) { //most dont do shit here
     }
 
+    /**
+     *
+     */
     public void startEvent() {
     }
 
+    /**
+     *
+     * @param chr
+     */
     public void warpBack(MapleCharacter chr) {
         int map = chr.getSavedLocation(SavedLocationType.EVENT);
         if (map <= -1) {
-            map = 104000000;
+            map = 104_000_000;
         }
         final MapleMap mapp = chr.getClient().getChannelServer().getMapFactory().getMap(map);
         chr.changeMap(mapp, mapp.getPortal(0));
     }
 
+    /**
+     *
+     */
     public void reset() {
         isRunning = true;
     }
 
+    /**
+     *
+     */
     public void unreset() {
         isRunning = false;
     }
 
+    /**
+     *
+     * @param cserv
+     * @param auto
+     */
     public static final void setEvent(final ChannelServer cserv, final boolean auto) {
         if (auto) {
             for (MapleEventType t : MapleEventType.values()) {
@@ -158,10 +211,11 @@ public abstract class MapleEvent {
                             e.broadcast(MaplePacketCreator.getClock(60));
                             EventTimer.getInstance().schedule(new Runnable() {
 
+                                @Override
                                 public void run() {
                                     e.startEvent();
                                 }
-                            }, 60000);
+                            }, 60_000);
                             break;
                         }
                     }
@@ -171,6 +225,11 @@ public abstract class MapleEvent {
         cserv.setEvent(-1);
     }
 
+    /**
+     *
+     * @param chr
+     * @param channel
+     */
     public static final void mapLoad(final MapleCharacter chr, final int channel) {
         if (chr == null) {
             return;
@@ -178,7 +237,7 @@ public abstract class MapleEvent {
         for (MapleEventType t : MapleEventType.values()) {
             final MapleEvent e = ChannelServer.getInstance(channel).getEvent(t);
             if (e.isRunning) {
-                if (chr.getMapId() == 109050000) { //finished map
+                if (chr.getMapId() == 109_050_000) { //finished map
                     e.finished(chr);
                 }
                 for (int i : e.mapid) {
@@ -190,6 +249,10 @@ public abstract class MapleEvent {
         }
     }
 
+    /**
+     *
+     * @param chr
+     */
     public static final void onStartEvent(final MapleCharacter chr) {
         for (MapleEventType t : MapleEventType.values()) {
             final MapleEvent e = chr.getClient().getChannelServer().getEvent(t);
@@ -204,6 +267,12 @@ public abstract class MapleEvent {
         }
     }
 
+    /**
+     *
+     * @param event
+     * @param cserv
+     * @return
+     */
     public static final String scheduleEvent(final MapleEventType event, final ChannelServer cserv) {
         if (cserv.getEvent() != -1 || cserv.getEvent(event) == null) {
             return "该活动已经被禁止安排了.";

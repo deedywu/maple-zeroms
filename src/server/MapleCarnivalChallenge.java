@@ -1,13 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package server;
 
-import java.lang.ref.WeakReference;
 import client.MapleCharacter;
-import handling.world.MapleParty;
 import handling.world.MaplePartyCharacter;
+import java.lang.ref.WeakReference;
 
 /**
  * TODO : Make this a function for NPC instead.. cleaner
@@ -19,8 +15,12 @@ public class MapleCarnivalChallenge {
     WeakReference<MapleCharacter> challenger;
     String challengeinfo = "";
 
+    /**
+     *
+     * @param challenger
+     */
     public MapleCarnivalChallenge(MapleCharacter challenger) {
-        this.challenger = new WeakReference<MapleCharacter>(challenger);
+        this.challenger = new WeakReference<>(challenger);
         challengeinfo += "#b";
         for (MaplePartyCharacter pc : challenger.getParty().getMembers()) {
             MapleCharacter c = challenger.getMap().getCharacterById(pc.getId());
@@ -31,25 +31,38 @@ public class MapleCarnivalChallenge {
         challengeinfo += "#k";
     }
 
+    /**
+     *
+     * @return
+     */
     public MapleCharacter getChallenger() {
         return challenger.get();
     }
 
+    /**
+     *
+     * @return
+     */
     public String getChallengeInfo() {
         return challengeinfo;
     }
 
+    /**
+     *
+     * @param job
+     * @return
+     */
     public static final String getJobNameById(int job) {
         switch (job) {
             case 0:
                 return "初心者";
-            case 1000:
+            case 1_000:
                 return "Nobless";
-            case 2000:
+            case 2_000:
                 return "Legend";
-            case 2001:
+            case 2_001:
                 return "Evan";
-            case 3000:
+            case 3_000:
                 return "Citizen";
 
             case 100:
@@ -149,70 +162,70 @@ public class MapleCarnivalChallenge {
             case 522:
                 return "槍神";
 
-            case 1100:
-            case 1110:
-            case 1111:
-            case 1112:
+            case 1_100:
+            case 1_110:
+            case 1_111:
+            case 1_112:
                 return "Soul Master";
 
-            case 1200:
-            case 1210:
-            case 1211:
-            case 1212:
+            case 1_200:
+            case 1_210:
+            case 1_211:
+            case 1_212:
                 return "Flame Wizard";
 
-            case 1300:
-            case 1310:
-            case 1311:
-            case 1312:
+            case 1_300:
+            case 1_310:
+            case 1_311:
+            case 1_312:
                 return "Wind Breaker";
 
-            case 1400:
-            case 1410:
-            case 1411:
-            case 1412:
+            case 1_400:
+            case 1_410:
+            case 1_411:
+            case 1_412:
                 return "Night Walker";
 
-            case 1500:
-            case 1510:
-            case 1511:
-            case 1512:
+            case 1_500:
+            case 1_510:
+            case 1_511:
+            case 1_512:
                 return "Striker";
 
-            case 2100:
-            case 2110:
-            case 2111:
-            case 2112:
+            case 2_100:
+            case 2_110:
+            case 2_111:
+            case 2_112:
                 return "Aran";
 
-            case 2200:
-            case 2210:
-            case 2211:
-            case 2212:
-            case 2213:
-            case 2214:
-            case 2215:
-            case 2216:
-            case 2217:
-            case 2218:
+            case 2_200:
+            case 2_210:
+            case 2_211:
+            case 2_212:
+            case 2_213:
+            case 2_214:
+            case 2_215:
+            case 2_216:
+            case 2_217:
+            case 2_218:
                 return "Evan";
 
-            case 3200:
-            case 3210:
-            case 3211:
-            case 3212:
+            case 3_200:
+            case 3_210:
+            case 3_211:
+            case 3_212:
                 return "Battle Mage";
 
-            case 3300:
-            case 3310:
-            case 3311:
-            case 3312:
+            case 3_300:
+            case 3_310:
+            case 3_311:
+            case 3_312:
                 return "Wild Hunter";
 
-            case 3500:
-            case 3510:
-            case 3511:
-            case 3512:
+            case 3_500:
+            case 3_510:
+            case 3_511:
+            case 3_512:
                 return "Mechanic";
 
             default:
@@ -220,23 +233,28 @@ public class MapleCarnivalChallenge {
         }
     }
 
+    /**
+     *
+     * @param job
+     * @return
+     */
     public static final String getJobBasicNameById(int job) {
         switch (job) {
             case 0:
-            case 1000:
-            case 2000:
-            case 2001:
-            case 3000:
+            case 1_000:
+            case 2_000:
+            case 2_001:
+            case 3_000:
                 return "初心者";
 
-            case 2100:
-            case 2110:
-            case 2111:
-            case 2112:
-            case 1100:
-            case 1110:
-            case 1111:
-            case 1112:
+            case 2_100:
+            case 2_110:
+            case 2_111:
+            case 2_112:
+            case 1_100:
+            case 1_110:
+            case 1_111:
+            case 1_112:
             case 100:
             case 110:
             case 111:
@@ -249,24 +267,24 @@ public class MapleCarnivalChallenge {
             case 132:
                 return "劍士";
 
-            case 2200:
-            case 2210:
-            case 2211:
-            case 2212:
-            case 2213:
-            case 2214:
-            case 2215:
-            case 2216:
-            case 2217:
-            case 2218:
-            case 3200:
-            case 3210:
-            case 3211:
-            case 3212:
-            case 1200:
-            case 1210:
-            case 1211:
-            case 1212:
+            case 2_200:
+            case 2_210:
+            case 2_211:
+            case 2_212:
+            case 2_213:
+            case 2_214:
+            case 2_215:
+            case 2_216:
+            case 2_217:
+            case 2_218:
+            case 3_200:
+            case 3_210:
+            case 3_211:
+            case 3_212:
+            case 1_200:
+            case 1_210:
+            case 1_211:
+            case 1_212:
             case 200:
             case 210:
             case 211:
@@ -279,14 +297,14 @@ public class MapleCarnivalChallenge {
             case 232:
                 return "法師";
 
-            case 3300:
-            case 3310:
-            case 3311:
-            case 3312:
-            case 1300:
-            case 1310:
-            case 1311:
-            case 1312:
+            case 3_300:
+            case 3_310:
+            case 3_311:
+            case 3_312:
+            case 1_300:
+            case 1_310:
+            case 1_311:
+            case 1_312:
             case 300:
             case 310:
             case 311:
@@ -296,10 +314,10 @@ public class MapleCarnivalChallenge {
             case 322:
                 return "弓箭手";
 
-            case 1400:
-            case 1410:
-            case 1411:
-            case 1412:
+            case 1_400:
+            case 1_410:
+            case 1_411:
+            case 1_412:
             case 400:
             case 410:
             case 411:
@@ -314,14 +332,14 @@ public class MapleCarnivalChallenge {
             case 434:
                 return "盜賊";
 
-            case 3500:
-            case 3510:
-            case 3511:
-            case 3512:
-            case 1500:
-            case 1510:
-            case 1511:
-            case 1512:
+            case 3_500:
+            case 3_510:
+            case 3_511:
+            case 3_512:
+            case 1_500:
+            case 1_510:
+            case 1_511:
+            case 1_512:
             case 500:
             case 510:
             case 511:

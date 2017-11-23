@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import provider.MapleData;
 import provider.MapleDataProvider;
@@ -98,22 +97,22 @@ public class WzStringDumper {
             System.out.println("提取 " + child.getName() + " 數據...");
             File eqpFile = new File(output + "\\Equip\\" + child.getName() + ".txt");
             eqpFile.createNewFile();
-            PrintWriter eqpWriter = new PrintWriter(new FileOutputStream(eqpFile));
-            for (MapleData child2 : child.getChildren()) {
-                MapleData nameData = child2.getChildByPath("name");
-                MapleData descData = child2.getChildByPath("desc");
-                String name = "";
-                String desc = "(無描述)";
-                if (nameData != null) {
-                    name = (String) nameData.getData();
+            try (PrintWriter eqpWriter = new PrintWriter(new FileOutputStream(eqpFile))) {
+                for (MapleData child2 : child.getChildren()) {
+                    MapleData nameData = child2.getChildByPath("name");
+                    MapleData descData = child2.getChildByPath("desc");
+                    String name = "";
+                    String desc = "(無描述)";
+                    if (nameData != null) {
+                        name = (String) nameData.getData();
+                    }
+                    if (descData != null) {
+                        desc = (String) descData.getData();
+                    }
+                    eqpWriter.println(child2.getName() + " - " + name + " - " + desc);
                 }
-                if (descData != null) {
-                    desc = (String) descData.getData();
-                }
-                eqpWriter.println(child2.getName() + " - " + name + " - " + desc);
+                eqpWriter.flush();
             }
-            eqpWriter.flush();
-            eqpWriter.close();
             System.out.println(child.getName() + " 提取完成.");
         }
         System.out.println("Eqp.img 提取完成.");

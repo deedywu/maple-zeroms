@@ -21,15 +21,50 @@
  */
 package server.events;
 
+/**
+ *
+ * @author zjj
+ */
 public enum MapleEventType {
 
-    打椰子比赛("椰子比赛", new int[]{109080000}), //Coconut
-    打瓶盖比赛("打瓶盖", new int[]{109080010}), //CokePlay
-    向高地("向高地", new int[]{109040000, 109040001, 109040002, 109040003, 109040004}),// Fitness
-    上楼上楼("上楼~上楼~", new int[]{109030001, 109030002, 109030003}),// OlaOla
-    快速0X猜题("快速OX猜题", new int[]{109020001}),//OxQuiz
-    雪球赛("雪球赛", new int[]{109060000}); //Snowball
+    /**
+     *
+     */
+    打椰子比赛("椰子比赛", new int[]{109_080_000}), //Coconut
+
+    /**
+     *
+     */
+    打瓶盖比赛("打瓶盖", new int[]{109_080_010}), //CokePlay
+
+    /**
+     *
+     */
+    向高地("向高地", new int[]{109_040_000, 109_040_001, 109_040_002, 109_040_003, 109_040_004}),// Fitness
+
+    /**
+     *
+     */
+    上楼上楼("上楼~上楼~", new int[]{109_030_001, 109_030_002, 109_030_003}),// OlaOla
+
+    /**
+     *
+     */
+    快速0X猜题("快速OX猜题", new int[]{109_020_001}),//OxQuiz
+
+    /**
+     *
+     */
+    雪球赛("雪球赛", new int[]{109_060_000}); //Snowball//Snowball
+
+    /**
+     *
+     */
     public String command;
+
+    /**
+     *
+     */
     public int[] mapids;
 
     private MapleEventType(String comm, int[] mapids) {
@@ -37,6 +72,11 @@ public enum MapleEventType {
         this.mapids = mapids;
     }
 
+    /**
+     *
+     * @param splitted
+     * @return
+     */
     public static final MapleEventType getByString(final String splitted) {
         for (MapleEventType t : MapleEventType.values()) {
             if (t.command.equalsIgnoreCase(splitted)) {

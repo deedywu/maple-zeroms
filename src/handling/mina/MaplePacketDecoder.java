@@ -1,54 +1,54 @@
-/*
- This file is part of the OdinMS Maple Story Server
- Copyright (C) 2008 ~ 2010 Patrick Huy <patrick.huy@frz.cc> 
- Matthias Butz <matze@odinms.de>
- Jan Christian Meyer <vimes@odinms.de>
 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License version 3
- as published by the Free Software Foundation. You may not use, modify
- or distribute this program under any other version of the
- GNU Affero General Public License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package handling.mina;
 
 import client.MapleClient;
-import constants.GameConstants;
 import constants.ServerConstants;
 import handling.RecvPacketOpcode;
-import java.nio.ByteBuffer;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
-import tools.MapleAESOFB;
-import tools.MapleCustomEncryption;
-
 import org.apache.mina.filter.codec.CumulativeProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.FileoutputUtil;
 import tools.HexTool;
+import tools.MapleAESOFB;
+import tools.MapleCustomEncryption;
 import tools.data.input.ByteArrayByteStream;
 import tools.data.input.GenericLittleEndianAccessor;
 
+/**
+ *
+ * @author zjj
+ */
 public class MaplePacketDecoder extends CumulativeProtocolDecoder {
 
+    /**
+     *
+     */
     public static final String DECODER_STATE_KEY = MaplePacketDecoder.class.getName() + ".STATE";
     private static Logger log = LoggerFactory.getLogger(MaplePacketDecoder.class);
 
+    /**
+     *
+     */
     public static class DecoderState {
 
+        /**
+         *
+         */
         public int packetlength = -1;
     }
 
+    /**
+     *
+     * @param session
+     * @param in
+     * @param out
+     * @return
+     * @throws Exception
+     */
+    @Override
     protected boolean doDecode(IoSession session, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
         DecoderState decoderState = (DecoderState) session.getAttribute(DECODER_STATE_KEY);
 
@@ -100,7 +100,7 @@ public class MaplePacketDecoder extends CumulativeProtocolDecoder {
                         show = false;
                 }
                 String Send = "客户端发送 " + op + " [" + pHeaderStr + "] (" + packetLen + ")\r\n";
-                if (packetLen <= 3000) {
+                if (packetLen <= 3_000) {
                     String SendTo = Send + HexTool.toString(decryptedPacket) + "\r\n" + HexTool.toStringFromAscii(decryptedPacket);
                     //log.info(HexTool.toString(decryptedPacket) + "客户端发送");
                     if (show) {

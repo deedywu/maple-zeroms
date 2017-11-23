@@ -20,6 +20,12 @@
  */
 package scripting;
 
+import client.MapleCharacter;
+import client.MapleQuestStatus;
+import handling.channel.ChannelServer;
+import handling.world.MapleParty;
+import handling.world.MaplePartyCharacter;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,53 +33,60 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.locks.Lock;
-import javax.script.ScriptException;
-
-import client.MapleCharacter;
-import client.MapleQuestStatus;
-import handling.channel.ChannelServer;
-import handling.world.MapleParty;
-import handling.world.MaplePartyCharacter;
-import java.util.Collections;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import javax.script.ScriptException;
 import server.MapleCarnivalParty;
 import server.MapleItemInformationProvider;
 import server.MapleSquad;
 import server.MapleSquad.MapleSquadType;
 import server.Timer.EventTimer;
-import server.quest.MapleQuest;
 import server.life.MapleMonster;
 import server.maps.MapleMap;
 import server.maps.MapleMapFactory;
+import server.quest.MapleQuest;
 import tools.FileoutputUtil;
 import tools.MaplePacketCreator;
 import tools.packet.UIPacket;
 
+/**
+ *
+ * @author zjj
+ */
 public class EventInstanceManager {
 
-    private List<MapleCharacter> chars = new LinkedList<MapleCharacter>(); //this is messy
-    private List<Integer> dced = new LinkedList<Integer>();
-    private List<MapleMonster> mobs = new LinkedList<MapleMonster>();
-    private Map<Integer, Integer> killCount = new HashMap<Integer, Integer>();
+    private List<MapleCharacter> chars = new LinkedList<>(); //this is messy
+    private List<Integer> dced = new LinkedList<>();
+    private List<MapleMonster> mobs = new LinkedList<>();
+    private Map<Integer, Integer> killCount = new HashMap<>();
     private EventManager em;
     private int channel;
     private String name;
     private Properties props = new Properties();
     private long timeStarted = 0;
     private long eventTime = 0;
-    private List<Integer> mapIds = new LinkedList<Integer>();
-    private List<Boolean> isInstanced = new LinkedList<Boolean>();
+    private List<Integer> mapIds = new LinkedList<>();
+    private List<Boolean> isInstanced = new LinkedList<>();
     private ScheduledFuture<?> eventTimer;
     private final ReentrantReadWriteLock mutex = new ReentrantReadWriteLock();
     private final Lock rL = mutex.readLock(), wL = mutex.writeLock();
     private boolean disposed = false;
 
+    /**
+     *
+     * @param em
+     * @param name
+     * @param channel
+     */
     public EventInstanceManager(EventManager em, String name, int channel) {
         this.em = em;
         this.name = name;
         this.channel = channel;
     }
 
+    /**
+     *
+     * @param chr
+     */
     public void registerPlayer(MapleCharacter chr) {
         if (disposed || chr == null) {
             return;
@@ -90,12 +103,17 @@ public class EventInstanceManager {
         } catch (NullPointerException ex) {
             FileoutputUtil.outputFileError(FileoutputUtil.ScriptEx_Log, ex);
             ex.printStackTrace();
-        } catch (Exception ex) {
+        } catch (ScriptException | NoSuchMethodException ex) {
             FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Event name" + em.getName() + ", Instance name : " + name + ", method Name : playerEntry:\n" + ex);
             System.out.println("Event name" + em.getName() + ", Instance name : " + name + ", method Name : playerEntry:\n" + ex);
         }
     }
 
+    /**
+     *
+     * @param chr
+     * @param mapid
+     */
     public void changedMap(final MapleCharacter chr, final int mapid) {
         if (disposed) {
             return;
@@ -103,25 +121,31 @@ public class EventInstanceManager {
         try {
             em.getIv().invokeFunction("changedMap", this, chr, mapid);
         } catch (NullPointerException npe) {
-        } catch (Exception ex) {
+        } catch (ScriptException | NoSuchMethodException ex) {
             FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "副本名称" + em.getName() + ", 实例名称 : " + name + ", 方法名称 : changedMap:\n" + ex);
             System.out.println("Event name" + em.getName() + ", Instance name : " + name + ", method Name : changedMap:\n" + ex);
         }
     }
 
+    /**
+     *
+     * @param delay
+     * @param eim
+     */
     public void timeOut(final long delay, final EventInstanceManager eim) {
         if (disposed || eim == null) {
             return;
         }
         eventTimer = EventTimer.getInstance().schedule(new Runnable() {
 
+            @Override
             public void run() {
                 if (disposed || eim == null || em == null) {
                     return;
                 }
                 try {
                     em.getIv().invokeFunction("scheduledTimeout", eim);
-                } catch (Exception ex) {
+                } catch (ScriptException | NoSuchMethodException ex) {
                     FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Event name" + em.getName() + ", Instance name : " + name + ", method Name : scheduledTimeout:\n" + ex);
                     System.out.println("Event name" + em.getName() + ", Instance name : " + name + ", method Name : scheduledTimeout:\n" + ex);
                 }
@@ -129,10 +153,17 @@ public class EventInstanceManager {
         }, delay);
     }
 
+    /**
+     *
+     * @param name
+     */
     public final void forceRemovePlayerByCharName(String name) {
         ChannelServer.forceRemovePlayerByCharName(name);
     }
 
+    /**
+     *
+     */
     public void stopEventTimer() {
         eventTime = 0;
         timeStarted = 0;
@@ -141,6 +172,10 @@ public class EventInstanceManager {
         }
     }
 
+    /**
+     *
+     * @param time
+     */
     public void restartEventTimer(long time) {
         try {
             if (disposed) {
@@ -152,7 +187,7 @@ public class EventInstanceManager {
                 eventTimer.cancel(false);
             }
             eventTimer = null;
-            final int timesend = (int) time / 1000;
+            final int timesend = (int) time / 1_000;
 
             for (MapleCharacter chr : getPlayers()) {
                 chr.getClient().getSession().write(MaplePacketCreator.getClock(timesend));
@@ -166,30 +201,60 @@ public class EventInstanceManager {
         }
     }
 
+    /**
+     *
+     * @param tt
+     * @param ttt
+     * @return
+     */
     public boolean isSquadLeader(MapleCharacter tt, MapleSquadType ttt) {
         return (tt.getClient().getChannelServer().getMapleSquad(ttt).getLeader().equals(tt));
     }
 
+    /**
+     *
+     * @param time
+     */
     public void startEventTimer(long time) {
         restartEventTimer(time); //just incase
     }
 
+    /**
+     *
+     * @return
+     */
     public int getInstanceId() {
         return ChannelServer.getInstance(1).getInstanceId();
     }
 
+    /**
+     *
+     */
     public void addInstanceId() {
         ChannelServer.getInstance(1).addInstanceId();
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isTimerStarted() {
         return eventTime > 0 && timeStarted > 0;
     }
 
+    /**
+     *
+     * @return
+     */
     public long getTimeLeft() {
         return eventTime - (System.currentTimeMillis() - timeStarted);
     }
 
+    /**
+     *
+     * @param party
+     * @param map
+     */
     public void registerParty(MapleParty party, MapleMap map) {
         if (disposed) {
             return;
@@ -200,6 +265,10 @@ public class EventInstanceManager {
         }
     }
 
+    /**
+     *
+     * @param chr
+     */
     public void unregisterPlayer(final MapleCharacter chr) {
         if (disposed) {
             chr.setEventInstance(null);
@@ -234,6 +303,12 @@ public class EventInstanceManager {
         return false;
     }
 
+    /**
+     *
+     * @param size
+     * @param towarp
+     * @return
+     */
     public final boolean disposeIfPlayerBelow(final byte size, final int towarp) {
         if (disposed) {
             return true;
@@ -246,7 +321,7 @@ public class EventInstanceManager {
         wL.lock();
         try {
             if (chars.size() <= size) {
-                final List<MapleCharacter> chrs = new LinkedList<MapleCharacter>(chars);
+                final List<MapleCharacter> chrs = new LinkedList<>(chars);
                 for (MapleCharacter chr : chrs) {
                     unregisterPlayer_NoLock(chr);
                     if (towarp > 0) {
@@ -262,12 +337,16 @@ public class EventInstanceManager {
         return false;
     }
 
+    /**
+     *
+     * @param points
+     */
     public final void saveBossQuest(final int points) {
         if (disposed) {
             return;
         }
         for (MapleCharacter chr : getPlayers()) {
-            final MapleQuestStatus record = chr.getQuestNAdd(MapleQuest.getInstance(150001));
+            final MapleQuestStatus record = chr.getQuestNAdd(MapleQuest.getInstance(150_001));
 
             if (record.getCustomData() != null) {
                 record.setCustomData(String.valueOf(points + Integer.parseInt(record.getCustomData())));
@@ -277,22 +356,34 @@ public class EventInstanceManager {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public List<MapleCharacter> getPlayers() {
         if (disposed) {
             return Collections.emptyList();
         }
         rL.lock();
         try {
-            return new LinkedList<MapleCharacter>(chars);
+            return new LinkedList<>(chars);
         } finally {
             rL.unlock();
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Integer> getDisconnected() {
         return dced;
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getPlayerCount() {
         if (disposed) {
             return 0;
@@ -300,6 +391,10 @@ public class EventInstanceManager {
         return chars.size();
     }
 
+    /**
+     *
+     * @param mob
+     */
     public void registerMonster(MapleMonster mob) {
         if (disposed) {
             return;
@@ -308,34 +403,47 @@ public class EventInstanceManager {
         mob.setEventInstance(this);
     }
 
+    /**
+     *
+     * @param mob
+     */
     public void unregisterMonster(MapleMonster mob) {
         mob.setEventInstance(null);
         if (disposed) {
             return;
         }
         mobs.remove(mob);
-        if (mobs.size() == 0) {
+        if (mobs.isEmpty()) {
             try {
                 em.getIv().invokeFunction("allMonstersDead", this);
-            } catch (Exception ex) {
+            } catch (ScriptException | NoSuchMethodException ex) {
                 FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Event name" + em.getName() + ", Instance name : " + name + ", method Name : allMonstersDead:\n" + ex);
                 System.out.println("Event name" + em.getName() + ", Instance name : " + name + ", method Name : allMonstersDead:\n" + ex);
             }
         }
     }
 
+    /**
+     *
+     * @param chr
+     */
     public void playerKilled(MapleCharacter chr) {
         if (disposed) {
             return;
         }
         try {
             em.getIv().invokeFunction("playerDead", this, chr);
-        } catch (Exception ex) {
+        } catch (ScriptException | NoSuchMethodException ex) {
             FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Event name" + em.getName() + ", Instance name : " + name + ", method Name : playerDead:\n" + ex);
             System.out.println("Event name" + em.getName() + ", Instance name : " + name + ", method Name : playerDead:\n" + ex);
         }
     }
 
+    /**
+     *
+     * @param chr
+     * @return
+     */
     public boolean revivePlayer(MapleCharacter chr) {
         if (disposed) {
             return false;
@@ -345,13 +453,18 @@ public class EventInstanceManager {
             if (b instanceof Boolean) {
                 return (Boolean) b;
             }
-        } catch (Exception ex) {
+        } catch (ScriptException | NoSuchMethodException ex) {
             FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Event name" + em.getName() + ", Instance name : " + name + ", method Name : playerRevive:\n" + ex);
             System.out.println("Event name" + em.getName() + ", Instance name : " + name + ", method Name : playerRevive:\n" + ex);
         }
         return true;
     }
 
+    /**
+     *
+     * @param chr
+     * @param idz
+     */
     public void playerDisconnected(final MapleCharacter chr, int idz) {
         if (disposed) {
             return;
@@ -359,7 +472,7 @@ public class EventInstanceManager {
         byte ret;
         try {
             ret = ((Double) em.getIv().invokeFunction("playerDisconnected", this, chr)).byteValue();
-        } catch (Exception e) {
+        } catch (ScriptException | NoSuchMethodException e) {
             ret = 0;
         }
 
@@ -377,7 +490,7 @@ public class EventInstanceManager {
                     dispose_NoLock();
                 }
             } else if ((ret > 0 && getPlayerCount() < ret) || (ret < 0 && (isLeader(chr) || getPlayerCount() < (ret * -1)))) {
-                final List<MapleCharacter> chrs = new LinkedList<MapleCharacter>(chars);
+                final List<MapleCharacter> chrs = new LinkedList<>(chars);
                 for (MapleCharacter player : chrs) {
                     if (player.getId() != idz) {
                         removePlayer(player);
@@ -425,13 +538,18 @@ public class EventInstanceManager {
             System.out.println("Event name" + (em == null ? "null" : em.getName()) + ", Instance name : " + name + ", method Name : monsterValue:\n" + ex);
             FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Event name" + (em == null ? "null" : em.getName()) + ", Instance name : " + name + ", method Name : monsterValue:\n" + ex);
         } catch (Exception ex) {
-            ex.printStackTrace();
             FileoutputUtil.outputFileError(FileoutputUtil.ScriptEx_Log, ex);
         }
     }
 
+    /**
+     *
+     * @param chr
+     * @param mob
+     * @param damage
+     */
     public void monsterDamaged(final MapleCharacter chr, final MapleMonster mob, final int damage) {
-        if (disposed || mob.getId() != 9700037) { //ghost PQ boss only.
+        if (disposed || mob.getId() != 9_700_037) { //ghost PQ boss only.
             return;
         }
         try {
@@ -443,11 +561,15 @@ public class EventInstanceManager {
             System.out.println("Event name" + (em == null ? "null" : em.getName()) + ", Instance name : " + name + ", method Name : monsterValue:\n" + ex);
             FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Event name" + (em == null ? "null" : em.getName()) + ", Instance name : " + name + ", method Name : monsterValue:\n" + ex);
         } catch (Exception ex) {
-            ex.printStackTrace();
             FileoutputUtil.outputFileError(FileoutputUtil.ScriptEx_Log, ex);
         }
     }
 
+    /**
+     *
+     * @param chr
+     * @return
+     */
     public int getKillCount(MapleCharacter chr) {
         if (disposed) {
             return 0;
@@ -460,6 +582,9 @@ public class EventInstanceManager {
         }
     }
 
+    /**
+     *
+     */
     public void dispose_NoLock() {
         if (disposed || em == null) {
             return;
@@ -502,6 +627,9 @@ public class EventInstanceManager {
         }
     }
 
+    /**
+     *
+     */
     public void dispose() {
         wL.lock();
         try {
@@ -512,10 +640,18 @@ public class EventInstanceManager {
 
     }
 
+    /**
+     *
+     * @return
+     */
     public ChannelServer getChannelServer() {
         return ChannelServer.getInstance(channel);
     }
 
+    /**
+     *
+     * @return
+     */
     public List<MapleMonster> getMobs() {
         return mobs;
     }
@@ -526,6 +662,11 @@ public class EventInstanceManager {
      * chr.finishAchievement(type); }
      }
      */
+    /**
+     *
+     * @param type
+     * @param msg
+     */
     public final void broadcastPlayerMsg(final int type, final String msg) {
         if (disposed) {
             return;
@@ -535,6 +676,11 @@ public class EventInstanceManager {
         }
     }
 
+    /**
+     *
+     * @param mapid
+     * @return
+     */
     public final MapleMap createInstanceMap(final int mapid) {
         if (disposed) {
             return null;
@@ -545,6 +691,11 @@ public class EventInstanceManager {
         return this.getMapFactory().CreateInstanceMap(mapid, true, true, true, assignedid);
     }
 
+    /**
+     *
+     * @param mapid
+     * @return
+     */
     public final MapleMap createInstanceMapS(final int mapid) {
         if (disposed) {
             return null;
@@ -555,6 +706,11 @@ public class EventInstanceManager {
         return this.getMapFactory().CreateInstanceMap(mapid, false, false, false, assignedid);
     }
 
+    /**
+     *
+     * @param mapid
+     * @return
+     */
     public final MapleMap setInstanceMap(final int mapid) { //gets instance map from the channelserv
         if (disposed) {
             return this.getMapFactory().getMap(mapid);
@@ -565,10 +721,19 @@ public class EventInstanceManager {
         return this.getMapFactory().getMap(mapid);
     }
 
+    /**
+     *
+     * @return
+     */
     public final MapleMapFactory getMapFactory() {
         return getChannelServer().getMapFactory();
     }
 
+    /**
+     *
+     * @param args
+     * @return
+     */
     public final MapleMap getMapInstance(int args) {
         if (disposed) {
             return null;
@@ -615,12 +780,18 @@ public class EventInstanceManager {
         }
     }
 
+    /**
+     *
+     * @param methodName
+     * @param delay
+     */
     public final void schedule(final String methodName, final long delay) {
         if (disposed) {
             return;
         }
         EventTimer.getInstance().schedule(new Runnable() {
 
+            @Override
             public void run() {
                 if (disposed || EventInstanceManager.this == null || em == null) {
                     return;
@@ -628,7 +799,7 @@ public class EventInstanceManager {
                 try {
                     em.getIv().invokeFunction(methodName, EventInstanceManager.this);
                 } catch (NullPointerException npe) {
-                } catch (Exception ex) {
+                } catch (ScriptException | NoSuchMethodException ex) {
                     System.out.println("Event name" + em.getName() + ", Instance name : " + name + ", method Name : " + methodName + ":\n" + ex);
                     FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Event name" + em.getName() + ", Instance name : " + name + ", method Name(schedule) : " + methodName + " :\n" + ex);
                 }
@@ -636,10 +807,19 @@ public class EventInstanceManager {
         }, delay);
     }
 
+    /**
+     *
+     * @return
+     */
     public final String getName() {
         return name;
     }
 
+    /**
+     *
+     * @param key
+     * @param value
+     */
     public final void setProperty(final String key, final String value) {
         if (disposed) {
             return;
@@ -647,6 +827,13 @@ public class EventInstanceManager {
         props.setProperty(key, value);
     }
 
+    /**
+     *
+     * @param key
+     * @param value
+     * @param prev
+     * @return
+     */
     public final Object setProperty(final String key, final String value, final boolean prev) {
         if (disposed) {
             return null;
@@ -654,6 +841,11 @@ public class EventInstanceManager {
         return props.setProperty(key, value);
     }
 
+    /**
+     *
+     * @param key
+     * @return
+     */
     public final String getProperty(final String key) {
         if (disposed) {
             return "";
@@ -661,65 +853,89 @@ public class EventInstanceManager {
         return props.getProperty(key);
     }
 
+    /**
+     *
+     * @return
+     */
     public final Properties getProperties() {
         return props;
     }
 
+    /**
+     *
+     * @param chr
+     */
     public final void leftParty(final MapleCharacter chr) {
         if (disposed) {
             return;
         }
         try {
             em.getIv().invokeFunction("leftParty", this, chr);
-        } catch (Exception ex) {
+        } catch (ScriptException | NoSuchMethodException ex) {
             System.out.println("Event name" + em.getName() + ", Instance name : " + name + ", method Name : leftParty:\n" + ex);
             FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Event name" + em.getName() + ", Instance name : " + name + ", method Name : leftParty:\n" + ex);
         }
     }
 
+    /**
+     *
+     */
     public final void disbandParty() {
         if (disposed) {
             return;
         }
         try {
             em.getIv().invokeFunction("disbandParty", this);
-        } catch (Exception ex) {
+        } catch (ScriptException | NoSuchMethodException ex) {
             System.out.println("Event name" + em.getName() + ", Instance name : " + name + ", method Name : disbandParty:\n" + ex);
             FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Event name" + em.getName() + ", Instance name : " + name + ", method Name : disbandParty:\n" + ex);
         }
     }
 
     //Separate function to warp players to a "finish" map, if applicable
+    /**
+     *
+     */
     public final void finishPQ() {
         if (disposed) {
             return;
         }
         try {
             em.getIv().invokeFunction("clearPQ", this);
-        } catch (Exception ex) {
+        } catch (ScriptException | NoSuchMethodException ex) {
             System.out.println("Event name" + em.getName() + ", Instance name : " + name + ", method Name : clearPQ:\n" + ex);
             FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Event name" + em.getName() + ", Instance name : " + name + ", method Name : clearPQ:\n" + ex);
         }
     }
 
+    /**
+     *
+     * @param chr
+     */
     public final void removePlayer(final MapleCharacter chr) {
         if (disposed) {
             return;
         }
         try {
             em.getIv().invokeFunction("playerExit", this, chr);
-        } catch (Exception ex) {
+        } catch (ScriptException | NoSuchMethodException ex) {
             System.out.println("Event name" + em.getName() + ", Instance name : " + name + ", method Name : playerExit:\n" + ex);
             FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "Event name" + em.getName() + ", Instance name : " + name + ", method Name : playerExit:\n" + ex);
         }
     }
 
+    /**
+     *
+     * @param leader
+     * @param map
+     * @param team
+     */
     public final void registerCarnivalParty(final MapleCharacter leader, final MapleMap map, final byte team) {
         if (disposed) {
             return;
         }
         leader.clearCarnivalRequests();
-        List<MapleCharacter> characters = new LinkedList<MapleCharacter>();
+        List<MapleCharacter> characters = new LinkedList<>();
         final MapleParty party = leader.getParty();
 
         if (party == null) {
@@ -744,6 +960,10 @@ public class EventInstanceManager {
         }
     }
 
+    /**
+     *
+     * @param chr
+     */
     public void onMapLoad(final MapleCharacter chr) {
         if (disposed) {
             return;
@@ -758,10 +978,21 @@ public class EventInstanceManager {
         }
     }
 
+    /**
+     *
+     * @param chr
+     * @return
+     */
     public boolean isLeader(final MapleCharacter chr) {
         return (chr != null && chr.getParty() != null && chr.getParty().getLeader().getId() == chr.getId());
     }
 
+    /**
+     *
+     * @param squad
+     * @param map
+     * @param questID
+     */
     public void registerSquad(MapleSquad squad, MapleMap map, int questID) {
         if (disposed) {
             return;
@@ -788,6 +1019,11 @@ public class EventInstanceManager {
         //squad.getBeginMap().broadcastMessage(MaplePacketCreator.stopClock());
     }
 
+    /**
+     *
+     * @param chr
+     * @return
+     */
     public boolean isDisconnected(final MapleCharacter chr) {
         if (disposed) {
             return false;
@@ -795,6 +1031,10 @@ public class EventInstanceManager {
         return (dced.contains(chr.getId()));
     }
 
+    /**
+     *
+     * @param id
+     */
     public void removeDisconnected(final int id) {
         if (disposed) {
             return;
@@ -802,15 +1042,28 @@ public class EventInstanceManager {
         dced.remove(id);
     }
 
+    /**
+     *
+     * @return
+     */
     public EventManager getEventManager() {
         return em;
     }
 
+    /**
+     *
+     * @param chr
+     * @param id
+     */
     public void applyBuff(final MapleCharacter chr, final int id) {
         MapleItemInformationProvider.getInstance().getItemEffect(id).applyTo(chr);
         chr.getClient().getSession().write(UIPacket.getStatusMsg(id));
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean check() {//嘉年华进入等级
         for (MapleCharacter chr : getPlayers()) {
             if (!(chr.getLevel() >= 30 && chr.getLevel() <= 201)) {
@@ -820,6 +1073,10 @@ public class EventInstanceManager {
         return true;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean check1() {
         for (MapleCharacter chr : getPlayers()) {
             if (!(chr.getLevel() >= 100 && chr.getLevel() <= 200)) {

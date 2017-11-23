@@ -4,11 +4,10 @@ import constants.GameConstants;
 import java.awt.Point;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.HashMap;
 import java.util.Map;
-
 import provider.MapleData;
 import provider.MapleDataDirectoryEntry;
 import provider.MapleDataFileEntry;
@@ -20,6 +19,10 @@ import tools.Pair;
 import tools.StringUtil;
 import tools.Triple;
 
+/**
+ *
+ * @author zjj
+ */
 public class MapleLifeFactory {
 
     private static final MapleDataProvider data = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/Mob.wz"));
@@ -29,11 +32,17 @@ public class MapleLifeFactory {
     private static final MapleData mobStringData = stringDataWZ.getData("Mob.img");
     private static final MapleData npcStringData = stringDataWZ.getData("Npc.img");
     private static final MapleData npclocData = etcDataWZ.getData("NpcLocation.img");
-    private static Map<Integer, String> npcNames = new HashMap<Integer, String>();
-    private static Map<Integer, MapleMonsterStats> monsterStats = new HashMap<Integer, MapleMonsterStats>();
-    private static Map<Integer, Integer> NPCLoc = new HashMap<Integer, Integer>();
-    private static Map<Integer, List<Integer>> questCount = new HashMap<Integer, List<Integer>>();
+    private static Map<Integer, String> npcNames = new HashMap<>();
+    private static Map<Integer, MapleMonsterStats> monsterStats = new HashMap<>();
+    private static Map<Integer, Integer> NPCLoc = new HashMap<>();
+    private static Map<Integer, List<Integer>> questCount = new HashMap<>();
 
+    /**
+     *
+     * @param id
+     * @param type
+     * @return
+     */
     public static AbstractLoadedMapleLife getLife(int id, String type) {
         if (type.equalsIgnoreCase("n")) {
             return getNPC(id);
@@ -45,6 +54,11 @@ public class MapleLifeFactory {
         }
     }
 
+    /**
+     *
+     * @param npcid
+     * @return
+     */
     public static int getNPCLocation(int npcid) {
         if (NPCLoc.containsKey(npcid)) {
             return NPCLoc.get(npcid);
@@ -54,6 +68,9 @@ public class MapleLifeFactory {
         return map;
     }
 
+    /**
+     *
+     */
     public static final void loadQuestCounts() {
         if (questCount.size() > 0) {
             return;
@@ -64,7 +81,7 @@ public class MapleLifeFactory {
                     final int id = Integer.parseInt(entry.getName().substring(0, entry.getName().length() - 4));
                     MapleData dat = data.getData("QuestCountGroup/" + entry.getName());
                     if (dat != null && dat.getChildByPath("info") != null) {
-                        List<Integer> z = new ArrayList<Integer>();
+                        List<Integer> z = new ArrayList<>();
                         for (MapleData da : dat.getChildByPath("info")) {
                             z.add(MapleDataTool.getInt(da, 0));
                         }
@@ -77,10 +94,20 @@ public class MapleLifeFactory {
         }
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     */
     public static final List<Integer> getQuestCount(final int id) {
         return questCount.get(id);
     }
 
+    /**
+     *
+     * @param mobId
+     * @return
+     */
     public static MapleMonster getMonster(int mobId) {
         MapleMonsterStats stats = getMonsterStats(mobId);
         if (stats == null) {
@@ -89,8 +116,13 @@ public class MapleLifeFactory {
         return new MapleMonster(mobId, stats);
     }
 
+    /**
+     *
+     * @param mobId
+     * @return
+     */
     public static MapleMonsterStats getMonsterStats(int mobId) {
-        MapleMonsterStats stats = monsterStats.get(Integer.valueOf(mobId));
+        MapleMonsterStats stats = monsterStats.get(mobId);
 
         if (stats == null) {
             MapleData monsterData = data.getData(StringUtil.getLeftPaddedStr(Integer.toString(mobId) + ".img", '0', 11));
@@ -107,7 +139,7 @@ public class MapleLifeFactory {
                 stats.setHp(GameConstants.getPartyPlayHP(mobId) > 0 ? GameConstants.getPartyPlayHP(mobId) : MapleDataTool.getIntConvert("maxHP", monsterInfoData));
             }
             stats.setMp(MapleDataTool.getIntConvert("maxMP", monsterInfoData, 0));
-            stats.setExp(mobId == 9300027 ? 0 : (GameConstants.getPartyPlayEXP(mobId) > 0 ? GameConstants.getPartyPlayEXP(mobId) : MapleDataTool.getIntConvert("exp", monsterInfoData, 0)));
+            stats.setExp(mobId == 9_300_027 ? 0 : (GameConstants.getPartyPlayEXP(mobId) > 0 ? GameConstants.getPartyPlayEXP(mobId) : MapleDataTool.getIntConvert("exp", monsterInfoData, 0)));
             stats.setLevel((short) MapleDataTool.getIntConvert("level", monsterInfoData, 1));
             stats.setWeaponPoint((short) MapleDataTool.getIntConvert("wp", monsterInfoData, 0));
             stats.setCharismaEXP((short) MapleDataTool.getIntConvert("charismaEXP", monsterInfoData, 0));
@@ -115,7 +147,7 @@ public class MapleLifeFactory {
             stats.setrareItemDropLevel((byte) MapleDataTool.getIntConvert("rareItemDropLevel", monsterInfoData, 0));
             stats.setFixedDamage(MapleDataTool.getIntConvert("fixedDamage", monsterInfoData, -1));
             stats.setOnlyNormalAttack(MapleDataTool.getIntConvert("onlyNormalAttack", monsterInfoData, 0) > 0);
-            stats.setBoss(GameConstants.getPartyPlayHP(mobId) > 0 || MapleDataTool.getIntConvert("boss", monsterInfoData, 0) > 0 || mobId == 8810018 || mobId == 9410066 || (mobId >= 8810118 && mobId <= 8810122));
+            stats.setBoss(GameConstants.getPartyPlayHP(mobId) > 0 || MapleDataTool.getIntConvert("boss", monsterInfoData, 0) > 0 || mobId == 8_810_018 || mobId == 9_410_066 || (mobId >= 8_810_118 && mobId <= 8_810_122));
             stats.setExplosiveReward(MapleDataTool.getIntConvert("explosiveReward", monsterInfoData, 0) > 0);
             stats.setUndead(MapleDataTool.getIntConvert("undead", monsterInfoData, 0) > 0);
             stats.setEscort(MapleDataTool.getIntConvert("escort", monsterInfoData, 0) > 0);
@@ -311,9 +343,9 @@ public class MapleLifeFactory {
                 hpdisplaytype = 0;
             } else if (stats.isFriendly()) {
                 hpdisplaytype = 1;
-            } else if (mobId >= 9300184 && mobId <= 9300215) { //武陵道场怪物
+            } else if (mobId >= 9_300_184 && mobId <= 9_300_215) { //武陵道场怪物
                 hpdisplaytype = 2;
-            } else if (!stats.isBoss() || mobId == 9410066 || stats.isPartyBonus()) { // Not boss and dong dong chiang 9410066 = 吉祥舞狮怪
+            } else if (!stats.isBoss() || mobId == 9_410_066 || stats.isPartyBonus()) { // Not boss and dong dong chiang 9410066 = 吉祥舞狮怪
                 hpdisplaytype = 3;
             }
             stats.setHPDisplayType(hpdisplaytype);
@@ -323,6 +355,11 @@ public class MapleLifeFactory {
         return stats;
     }
 
+    /**
+     *
+     * @param stats
+     * @param elemAttr
+     */
     public static final void decodeElementalString(MapleMonsterStats stats, String elemAttr) {
         for (int i = 0; i < elemAttr.length(); i += 2) {
             stats.setEffectiveness(
@@ -333,35 +370,43 @@ public class MapleLifeFactory {
 
     private static final boolean isDmgSponge(final int mobId) {
         switch (mobId) {
-            case 8810018:
-            case 8810118:
-            case 8810119:
-            case 8810120:
-            case 8810121:
-            case 8810122:
-            case 8820009:
-            case 8820010:
-            case 8820011:
-            case 8820012:
-            case 8820013:
-            case 8820014:
+            case 8_810_018:
+            case 8_810_118:
+            case 8_810_119:
+            case 8_810_120:
+            case 8_810_121:
+            case 8_810_122:
+            case 8_820_009:
+            case 8_820_010:
+            case 8_820_011:
+            case 8_820_012:
+            case 8_820_013:
+            case 8_820_014:
                 return true;
         }
         return false;
     }
 
+    /**
+     *
+     * @param nid
+     * @return
+     */
     public static MapleNPC getNPC(final int nid) {
         String name = npcNames.get(nid);
         if (name == null) {
             name = MapleDataTool.getString(nid + "/name", npcStringData, "MISSINGNO");
             npcNames.put(nid, name);
         }
-        if (name.indexOf("Maple TV") != -1) {
+        if (name.contains("Maple TV")) {
             return null;
         }
         return new MapleNPC(nid, name);
     }
 
+    /**
+     *
+     */
     public static class loseItem {
 
         private final int id;
@@ -374,14 +419,26 @@ public class MapleLifeFactory {
             this.x = x;
         }
 
+        /**
+         *
+         * @return
+         */
         public int getId() {
             return id;
         }
 
+        /**
+         *
+         * @return
+         */
         public byte getChance() {
             return chance;
         }
 
+        /**
+         *
+         * @return
+         */
         public byte getX() {
             return x;
         }

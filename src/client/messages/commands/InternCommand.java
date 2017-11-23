@@ -11,29 +11,58 @@ import tools.FileoutputUtil;
 import tools.MaplePacketCreator;
 import tools.StringUtil;
 
+/**
+ *
+ * @author zjj
+ */
 public class InternCommand {
 
+    /**
+     *
+     * @return
+     */
     public static ServerConstants.PlayerGMRank getPlayerLevelRequired() {
         return ServerConstants.PlayerGMRank.INTERN;
     }
 
+    /**
+     *
+     */
     public static class 跟踪 extends Warp {
     }
 
+    /**
+     *
+     */
     public static class 跟踪2 extends Warp2 {
     }
 
+    /**
+     *
+     */
     public static class 封号 extends Ban {
     }
 
+    /**
+     *
+     */
     public static class 隐身 extends Hide {
     }
 
+    /**
+     *
+     */
     public static class 解除隐身 extends UnHide {
     }
 
+    /**
+     *
+     */
     public static class Ban extends CommandExecute {
 
+        /**
+         *
+         */
         protected boolean hellban = false;
 
         private String getCommand() {
@@ -80,6 +109,9 @@ public class InternCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class online1 extends CommandExecute {
 
         @Override
@@ -90,6 +122,9 @@ public class InternCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class CnGM extends CommandExecute {
 
         @Override
@@ -101,26 +136,35 @@ public class InternCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class Hide extends CommandExecute {
 
         @Override
         public int execute(MapleClient c, String[] splitted) {
-            SkillFactory.getSkill(9001004).getEffect(1).applyTo(c.getPlayer());
+            SkillFactory.getSkill(9_001_004).getEffect(1).applyTo(c.getPlayer());
             c.getPlayer().dropMessage(6, "管理员隐藏 = 开启 \r\n 解除请输入!unhide");
             return 0;
         }
     }
 
+    /**
+     *
+     */
     public static class UnHide extends CommandExecute {
 
         @Override
         public int execute(MapleClient c, String[] splitted) {
-            c.getPlayer().dispelBuff(9001004);
+            c.getPlayer().dispelBuff(9_001_004);
             c.getPlayer().dropMessage(6, "管理员隐藏 = 关闭 \r\n 开启请输入!hide");
             return 1;
         }
     }
 
+    /**
+     *
+     */
     public static class Warp extends CommandExecute {
 
         @Override
@@ -158,6 +202,9 @@ public class InternCommand {
         }
     }
 
+    /**
+     *
+     */
     public static class Warp2 extends CommandExecute {
 
         @Override

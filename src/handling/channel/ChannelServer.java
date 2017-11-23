@@ -1,15 +1,5 @@
 package handling.channel;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import client.MapleCharacter;
 import client.MapleClient;
 import database.DatabaseConnection;
@@ -20,32 +10,35 @@ import handling.cashshop.CashShopServer;
 import handling.login.LoginServer;
 import handling.mina.MapleCodecFactory;
 import handling.world.CheaterData;
-import handling.world.World;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import scripting.EventScriptManager;
-import server.MapleSquad;
-import server.MapleSquad.MapleSquadType;
-import server.maps.MapleMapFactory;
-import server.shops.HiredMerchant;
-import tools.MaplePacketCreator;
-import server.life.PlayerNPC;
-import org.apache.mina.filter.codec.ProtocolCodecFilter;
+import java.io.IOException;
 import java.io.Serializable;
+import java.net.InetSocketAddress;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.buffer.SimpleBufferAllocator;
 import org.apache.mina.core.filterchain.IoFilter;
 import org.apache.mina.core.service.IoAcceptor;
+import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.SocketSessionConfig;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scripting.EventScriptManager;
+import server.MapleSquad;
+import server.MapleSquad.MapleSquadType;
 import server.ServerProperties;
 import server.events.MapleCoconut;
 import server.events.MapleEvent;
@@ -54,18 +47,29 @@ import server.events.MapleFitness;
 import server.events.MapleOla;
 import server.events.MapleOxQuiz;
 import server.events.MapleSnowball;
+import server.life.PlayerNPC;
+import server.maps.MapleMapFactory;
+import server.shops.HiredMerchant;
 import tools.CollectionUtil;
 import tools.ConcurrentEnumMap;
+import tools.MaplePacketCreator;
 
+/**
+ *
+ * @author zjj
+ */
 public class ChannelServer implements Serializable {
 
+    /**
+     *
+     */
     public static long serverStartTime;
     private int expRate, mesoRate, dropRate, cashRate, BossdropRate = 1;
     private int doubleExp = 1;
     private int doubleMeso = 1;
     private int doubleDrop = 1;
-    private short port = 7574;
-    private static final short DEFAULT_PORT = 7574;
+    private short port = 7_574;
+    private static final short DEFAULT_PORT = 7_574;
     private int channel, running_MerchantID = 0, flags = 0;
     private String serverMessage, key, ip, serverName;
     private boolean shutdown = false, finishedShutdown = false, MegaphoneMuteState = false, adminOnly = false;
@@ -75,14 +79,14 @@ public class ChannelServer implements Serializable {
     private final MapleMapFactory mapFactory;
     private EventScriptManager eventSM;
     private static final Logger log = LoggerFactory.getLogger(ChannelServer.class);
-    private static final Map<Integer, ChannelServer> instances = new HashMap<Integer, ChannelServer>();
-    private final Map<MapleSquadType, MapleSquad> mapleSquads = new ConcurrentEnumMap<MapleSquadType, MapleSquad>(MapleSquadType.class);
-    private final Map<Integer, HiredMerchant> merchants = new HashMap<Integer, HiredMerchant>();
-    private final Map<Integer, PlayerNPC> playerNPCs = new HashMap<Integer, PlayerNPC>();
+    private static final Map<Integer, ChannelServer> instances = new HashMap<>();
+    private final Map<MapleSquadType, MapleSquad> mapleSquads = new ConcurrentEnumMap<>(MapleSquadType.class);
+    private final Map<Integer, HiredMerchant> merchants = new HashMap<>();
+    private final Map<Integer, PlayerNPC> playerNPCs = new HashMap<>();
     private final ReentrantReadWriteLock merchLock = new ReentrantReadWriteLock(); //merchant
     private final ReentrantReadWriteLock squadLock = new ReentrantReadWriteLock(); //squad
     private int eventmap = -1;
-    private final Map<MapleEventType, MapleEvent> events = new EnumMap<MapleEventType, MapleEvent>(MapleEventType.class);
+    private final Map<MapleEventType, MapleEvent> events = new EnumMap<>(MapleEventType.class);
     private boolean debugMode = false;
     private int instanceId = 0;
 
@@ -101,12 +105,19 @@ public class ChannelServer implements Serializable {
          */
     }
 
+    /**
+     *
+     * @return
+     */
     public static Set<Integer> getAllInstance() {
-        return new HashSet<Integer>(instances.keySet());
+        return new HashSet<>(instances.keySet());
     }
 
+    /**
+     *
+     */
     public final void loadEvents() {
-        if (events.size() != 0) {
+        if (!events.isEmpty()) {
             return;
         }
         events.put(MapleEventType.打椰子比赛, new MapleCoconut(channel, MapleEventType.打椰子比赛.mapids));
@@ -117,6 +128,9 @@ public class ChannelServer implements Serializable {
         events.put(MapleEventType.雪球赛, new MapleSnowball(channel, MapleEventType.雪球赛.mapids));
     }
 
+    /**
+     *
+     */
     public final void run_startup_configurations() {
         setChannel(this.channel); //instances.put
         try {
@@ -159,6 +173,10 @@ public class ChannelServer implements Serializable {
         }
     }
 
+    /**
+     *
+     * @param threadToNotify
+     */
     public final void shutdown(Object threadToNotify) {
         if (finishedShutdown) {
             return;
@@ -185,10 +203,18 @@ public class ChannelServer implements Serializable {
 //        }
     }
 
+    /**
+     *
+     * @return
+     */
     public final boolean hasFinishedShutdown() {
         return finishedShutdown;
     }
 
+    /**
+     *
+     * @return
+     */
     public final MapleMapFactory getMapFactory() {
         return mapFactory;
     }
@@ -196,19 +222,38 @@ public class ChannelServer implements Serializable {
 //    public static final ChannelServer newInstance(final String key, final int channel) {
 //        return new ChannelServer(key, channel);
 //    }
+
+    /**
+     *
+     * @param channel
+     * @return
+     */
     public static final ChannelServer newInstance(final int channel) {
         return new ChannelServer(channel);
     }
 
+    /**
+     *
+     * @param channel
+     * @return
+     */
     public static final ChannelServer getInstance(final int channel) {
         return instances.get(channel);
     }
 
+    /**
+     *
+     * @param chr
+     */
     public final void addPlayer(final MapleCharacter chr) {
         getPlayerStorage().registerPlayer(chr);
         chr.getClient().getSession().write(MaplePacketCreator.serverMessage(serverMessage));
     }
 
+    /**
+     *
+     * @return
+     */
     public final PlayerStorage getPlayerStorage() {
         if (players == null) { //wth
             players = new PlayerStorage(channel); //wthhhh
@@ -216,120 +261,232 @@ public class ChannelServer implements Serializable {
         return players;
     }
 
+    /**
+     *
+     * @param chr
+     */
     public final void removePlayer(final MapleCharacter chr) {
         getPlayerStorage().deregisterPlayer(chr);
 
     }
 
+    /**
+     *
+     * @param idz
+     * @param namez
+     */
     public final void removePlayer(final int idz, final String namez) {
         getPlayerStorage().deregisterPlayer(idz, namez);
 
     }
 
+    /**
+     *
+     * @return
+     */
     public final String getServerMessage() {
         return serverMessage;
     }
 
+    /**
+     *
+     * @param newMessage
+     */
     public final void setServerMessage(final String newMessage) {
         serverMessage = newMessage;
         broadcastPacket(MaplePacketCreator.serverMessage(serverMessage));
     }
 
+    /**
+     *
+     * @param data
+     */
     public final void broadcastPacket(final MaplePacket data) {
         getPlayerStorage().broadcastPacket(data);
     }
 
+    /**
+     *
+     * @param data
+     */
     public final void broadcastSmegaPacket(final MaplePacket data) {
         getPlayerStorage().broadcastSmegaPacket(data);
     }
 
+    /**
+     *
+     * @param data
+     */
     public final void broadcastGMPacket(final MaplePacket data) {
         getPlayerStorage().broadcastGMPacket(data);
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getExpRate() {
         return expRate * doubleExp;
     }
 
+    /**
+     *
+     * @param expRate
+     */
     public final void setExpRate(final int expRate) {
         this.expRate = expRate;
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getCashRate() {
         return cashRate;
     }
 
+    /**
+     *
+     * @param cashRate
+     */
     public final void setCashRate(final int cashRate) {
         this.cashRate = cashRate;
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getChannel() {
         return channel;
     }
 
+    /**
+     *
+     * @param channel
+     */
     public final void setChannel(final int channel) {
         instances.put(channel, this);
         LoginServer.addChannel(channel);
     }
 
+    /**
+     *
+     * @return
+     */
     public static final Collection<ChannelServer> getAllInstances() {
         return Collections.unmodifiableCollection(instances.values());
     }
 
+    /**
+     *
+     * @return
+     */
     public final String getSocket() {
         return ip;
     }
 
+    /**
+     *
+     * @return
+     */
     public final String getIP() {
         return ip;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getIPA() {
         return ip;
     }
 
+    /**
+     *
+     * @return
+     */
     public final boolean isShutdown() {
         return shutdown;
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getLoadedMaps() {
         return mapFactory.getLoadedMaps();
     }
 
+    /**
+     *
+     * @return
+     */
     public final EventScriptManager getEventSM() {
         return eventSM;
     }
 
+    /**
+     *
+     */
     public final void reloadEvents() {
         eventSM.cancel();
         eventSM = new EventScriptManager(this, ServerProperties.getProperty("ZeroMS.Events").split(","));
         eventSM.init();
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getBossDropRate() {
         return BossdropRate;
     }
 
+    /**
+     *
+     * @param dropRate
+     */
     public final void setBossDropRate(final int dropRate) {
         this.BossdropRate = dropRate;
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getMesoRate() {
         return mesoRate * doubleMeso;
     }
 
+    /**
+     *
+     * @param mesoRate
+     */
     public final void setMesoRate(final int mesoRate) {
         this.mesoRate = mesoRate;
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getDropRate() {
         return dropRate * doubleDrop;
     }
 
+    /**
+     *
+     * @param dropRate
+     */
     public final void setDropRate(final int dropRate) {
         this.dropRate = dropRate;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getDoubleExp() {
         if ((this.doubleExp < 0) || (this.doubleExp > 2)) {
             return 1;
@@ -337,6 +494,10 @@ public class ChannelServer implements Serializable {
         return this.doubleExp;
     }
 
+    /**
+     *
+     * @param doubleExp
+     */
     public void setDoubleExp(int doubleExp) {
         if ((doubleExp < 0) || (doubleExp > 2)) {
             this.doubleExp = 1;
@@ -345,6 +506,10 @@ public class ChannelServer implements Serializable {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public int getDoubleMeso() {
         if ((this.doubleMeso < 0) || (this.doubleMeso > 2)) {
             return 1;
@@ -352,6 +517,10 @@ public class ChannelServer implements Serializable {
         return this.doubleMeso;
     }
 
+    /**
+     *
+     * @param doubleMeso
+     */
     public void setDoubleMeso(int doubleMeso) {
         if ((doubleMeso < 0) || (doubleMeso > 2)) {
             this.doubleMeso = 1;
@@ -360,6 +529,10 @@ public class ChannelServer implements Serializable {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public int getDoubleDrop() {
         if ((this.doubleDrop < 0) || (this.doubleDrop > 2)) {
             return 1;
@@ -367,6 +540,10 @@ public class ChannelServer implements Serializable {
         return this.doubleDrop;
     }
 
+    /**
+     *
+     * @param doubleDrop
+     */
     public void setDoubleDrop(int doubleDrop) {
         if ((doubleDrop < 0) || (doubleDrop > 2)) {
             this.doubleDrop = 1;
@@ -386,6 +563,11 @@ public class ChannelServer implements Serializable {
      * 1).run_startup_configurations(); } }
      */
 
+    /**
+     *
+     */
+
+
     public static void startChannel_Main() {
         serverStartTime = System.currentTimeMillis();
         int ch = Integer.parseInt(ServerProperties.getProperty("ZeroMS.Count", "0"));
@@ -397,6 +579,10 @@ public class ChannelServer implements Serializable {
         }
     }
 
+    /**
+     *
+     * @param channel
+     */
     public static final void startChannel(final int channel) {
         serverStartTime = System.currentTimeMillis();
         for (int i = 0; i < Integer.parseInt(ServerProperties.getProperty("ZeroMS.Count", "0")); i++) {
@@ -409,18 +595,38 @@ public class ChannelServer implements Serializable {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public Map<MapleSquadType, MapleSquad> getAllSquads() {
         return Collections.unmodifiableMap(mapleSquads);
     }
 
+    /**
+     *
+     * @param type
+     * @return
+     */
     public final MapleSquad getMapleSquad(final String type) {
         return getMapleSquad(MapleSquadType.valueOf(type.toLowerCase()));
     }
 
+    /**
+     *
+     * @param type
+     * @return
+     */
     public final MapleSquad getMapleSquad(final MapleSquadType type) {
         return mapleSquads.get(type);
     }
 
+    /**
+     *
+     * @param squad
+     * @param type
+     * @return
+     */
     public final boolean addMapleSquad(final MapleSquad squad, final String type) {
         final MapleSquadType types = MapleSquadType.valueOf(type.toLowerCase());
         if (types != null && !mapleSquads.containsKey(types)) {
@@ -431,6 +637,12 @@ public class ChannelServer implements Serializable {
         return false;
     }
 
+    /**
+     *
+     * @param squad
+     * @param type
+     * @return
+     */
     public boolean removeMapleSquad(MapleSquad squad, MapleSquadType type) {
         if (type != null && mapleSquads.containsKey(type)) {
             if (mapleSquads.get(type) == squad) {
@@ -441,6 +653,11 @@ public class ChannelServer implements Serializable {
         return false;
     }
 
+    /**
+     *
+     * @param types
+     * @return
+     */
     public final boolean removeMapleSquad(final MapleSquadType types) {
         if (types != null && mapleSquads.containsKey(types)) {
             mapleSquads.remove(types);
@@ -449,6 +666,10 @@ public class ChannelServer implements Serializable {
         return false;
     }
 
+    /**
+     *
+     * @return
+     */
     public int closeAllMerchant() {
         int ret = 0;
         merchLock.writeLock().lock();
@@ -467,6 +688,11 @@ public class ChannelServer implements Serializable {
         return ret;
     }
 
+    /**
+     *
+     * @param hMerchant
+     * @return
+     */
     public final int addMerchant(final HiredMerchant hMerchant) {
         merchLock.writeLock().lock();
 
@@ -481,6 +707,10 @@ public class ChannelServer implements Serializable {
         return runningmer;
     }
 
+    /**
+     *
+     * @param hMerchant
+     */
     public final void removeMerchant(final HiredMerchant hMerchant) {
         merchLock.writeLock().lock();
 
@@ -491,6 +721,11 @@ public class ChannelServer implements Serializable {
         }
     }
 
+    /**
+     *
+     * @param accid
+     * @return
+     */
     public final boolean containsMerchant(final int accid) {
         boolean contains = false;
 
@@ -510,8 +745,13 @@ public class ChannelServer implements Serializable {
         return contains;
     }
 
+    /**
+     *
+     * @param itemSearch
+     * @return
+     */
     public final List<HiredMerchant> searchMerchant(final int itemSearch) {
-        final List<HiredMerchant> list = new LinkedList<HiredMerchant>();
+        final List<HiredMerchant> list = new LinkedList<>();
         merchLock.readLock().lock();
         try {
             final Iterator itr = merchants.values().iterator();
@@ -528,34 +768,67 @@ public class ChannelServer implements Serializable {
         return list;
     }
 
+    /**
+     *
+     */
     public final void toggleMegaphoneMuteState() {
         this.MegaphoneMuteState = !this.MegaphoneMuteState;
     }
 
+    /**
+     *
+     * @return
+     */
     public final boolean getMegaphoneMuteState() {
         return MegaphoneMuteState;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getEvent() {
         return eventmap;
     }
 
+    /**
+     *
+     * @param ze
+     */
     public final void setEvent(final int ze) {
         this.eventmap = ze;
     }
 
+    /**
+     *
+     * @param t
+     * @return
+     */
     public MapleEvent getEvent(final MapleEventType t) {
         return events.get(t);
     }
 
+    /**
+     *
+     * @return
+     */
     public final Collection<PlayerNPC> getAllPlayerNPC() {
         return playerNPCs.values();
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     */
     public final PlayerNPC getPlayerNPC(final int id) {
         return playerNPCs.get(id);
     }
 
+    /**
+     *
+     * @param npc
+     */
     public final void addPlayerNPC(final PlayerNPC npc) {
         if (playerNPCs.containsKey(npc.getId())) {
             removePlayerNPC(npc);
@@ -564,6 +837,10 @@ public class ChannelServer implements Serializable {
         getMapFactory().getMap(npc.getMapId()).addMapObject(npc);
     }
 
+    /**
+     *
+     * @param npc
+     */
     public final void removePlayerNPC(final PlayerNPC npc) {
         if (playerNPCs.containsKey(npc.getId())) {
             playerNPCs.remove(npc.getId());
@@ -571,60 +848,110 @@ public class ChannelServer implements Serializable {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public final String getServerName() {
         return serverName;
     }
 
+    /**
+     *
+     * @param sn
+     */
     public final void setServerName(final String sn) {
         this.serverName = sn;
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getPort() {
         return port;
     }
 
+    /**
+     *
+     * @return
+     */
     public static final Set<Integer> getChannelServer() {
-        return new HashSet<Integer>(instances.keySet());
+        return new HashSet<>(instances.keySet());
     }
 
+    /**
+     *
+     */
     public final void setShutdown() {
         this.shutdown = true;
         System.out.println("频道 " + channel + " 已开始关闭.");
     }
 
+    /**
+     *
+     */
     public final void setFinishShutdown() {
         this.finishedShutdown = true;
         System.out.println("频道 " + channel + " 已关闭完成.");
     }
 
+    /**
+     *
+     * @return
+     */
     public final boolean isAdminOnly() {
         return adminOnly;
     }
 
+    /**
+     *
+     * @return
+     */
     public final static int getChannelCount() {
         return instances.size();
     }
 
+    /**
+     *
+     * @return
+     */
     public final MapleServerHandler getServerHandler() {
         return serverHandler;
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getTempFlag() {
         return flags;
     }
 
+    /**
+     *
+     * @return
+     */
     public static Map<Integer, Integer> getChannelLoad() {
-        Map<Integer, Integer> ret = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> ret = new HashMap<>();
         for (ChannelServer cs : instances.values()) {
             ret.put(cs.getChannel(), cs.getConnectedClients());
         }
         return ret;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getConnectedClients() {
         return getPlayerStorage().getConnectedClients();
     }
 
+    /**
+     *
+     * @return
+     */
     public List<CheaterData> getCheaters() {
         List<CheaterData> cheaters = getPlayerStorage().getCheaters();
 
@@ -632,22 +959,41 @@ public class ChannelServer implements Serializable {
         return CollectionUtil.copyFirst(cheaters, 20);
     }
 
+    /**
+     *
+     * @param message
+     */
     public void broadcastMessage(byte[] message) {
         broadcastPacket(new ByteArrayMaplePacket(message));
     }
 
+    /**
+     *
+     * @param message
+     */
     public void broadcastMessage(MaplePacket message) {
         broadcastPacket(message);
     }
 
+    /**
+     *
+     * @param message
+     */
     public void broadcastSmega(byte[] message) {
         broadcastSmegaPacket(new ByteArrayMaplePacket(message));
     }
 
+    /**
+     *
+     * @param message
+     */
     public void broadcastGMMessage(byte[] message) {
         broadcastGMPacket(new ByteArrayMaplePacket(message));
     }
 
+    /**
+     *
+     */
     public void saveAll() {
         int ppl = 0;
         for (MapleCharacter chr : this.players.getAllCharactersThreadSafe()) {
@@ -659,10 +1005,18 @@ public class ChannelServer implements Serializable {
         System.out.println("[自动存档] 已经将频道 " + this.channel + " 的 " + ppl + " 个玩家保存到数据中.");
     }
 
+    /**
+     *
+     * @param dy
+     */
     public void AutoNx(int dy) {
-        mapFactory.getMap(910000000).AutoNxmht(dy);//泡点地图
+        mapFactory.getMap(910_000_000).AutoNxmht(dy);//泡点地图
     }
 
+    /**
+     *
+     * @param dy
+     */
     public void AutoTime(int dy) {
         try {
             for (ChannelServer chan : ChannelServer.getAllInstances()) {
@@ -680,14 +1034,24 @@ public class ChannelServer implements Serializable {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public int getInstanceId() {
         return instanceId;
     }
 
+    /**
+     *
+     */
     public void addInstanceId() {
         instanceId++;
     }
 
+    /**
+     *
+     */
     public void shutdown() {
 
         if (this.finishedShutdown) {
@@ -705,11 +1069,15 @@ public class ChannelServer implements Serializable {
         // getPlayerStorage().disconnectAll();
         System.out.println("频道 " + this.channel + " 解除绑定端口...");
         acceptor.unbind(new InetSocketAddress(port));
-        instances.remove(Integer.valueOf(this.channel));
+        instances.remove(this.channel);
         setFinishShutdown();
     }
 
     //-------------------------------------0620新加 清除bosslog全部数据 功能2 清除bosslog制定数据
+
+    /**
+     *
+     */
     public void setQKBossLog() {
         Connection con1 = DatabaseConnection.getConnection();
         try {
@@ -722,6 +1090,11 @@ public class ChannelServer implements Serializable {
         }
     }
 
+    /**
+     *
+     * @param id
+     * @param bossid
+     */
     public void setQLBossLog(String id, String bossid) {
         Connection con1 = DatabaseConnection.getConnection();
         try {
@@ -776,6 +1149,13 @@ public class ChannelServer implements Serializable {
            }
   }
      */
+
+    /**
+     *
+     * @param Name
+     * @return
+     */
+
     public static boolean forceRemovePlayerByCharName(String Name) {
         for (ChannelServer ch : ChannelServer.getAllInstances()) {
             Collection<MapleCharacter> chrs = ch.getPlayerStorage().getAllCharactersThreadSafe();
@@ -804,6 +1184,11 @@ public class ChannelServer implements Serializable {
         return false;
     }
 
+    /**
+     *
+     * @param c
+     * @param accid
+     */
     public static void forceRemovePlayerByAccId(MapleClient c, int accid) {
         for (ChannelServer ch : ChannelServer.getAllInstances()) {
             Collection<MapleCharacter> chrs = ch.getPlayerStorage().getAllCharactersThreadSafe();
@@ -847,6 +1232,10 @@ public class ChannelServer implements Serializable {
         }
     }
 
+    /**
+     *
+     * @param accid
+     */
     public static void forceRemovePlayerByAccId(int accid) {
         for (ChannelServer ch : ChannelServer.getAllInstances()) {
             Collection<MapleCharacter> chrs = ch.getPlayerStorage().getAllCharactersThreadSafe();

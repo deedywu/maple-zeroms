@@ -23,41 +23,66 @@ package client;
 import constants.GameConstants;
 import java.util.ArrayList;
 import java.util.List;
-
 import provider.MapleData;
 import provider.MapleDataTool;
 import server.MapleStatEffect;
 import server.life.Element;
 
+/**
+ *
+ * @author zjj
+ */
 public class Skill implements ISkill {
 
     //public static final int[] skills = new int[]{4311003, 4321000, 4331002, 4331005, 4341004, 4341007};
     private String name = "";
-    private final List<MapleStatEffect> effects = new ArrayList<MapleStatEffect>();
+    private final List<MapleStatEffect> effects = new ArrayList<>();
     private Element element;
     private byte level;
     private int id, animationTime, requiredSkill, masterLevel;
     private boolean action, invisible, chargeskill, timeLimited;
 
+    /**
+     *
+     * @param id
+     */
     public Skill(final int id) {
         super();
         this.id = id;
     }
 
+    /**
+     *
+     * @param name
+     */
     public void setName(final String name) {
         this.name = name;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getId() {
         return id;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getName() {
         return name;
     }
 
+    /**
+     *
+     * @param id
+     * @param data
+     * @return
+     */
     public static final Skill loadFromData(final int id, final MapleData data) {
         Skill ret = new Skill(id);
 
@@ -88,13 +113,13 @@ public class Skill implements ISkill {
                     action = true;
                 } else {
                     switch (id) {
-                        case 5201001:
-                        case 5221009:
-                        case 4221001:
-                        case 4321001:
-                        case 4321000:
-                        case 4331001: //o_o
-                        case 3101005: //or is this really hack
+                        case 5_201_001:
+                        case 5_221_009:
+                        case 4_221_001:
+                        case 4_321_001:
+                        case 4_321_000:
+                        case 4_331_001: //o_o
+                        case 3_101_005: //or is this really hack
                             action = true;
                             break;
                     }
@@ -106,94 +131,94 @@ public class Skill implements ISkill {
             isBuff = effect != null && hit == null && ball == null;
             isBuff |= action_ != null && MapleDataTool.getString("0", action_, "").equals("alert2");
             switch (id) {
-                case 2301002: // heal is alert2 but not overtime...
-                case 2111003: // poison mist
-                case 12111005: // Flame Gear
-                case 2111002: // explosion
-                case 4211001: // chakra
-                case 2121001: // Big bang
-                case 2221001: // Big bang
-                case 2321001: // Big bang
+                case 2_301_002: // heal is alert2 but not overtime...
+                case 2_111_003: // poison mist
+                case 12_111_005: // Flame Gear
+                case 2_111_002: // explosion
+                case 4_211_001: // chakra
+                case 2_121_001: // Big bang
+                case 2_221_001: // Big bang
+                case 2_321_001: // Big bang
                     isBuff = false;
                     break;
-                case 1004: // monster riding
-                case 1017:
-                case 20001019:
-                case 10001019:
-                case 10001004:
-                case 20001004:
-                case 20011004:
-                case 30001004:
-                case 1026: //Soaring
-                case 10001026:
-                case 20001026:
-                case 20011026:
-                case 30001026:
-                case 9101004: // hide is a buff -.- atleast for us o.o"
-                case 1111002: // combo
-                case 4211003: // pickpocket
-                case 4111001: // mesoup
-                case 15111002: // Super Transformation
-                case 5111005: // Transformation
-                case 5121003: // Super Transformation
-                case 13111005: // Alabtross
-                case 21000000: // Aran Combo
-                case 21101003: // Body Pressure
-                case 21110000:
-                case 5211001: // Pirate octopus summon
-                case 5211002:
-                case 5220002: // wrath of the octopi
-                case 5001005: //dash
-                case 15001003:
-                case 5211006: //homing beacon
-                case 5220011: //bullseye
-                case 5110001: //energy charge
-                case 15100004:
-                case 5121009: //speed infusion
-                case 15111005:
+                case 1_004: // monster riding
+                case 1_017:
+                case 20_001_019:
+                case 10_001_019:
+                case 10_001_004:
+                case 20_001_004:
+                case 20_011_004:
+                case 30_001_004:
+                case 1_026: //Soaring
+                case 10_001_026:
+                case 20_001_026:
+                case 20_011_026:
+                case 30_001_026:
+                case 9_101_004: // hide is a buff -.- atleast for us o.o"
+                case 1_111_002: // combo
+                case 4_211_003: // pickpocket
+                case 4_111_001: // mesoup
+                case 15_111_002: // Super Transformation
+                case 5_111_005: // Transformation
+                case 5_121_003: // Super Transformation
+                case 13_111_005: // Alabtross
+                case 21_000_000: // Aran Combo
+                case 21_101_003: // Body Pressure
+                case 21_110_000:
+                case 5_211_001: // Pirate octopus summon
+                case 5_211_002:
+                case 5_220_002: // wrath of the octopi
+                case 5_001_005: //dash
+                case 15_001_003:
+                case 5_211_006: //homing beacon
+                case 5_220_011: //bullseye
+                case 5_110_001: //energy charge
+                case 15_100_004:
+                case 5_121_009: //speed infusion
+                case 15_111_005:
 
-                case 22121001: //element reset
-                case 22131001: //magic shield
-                case 22141002: //magic booster
-                case 22151002: //killer wing
-                case 22151003: //magic resist
-                case 22171000: //maple warrior
-                case 22171004: //hero will
-                case 22181000: //onyx blessing
-                case 22181003: //soul stone
+                case 22_121_001: //element reset
+                case 22_131_001: //magic shield
+                case 22_141_002: //magic booster
+                case 22_151_002: //killer wing
+                case 22_151_003: //magic resist
+                case 22_171_000: //maple warrior
+                case 22_171_004: //hero will
+                case 22_181_000: //onyx blessing
+                case 22_181_003: //soul stone
                 //case 22121000:
                 //case 22141003:
                 //case 22151001:
                 //case 22161002:
-                case 4331003: //owl spirit
-                case 15101006: //spark
-                case 15111006: //spark
-                case 4321000: //tornado spin
-                case 1320009: //beholder's buff.. passive
-                case 35120000:
-                case 35001002: //TEMP. mech
-                case 9001004: // hide
-                case 4341002:
+                case 4_331_003: //owl spirit
+                case 15_101_006: //spark
+                case 15_111_006: //spark
+                case 4_321_000: //tornado spin
+                case 1_320_009: //beholder's buff.. passive
+                case 35_120_000:
+                case 35_001_002: //TEMP. mech
+                case 9_001_004: // hide
+                case 4_341_002:
 
-                case 32001003: //dark aura
-                case 32120000:
-                case 32101002: //blue aura
-                case 32110000:
-                case 32101003: //yellow aura
-                case 32120001:
-                case 35101007: //perfect armor
-                case 35121006: //satellite safety
-                case 35001001: //flame
-                case 35101009:
-                case 35111007: //TEMP
-                case 35121005: //missile
-                case 35121013:
+                case 32_001_003: //dark aura
+                case 32_120_000:
+                case 32_101_002: //blue aura
+                case 32_110_000:
+                case 32_101_003: //yellow aura
+                case 32_120_001:
+                case 35_101_007: //perfect armor
+                case 35_121_006: //satellite safety
+                case 35_001_001: //flame
+                case 35_101_009:
+                case 35_111_007: //TEMP
+                case 35_121_005: //missile
+                case 35_121_013:
                 //case 35111004: //siege
-                case 35101002: //TEMP
-                case 33111003: //puppet ?
-                case 1211009:
-                case 1111007:
-                case 1311007: //magic,armor,atk crash
+                case 35_101_002: //TEMP
+                case 33_111_003: //puppet ?
+                case 1_211_009:
+                case 1_111_007:
+                case 1_311_007: //magic,armor,atk crash
                     isBuff = true;
                     break;
             }
@@ -219,6 +244,11 @@ public class Skill implements ISkill {
         return ret;
     }
 
+    /**
+     *
+     * @param level
+     * @return
+     */
     @Override
     public MapleStatEffect getEffect(final int level) {
         if (effects.size() < level) {
@@ -232,50 +262,83 @@ public class Skill implements ISkill {
         return effects.get(level - 1);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean getAction() {
         return action;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean isChargeSkill() {
         return chargeskill;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean isInvisible() {
         return invisible;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean hasRequiredSkill() {
         return level > 0;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getRequiredSkillLevel() {
         return level;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getRequiredSkillId() {
         return requiredSkill;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public byte getMaxLevel() {
         return (byte) effects.size();
     }
 
+    /**
+     *
+     * @param job
+     * @return
+     */
     @Override
     public boolean canBeLearnedBy(int job) {
         int jid = job;
-        int skillForJob = id / 10000;
-        if (skillForJob == 2001 && GameConstants.isEvan(job)) {
+        int skillForJob = id / 10_000;
+        if (skillForJob == 2_001 && GameConstants.isEvan(job)) {
             return true; //special exception for evan -.-
         } else if (jid / 100 != skillForJob / 100) { // wrong job
             return false;
-        } else if (jid / 1000 != skillForJob / 1000) { // wrong job
+        } else if (jid / 1_000 != skillForJob / 1_000) { // wrong job
             return false;
         } else if (GameConstants.isAdventurer(skillForJob) && !GameConstants.isAdventurer(job)) {
             return false;
@@ -295,40 +358,64 @@ public class Skill implements ISkill {
         return true;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean isTimeLimited() {
         return timeLimited;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean isFourthJob() {
-        if (id / 10000 >= 2212 && id / 10000 < 3000) { //evan skill
-            return ((id / 10000) % 10) >= 7;
+        if (id / 10_000 >= 2_212 && id / 10_000 < 3_000) { //evan skill
+            return ((id / 10_000) % 10) >= 7;
         }
-        if (id / 10000 >= 430 && id / 10000 <= 434) { //db skill
-            return ((id / 10000) % 10) == 4 || getMasterLevel() > 0;
+        if (id / 10_000 >= 430 && id / 10_000 <= 434) { //db skill
+            return ((id / 10_000) % 10) == 4 || getMasterLevel() > 0;
         }
-        return ((id / 10000) % 10) == 2;
+        return ((id / 10_000) % 10) == 2;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Element getElement() {
         return element;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getAnimationTime() {
         return animationTime;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getMasterLevel() {
         return masterLevel;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean isBeginnerSkill() {
-        int jobId = id / 10000;
-        return jobId == 0 || jobId == 1000 || jobId == 2000 || jobId == 2001 || jobId == 3000;
+        int jobId = id / 10_000;
+        return jobId == 0 || jobId == 1_000 || jobId == 2_000 || jobId == 2_001 || jobId == 3_000;
     }
 }

@@ -1,47 +1,494 @@
 package handling.world;
 
 import client.*;
+import client.inventory.MapleMount;
+import client.inventory.MaplePet;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-
-import client.inventory.MapleMount;
-import client.inventory.MaplePet;
 import server.quest.MapleQuest;
 import tools.Pair;
-import java.util.ArrayList;
-import java.util.List;
 
+/**
+ *
+ * @author zjj
+ */
 public class CharacterTransfer implements Externalizable {
 
-    public int characterid, accountid, exp,
-            beans, meso, hair, face, mapid, guildid, modid, modsl, lqjf, jf, bossjf, cjjf,
-            partyid, messengerid, mBookCover, dojo, ACash, MaplePoints,
-            mount_itemid, mount_exp, points, vpoints, marriageId,
-            familyid, seniorid, junior1, junior2, currentrep, totalrep, expression, constellation, blood, month, day, battleshipHP, prefix, mount_id, vip, skillzq;
-    public byte channel, dojoRecord, gender, gmLevel, guildrank, alliancerank, clonez, fairyExp, buddysize, world, initialSpawnPoint, skinColor, mount_level, mount_Fatigue, subcategory;
-    public long lastfametime, TranferTime, lastGainHM;
-    public String tempIP;
-    public String name, accountname, BlessOfFairy, chalkboard, charmessage;
-    public short level, fame, str, dex, int_, luk, maxhp, maxmp, hp, mp, remainingAp, hpApUsed, job;
-    public Object inventorys, skillmacro, storage, cs;
-    public int[] savedlocation, wishlist, rocks, remainingSp, regrocks;
-    public byte[] petStore;
-    public boolean DebugMessage;
-    public Map<Integer, Integer> mbook = new LinkedHashMap<Integer, Integer>();
-    public Map<Integer, Pair<Byte, Integer>> keymap = new LinkedHashMap<Integer, Pair<Byte, Integer>>();
-    public final List<Integer> finishedAchievements = new ArrayList<Integer>(), famedcharacters = new ArrayList<Integer>();
-    public final Map<BuddyEntry, Boolean> buddies = new LinkedHashMap<BuddyEntry, Boolean>();
-    public final Map<Integer, Object> Quest = new LinkedHashMap<Integer, Object>(); // Questid instead of MapleQuest, as it's huge. Cant be transporting MapleQuest.java
-    public Map<Integer, String> InfoQuest = new LinkedHashMap<Integer, String>();
-    public final Map<Integer, SkillEntry> Skills = new LinkedHashMap<Integer, SkillEntry>(); // Skillid instead of Skill.java, as it's huge. Cant be transporting Skill.java and MapleStatEffect.java
+    public int characterid, 
 
+    /**
+     *
+     */
+    accountid, 
+
+    /**
+     *
+     */
+    exp,
+
+    /**
+     *
+     */
+    beans, 
+
+    /**
+     *
+     */
+    meso, 
+
+    /**
+     *
+     */
+    hair, 
+
+    /**
+     *
+     */
+    face, 
+
+    /**
+     *
+     */
+    mapid, 
+
+    /**
+     *
+     */
+    guildid, 
+
+    /**
+     *
+     */
+    modid, 
+
+    /**
+     *
+     */
+    modsl, 
+
+    /**
+     *
+     */
+    lqjf, 
+
+    /**
+     *
+     */
+    jf, 
+
+    /**
+     *
+     */
+    bossjf, 
+
+    /**
+     *
+     */
+    cjjf,
+
+    /**
+     *
+     */
+    partyid, 
+
+    /**
+     *
+     */
+    messengerid, 
+
+    /**
+     *
+     */
+    mBookCover, 
+
+    /**
+     *
+     */
+    dojo, 
+
+    /**
+     *
+     */
+    ACash, 
+
+    /**
+     *
+     */
+    MaplePoints,
+
+    /**
+     *
+     */
+    mount_itemid, 
+
+    /**
+     *
+     */
+    mount_exp, 
+
+    /**
+     *
+     */
+    points, 
+
+    /**
+     *
+     */
+    vpoints, 
+
+    /**
+     *
+     */
+    marriageId,
+
+    /**
+     *
+     */
+    familyid, 
+
+    /**
+     *
+     */
+    seniorid, 
+
+    /**
+     *
+     */
+    junior1, 
+
+    /**
+     *
+     */
+    junior2, 
+
+    /**
+     *
+     */
+    currentrep, 
+
+    /**
+     *
+     */
+    totalrep, 
+
+    /**
+     *
+     */
+    expression, 
+
+    /**
+     *
+     */
+    constellation, 
+
+    /**
+     *
+     */
+    blood, 
+
+    /**
+     *
+     */
+    month, 
+
+    /**
+     *
+     */
+    day, 
+
+    /**
+     *
+     */
+    battleshipHP, 
+
+    /**
+     *
+     */
+    prefix, 
+
+    /**
+     *
+     */
+    mount_id, 
+
+    /**
+     *
+     */
+    vip, 
+
+    /**
+     *
+     */
+    skillzq;
+    public byte channel, 
+
+    /**
+     *
+     */
+    dojoRecord, 
+
+    /**
+     *
+     */
+    gender, 
+
+    /**
+     *
+     */
+    gmLevel, 
+
+    /**
+     *
+     */
+    guildrank, 
+
+    /**
+     *
+     */
+    alliancerank, 
+
+    /**
+     *
+     */
+    clonez, 
+
+    /**
+     *
+     */
+    fairyExp, 
+
+    /**
+     *
+     */
+    buddysize, 
+
+    /**
+     *
+     */
+    world, 
+
+    /**
+     *
+     */
+    initialSpawnPoint, 
+
+    /**
+     *
+     */
+    skinColor, 
+
+    /**
+     *
+     */
+    mount_level, 
+
+    /**
+     *
+     */
+    mount_Fatigue, 
+
+    /**
+     *
+     */
+    subcategory;
+    public long lastfametime, 
+
+    /**
+     *
+     */
+    TranferTime, 
+
+    /**
+     *
+     */
+    lastGainHM;
+
+    /**
+     *
+     */
+    public String tempIP;
+    public String name, 
+
+    /**
+     *
+     */
+    accountname, 
+
+    /**
+     *
+     */
+    BlessOfFairy, 
+
+    /**
+     *
+     */
+    chalkboard, 
+
+    /**
+     *
+     */
+    charmessage;
+    public short level, 
+
+    /**
+     *
+     */
+    fame, 
+
+    /**
+     *
+     */
+    str, 
+
+    /**
+     *
+     */
+    dex, 
+
+    /**
+     *
+     */
+    int_, 
+
+    /**
+     *
+     */
+    luk, 
+
+    /**
+     *
+     */
+    maxhp, 
+
+    /**
+     *
+     */
+    maxmp, 
+
+    /**
+     *
+     */
+    hp, 
+
+    /**
+     *
+     */
+    mp, 
+
+    /**
+     *
+     */
+    remainingAp, 
+
+    /**
+     *
+     */
+    hpApUsed, 
+
+    /**
+     *
+     */
+    job;
+    public Object inventorys, 
+
+    /**
+     *
+     */
+    skillmacro, 
+
+    /**
+     *
+     */
+    storage, 
+
+    /**
+     *
+     */
+    cs;
+    public int[] savedlocation, 
+
+    /**
+     *
+     */
+    wishlist, 
+
+    /**
+     *
+     */
+    rocks, 
+
+    /**
+     *
+     */
+    remainingSp, 
+
+    /**
+     *
+     */
+    regrocks;
+
+    /**
+     *
+     */
+    public byte[] petStore;
+
+    /**
+     *
+     */
+    public boolean DebugMessage;
+
+    /**
+     *
+     */
+    public Map<Integer, Integer> mbook = new LinkedHashMap<>();
+
+    /**
+     *
+     */
+    public Map<Integer, Pair<Byte, Integer>> keymap = new LinkedHashMap<>();
+    public final List<Integer> finishedAchievements = new ArrayList<>(), 
+
+    /**
+     *
+     */
+    famedcharacters = new ArrayList<>();
+
+    /**
+     *
+     */
+    public final Map<BuddyEntry, Boolean> buddies = new LinkedHashMap<>();
+
+    /**
+     *
+     */
+    public final Map<Integer, Object> Quest = new LinkedHashMap<>(); // Questid instead of MapleQuest, as it's huge. Cant be transporting MapleQuest.java
+
+    /**
+     *
+     */
+    public Map<Integer, String> InfoQuest = new LinkedHashMap<>();
+
+    /**
+     *
+     */
+    public final Map<Integer, SkillEntry> Skills = new LinkedHashMap<>(); // Skillid instead of Skill.java, as it's huge. Cant be transporting Skill.java and MapleStatEffect.java
+
+    /**
+     *
+     */
     public CharacterTransfer() {
     }
 
+    /**
+     *
+     * @param chr
+     */
     public CharacterTransfer(final MapleCharacter chr) {
         this.lastGainHM = chr.getLastHM();
         this.mount_id = chr.getMountId();
@@ -340,7 +787,7 @@ public class CharacterTransfer implements Externalizable {
 
         final int keysize = in.readInt();
         for (int i = 0; i < keysize; i++) {
-            this.keymap.put(in.readInt(), new Pair<Byte, Integer>(in.readByte(), in.readInt()));
+            this.keymap.put(in.readInt(), new Pair<>(in.readByte(), in.readInt()));
         }
         this.petStore = new byte[in.readByte()];
         for (int i = 0; i < 3; i++) {
@@ -479,12 +926,12 @@ public class CharacterTransfer implements Externalizable {
 
         out.writeShort(this.finishedAchievements.size());
         for (final Integer zz : finishedAchievements) {
-            out.writeInt(zz.intValue());
+            out.writeInt(zz);
         }
 
         out.writeInt(this.famedcharacters.size());
         for (final Integer zz : famedcharacters) {
-            out.writeInt(zz.intValue());
+            out.writeInt(zz);
         }
 
         out.writeShort(this.savedlocation.length);

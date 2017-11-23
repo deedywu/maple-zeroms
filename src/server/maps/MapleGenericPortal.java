@@ -20,15 +20,18 @@
  */
 package server.maps;
 
-import java.awt.Point;
-
 import client.MapleClient;
 import client.anticheat.CheatingOffense;
 import handling.channel.ChannelServer;
+import java.awt.Point;
 import scripting.PortalScriptManager;
 import server.MaplePortal;
 import tools.MaplePacketCreator;
 
+/**
+ *
+ * @author zjj
+ */
 public class MapleGenericPortal implements MaplePortal {
 
     private String name, target, scriptName;
@@ -36,73 +39,133 @@ public class MapleGenericPortal implements MaplePortal {
     private int targetmap, type, id;
     private boolean portalState = true;
 
+    /**
+     *
+     * @param type
+     */
     public MapleGenericPortal(final int type) {
         this.type = type;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public final int getId() {
         return id;
     }
 
+    /**
+     *
+     * @param id
+     */
     public final void setId(int id) {
         this.id = id;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public final String getName() {
         return name;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public final Point getPosition() {
         return position;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public final String getTarget() {
         return target;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public final int getTargetMapId() {
         return targetmap;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public final int getType() {
         return type;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public final String getScriptName() {
         return scriptName;
     }
 
+    /**
+     *
+     * @param name
+     */
     public final void setName(final String name) {
         this.name = name;
     }
 
+    /**
+     *
+     * @param position
+     */
     public final void setPosition(final Point position) {
         this.position = position;
     }
 
+    /**
+     *
+     * @param target
+     */
     public final void setTarget(final String target) {
         this.target = target;
     }
 
+    /**
+     *
+     * @param targetmapid
+     */
     public final void setTargetMapId(final int targetmapid) {
         this.targetmap = targetmapid;
     }
 
+    /**
+     *
+     * @param scriptName
+     */
     @Override
     public final void setScriptName(final String scriptName) {
         this.scriptName = scriptName;
     }
 
+    /**
+     *
+     * @param c
+     */
     @Override
     public final void enterPortal(final MapleClient c) {
-        if (getPosition().distanceSq(c.getPlayer().getPosition()) > 22500) {
+        if (getPosition().distanceSq(c.getPlayer().getPosition()) > 22_500) {
             c.getPlayer().getCheatTracker().registerOffense(CheatingOffense.使用过远传送点);
         }
         final MapleMap currentmap = c.getPlayer().getMap();
@@ -114,7 +177,7 @@ public class MapleGenericPortal implements MaplePortal {
                 } catch (final Exception e) {
                     e.printStackTrace();
                 }
-            } else if (getTargetMapId() != 999999999) {
+            } else if (getTargetMapId() != 999_999_999) {
                 final MapleMap to = ChannelServer.getInstance(c.getChannel()).getMapFactory().getMap(getTargetMapId());
                 if (!c.getPlayer().isGM()) {
                     if (to == null) {
@@ -145,11 +208,19 @@ public class MapleGenericPortal implements MaplePortal {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean getPortalState() {
         return portalState;
     }
 
+    /**
+     *
+     * @param ps
+     */
     @Override
     public void setPortalState(boolean ps) {
         this.portalState = ps;

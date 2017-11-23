@@ -1,48 +1,35 @@
-/*
- This file is part of the OdinMS Maple Story Server
- Copyright (C) 2008 ~ 2010 Patrick Huy <patrick.huy@frz.cc> 
- Matthias Butz <matze@odinms.de>
- Jan Christian Meyer <vimes@odinms.de>
 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License version 3
- as published by the Free Software Foundation. You may not use, modify
- or distribute this program under any other version of the
- GNU Affero General Public License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package client;
 
 import constants.GameConstants;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import database.DatabaseConnection;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.io.Serializable;
-
-import database.DatabaseConnection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import server.MapleItemInformationProvider;
-import tools.MaplePacketCreator;
 import tools.data.output.MaplePacketLittleEndianWriter;
 import tools.packet.MonsterBookPacket;
 
+/**
+ *
+ * @author zjj
+ */
 public class MonsterBook implements Serializable {
 
-    private static final long serialVersionUID = 7179541993413738569L;
+    private static final long serialVersionUID = 7_179_541_993_413_738_569L;
     private boolean changed = false;
     private int SpecialCard = 0, NormalCard = 0, BookLevel = 1;
     private Map<Integer, Integer> cards;
 
+    /**
+     *
+     * @param cards
+     */
     public MonsterBook(Map<Integer, Integer> cards) {
         this.cards = cards;
 
@@ -57,35 +44,58 @@ public class MonsterBook implements Serializable {
         calculateLevel();
     }
 
+    /**
+     *
+     * @return
+     */
     public Map<Integer, Integer> getCards() {
         return cards;
     }
 
+    /**
+     *
+     * @return
+     */
     public final int getTotalCards() {
         return SpecialCard + NormalCard;
     }
 
+    /**
+     *
+     * @param cardid
+     * @return
+     */
     public final int getLevelByCard(final int cardid) {
         return cards.get(cardid) == null ? 0 : cards.get(cardid);
     }
 
+    /**
+     *
+     * @param charid
+     * @return
+     * @throws SQLException
+     */
     public final static MonsterBook loadCards(final int charid) throws SQLException {
-        final PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM monsterbook WHERE charid = ? ORDER BY cardid ASC");
-        ps.setInt(1, charid);
-        final ResultSet rs = ps.executeQuery();
-        Map<Integer, Integer> cards = new LinkedHashMap<Integer, Integer>();
-        int cardid, level;
-
-        while (rs.next()) {
-            cards.put(rs.getInt("cardid"), rs.getInt("level"));
+        Map<Integer, Integer> cards;
+        try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM monsterbook WHERE charid = ? ORDER BY cardid ASC")) {
+            ps.setInt(1, charid);
+            final ResultSet rs = ps.executeQuery();
+            cards = new LinkedHashMap<>();
+            int cardid, level;
+            while (rs.next()) {
+                cards.put(rs.getInt("cardid"), rs.getInt("level"));
+            }   rs.close();
         }
-        rs.close();
-        ps.close();
         return new MonsterBook(cards);
     }
 
+    /**
+     *
+     * @param charid
+     * @throws SQLException
+     */
     public final void saveCards(final int charid) throws SQLException {
-        if (!changed || cards.size() == 0) {
+        if (!changed || cards.isEmpty()) {
             return;
         }
         final Connection con = DatabaseConnection.getConnection();
@@ -128,6 +138,10 @@ public class MonsterBook implements Serializable {
         }
     }
 
+    /**
+     *
+     * @param mplew
+     */
     public final void addCardPacket(final MaplePacketLittleEndianWriter mplew) {
         mplew.writeShort(cards.size());
 
@@ -137,6 +151,11 @@ public class MonsterBook implements Serializable {
         }
     }
 
+    /**
+     *
+     * @param bookcover
+     * @param mplew
+     */
     public final void addCharInfoPacket(final int bookcover, final MaplePacketLittleEndianWriter mplew) {
         mplew.writeInt(BookLevel);
         mplew.writeInt(NormalCard);
@@ -145,10 +164,20 @@ public class MonsterBook implements Serializable {
         mplew.writeInt(MapleItemInformationProvider.getInstance().getCardMobId(bookcover));
     }
 
+    /**
+     *
+     * @param c
+     * @param cardid
+     */
     public final void updateCard(final MapleClient c, final int cardid) {
         c.getSession().write(MonsterBookPacket.changeCover(cardid));
     }
 
+    /**
+     *
+     * @param c
+     * @param cardid
+     */
     public final void addCard(final MapleClient c, final int cardid) {
         changed = true;
         // c.getPlayer().getMap().broadcastMessage(c.getPlayer(), MonsterBookPacket.showForeginCardEffect(c.getPlayer().getId()), false);

@@ -20,28 +20,36 @@
  */
 package handling.channel.handler;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-
-import client.inventory.IItem;
-import client.inventory.Equip;
-import client.SkillFactory;
 import client.MapleClient;
+import client.SkillFactory;
+import client.inventory.Equip;
+import client.inventory.IItem;
 import client.inventory.MapleInventoryType;
 import constants.GameConstants;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import server.ItemMakerFactory;
 import server.ItemMakerFactory.GemCreateEntry;
 import server.ItemMakerFactory.ItemMakerCreateEntry;
-import server.Randomizer;
-import server.MapleItemInformationProvider;
 import server.MapleInventoryManipulator;
-import tools.Pair;
+import server.MapleItemInformationProvider;
+import server.Randomizer;
 import tools.MaplePacketCreator;
+import tools.Pair;
 import tools.data.input.SeekableLittleEndianAccessor;
 
+/**
+ *
+ * @author zjj
+ */
 public class ItemMakerHandler {
 
+    /**
+     *
+     * @param slea
+     * @param c
+     */
     public static final void ItemMaker(final SeekableLittleEndianAccessor slea, final MapleClient c) {
         //System.out.println(slea.toString()); //change?
         final int makerType = slea.readInt();
@@ -193,23 +201,23 @@ public class ItemMakerHandler {
         final short level = MapleItemInformationProvider.getInstance().getItemMakeLevel(etc);
 
         if (level >= 31 && level <= 50) {
-            itemid = 4260000;
+            itemid = 4_260_000;
         } else if (level >= 51 && level <= 60) {
-            itemid = 4260001;
+            itemid = 4_260_001;
         } else if (level >= 61 && level <= 70) {
-            itemid = 4260002;
+            itemid = 4_260_002;
         } else if (level >= 71 && level <= 80) {
-            itemid = 4260003;
+            itemid = 4_260_003;
         } else if (level >= 81 && level <= 90) {
-            itemid = 4260004;
+            itemid = 4_260_004;
         } else if (level >= 91 && level <= 100) {
-            itemid = 4260005;
+            itemid = 4_260_005;
         } else if (level >= 101 && level <= 110) {
-            itemid = 4260006;
+            itemid = 4_260_006;
         } else if (level >= 111 && level <= 120) {
-            itemid = 4260007;
+            itemid = 4_260_007;
         } else if (level >= 121) {
-            itemid = 4260008;
+            itemid = 4_260_008;
         } else {
             throw new RuntimeException("Invalid Item Maker id");
         }
@@ -220,23 +228,23 @@ public class ItemMakerHandler {
         int[] all = new int[2];
         all[0] = -1;
         if (level >= 31 && level <= 50) {
-            all[0] = 4260000;
+            all[0] = 4_260_000;
         } else if (level >= 51 && level <= 60) {
-            all[0] = 4260001;
+            all[0] = 4_260_001;
         } else if (level >= 61 && level <= 70) {
-            all[0] = 4260002;
+            all[0] = 4_260_002;
         } else if (level >= 71 && level <= 80) {
-            all[0] = 4260003;
+            all[0] = 4_260_003;
         } else if (level >= 81 && level <= 90) {
-            all[0] = 4260004;
+            all[0] = 4_260_004;
         } else if (level >= 91 && level <= 100) {
-            all[0] = 4260005;
+            all[0] = 4_260_005;
         } else if (level >= 101 && level <= 110) {
-            all[0] = 4260006;
+            all[0] = 4_260_006;
         } else if (level >= 111 && level <= 120) {
-            all[0] = 4260007;
+            all[0] = 4_260_007;
         } else if (level >= 121 && level <= 200) {
-            all[0] = 4260008;
+            all[0] = 4_260_008;
         } else {
             throw new RuntimeException("Invalid Item Maker type" + level);
         }
@@ -329,7 +337,7 @@ public class ItemMakerHandler {
 
     private static final int getRandomGem(final List<Pair<Integer, Integer>> rewards) {
         int itemid;
-        final List<Integer> items = new ArrayList<Integer>();
+        final List<Integer> items = new ArrayList<>();
 
         for (final Pair p : rewards) {
             itemid = (Integer) p.getLeft();
@@ -356,15 +364,15 @@ public class ItemMakerHandler {
 
     private static final boolean hasSkill(final MapleClient c, final int reqlvl) {
         if (GameConstants.isKOC(c.getPlayer().getJob())) { // KoC Maker skill.
-            return c.getPlayer().getSkillLevel(SkillFactory.getSkill(10001007)) >= reqlvl;
+            return c.getPlayer().getSkillLevel(SkillFactory.getSkill(10_001_007)) >= reqlvl;
         } else if (GameConstants.isAran(c.getPlayer().getJob())) { // KoC Maker skill.
-            return c.getPlayer().getSkillLevel(SkillFactory.getSkill(20001007)) >= reqlvl;
+            return c.getPlayer().getSkillLevel(SkillFactory.getSkill(20_001_007)) >= reqlvl;
         } else if (GameConstants.isEvan(c.getPlayer().getJob())) { // KoC Maker skill.
-            return c.getPlayer().getSkillLevel(SkillFactory.getSkill(20011007)) >= reqlvl;
+            return c.getPlayer().getSkillLevel(SkillFactory.getSkill(20_011_007)) >= reqlvl;
         } else if (GameConstants.isResist(c.getPlayer().getJob())) { // KoC Maker skill.
-            return c.getPlayer().getSkillLevel(SkillFactory.getSkill(30001007)) >= reqlvl;
+            return c.getPlayer().getSkillLevel(SkillFactory.getSkill(30_001_007)) >= reqlvl;
         } else {
-            return c.getPlayer().getSkillLevel(SkillFactory.getSkill(1007)) >= reqlvl;
+            return c.getPlayer().getSkillLevel(SkillFactory.getSkill(1_007)) >= reqlvl;
         }
     }
 }

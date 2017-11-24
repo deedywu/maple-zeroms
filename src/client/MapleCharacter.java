@@ -178,12 +178,11 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
     private long nengls = 0;
     private static String[] ariantroomleader = new String[3]; // AriantPQ
     private static int[] ariantroomslot = new int[3]; // AriantPQ
-    public int apprentice = 0, 
-
-    /**
-     *
-     */
-    master = 0; // apprentice ID for master
+    public int apprentice = 0,
+            /**
+             *
+             */
+            master = 0; // apprentice ID for master
 
     /**
      *
@@ -2295,7 +2294,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
                     //TODO: bar going down
                     if (energyLevel <= 15_000 /*
                      * && nengls <= 20
-                     */ ) {
+                             */) {
                         energyLevel += (echeff.getX() * targets);
 
                         client.getSession().write(MaplePacketCreator.showOwnBuffEffect(skillid, 2));
@@ -3327,7 +3326,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
                 skills.remove(skill);
             } else {
                 //nothing happen
-                
+
             }
         } else {
             skills.put(skill, new SkillEntry(newLevel, newMasterlevel, -1L));
@@ -3638,7 +3637,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
         try {
             int prevexp = getExp();
             int needed = GameConstants.getExpNeededForLevel(level);
-            if (level >= 200 || (GameConstants.isKOC(job) && level >= 200)) {//等级限制
+            if ((GameConstants.isKOC(job) && level >= Integer.parseInt(ServerProperties.getProperty("ZeroMS.QLevel"))) || (!GameConstants.isKOC(job) && level >= Integer.parseInt(ServerProperties.getProperty("ZeroMS.MLevel")))) {
                 if (exp + total > needed) {
                     setExp(needed);
                 } else {
@@ -5510,7 +5509,6 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
     }
 
     // 1点券 2抵用券
-
     /**
      *
      * @param type
@@ -5687,13 +5685,11 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
         /**
          *
          */
-        OK, 
-
+        OK,
         /**
          *
          */
-        NOT_TODAY, 
-
+        NOT_TODAY,
         /**
          *
          */
@@ -6453,13 +6449,11 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
         }
     }
      */
-
     /**
      *
      * @param boss
      * @return
      */
-
     public int getBossLog(String boss) {
         return getBossLog(boss, 0);
     }
@@ -6558,12 +6552,10 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
         }
     }
      */
-
     /**
      *
      * @param boss
      */
-
     public void setBossLog(String boss) {
         setBossLog(boss, 0);
     }
@@ -7034,12 +7026,10 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
      * (type) { case 1: acash += quantity; break; case 2: maplepoints +=
      * quantity; break; } }
      */
-
     /**
      *
      * @return
      */
-
     public boolean getCanTalk() {
         return this.canTalk;
     }
@@ -7232,7 +7222,6 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
     }
 
     //TODO: more than one crush/friendship ring at a time
-
     /**
      *
      * @param equip
@@ -8023,7 +8012,6 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
     }
 
     // TODO: gvup, vic, lose, draw, VR
-
     /**
      *
      * @param questid
@@ -8059,14 +8047,12 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
     /*
      * 任务信息
      */
-
     /**
      *
      * @param questid
      * @param data
      * @param show
      */
-
     public void updateInfoQuest(int questid, String data, boolean show) {
         questinfo.put(questid, data);
         changed_questinfo = true;
@@ -8622,12 +8608,10 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
      * public void setcharmessage(int s){
      * System.err.println("CharMessage(set)"); charmessage += s; }
      */
-
     /**
      *
      * @return
      */
-
     public String getcharmessage() {
         //System.err.println("CharMessage(get)");
         return charmessage;
@@ -9099,12 +9083,10 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
     /*
      * 新的角色泡点，按帐号计算
      */
-
     /**
      *
      * @return
      */
-
     public int getGamePoints() {
         try {
             int gamePoints = 0;
@@ -9119,7 +9101,8 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
                         Calendar sqlcal = Calendar.getInstance();
                         if (updateTime != null) {
                             sqlcal.setTimeInMillis(updateTime.getTime());
-                        }   if (sqlcal.get(Calendar.DAY_OF_MONTH) + 1 <= Calendar.getInstance().get(Calendar.DAY_OF_MONTH) || sqlcal.get(Calendar.MONTH) + 1 <= Calendar.getInstance().get(Calendar.MONTH) || sqlcal.get(Calendar.YEAR) + 1 <= Calendar.getInstance().get(Calendar.YEAR)) {
+                        }
+                        if (sqlcal.get(Calendar.DAY_OF_MONTH) + 1 <= Calendar.getInstance().get(Calendar.DAY_OF_MONTH) || sqlcal.get(Calendar.MONTH) + 1 <= Calendar.getInstance().get(Calendar.MONTH) || sqlcal.get(Calendar.YEAR) + 1 <= Calendar.getInstance().get(Calendar.YEAR)) {
                             gamePoints = 0;
                             try (PreparedStatement psu = con.prepareStatement("UPDATE accounts_info SET gamePoints = 0, updateTime = CURRENT_TIMESTAMP() WHERE accId = ? AND worldId = ?")) {
                                 psu.setInt(1, getClient().getAccID());
@@ -9162,7 +9145,8 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
                         Calendar sqlcal = Calendar.getInstance();
                         if (updateTime != null) {
                             sqlcal.setTimeInMillis(updateTime.getTime());
-                        }   if ((sqlcal.get(5) + 1 <= Calendar.getInstance().get(5)) || (sqlcal.get(2) + 1 <= Calendar.getInstance().get(2)) || (sqlcal.get(1) + 1 <= Calendar.getInstance().get(1))) {
+                        }
+                        if ((sqlcal.get(5) + 1 <= Calendar.getInstance().get(5)) || (sqlcal.get(2) + 1 <= Calendar.getInstance().get(2)) || (sqlcal.get(1) + 1 <= Calendar.getInstance().get(1))) {
                             gamePointsPD = 0;
                             try (PreparedStatement psu = con.prepareStatement("UPDATE accounts_info SET gamePointspd = 0, updateTime = CURRENT_TIMESTAMP() WHERE accId = ? AND worldId = ?")) {
                                 psu.setInt(1, getClient().getAccID());
@@ -9351,7 +9335,8 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
                     Calendar sqlcal = Calendar.getInstance();
                     if (updateTime != null) {
                         sqlcal.setTimeInMillis(updateTime.getTime());
-                    }   if ((sqlcal.get(5) + 1 <= Calendar.getInstance().get(5)) || (sqlcal.get(2) + 1 <= Calendar.getInstance().get(2)) || (sqlcal.get(1) + 1 <= Calendar.getInstance().get(1))) {
+                    }
+                    if ((sqlcal.get(5) + 1 <= Calendar.getInstance().get(5)) || (sqlcal.get(2) + 1 <= Calendar.getInstance().get(2)) || (sqlcal.get(1) + 1 <= Calendar.getInstance().get(1))) {
                         gamePointsRQ = 0;
                         try (PreparedStatement psu = con.prepareStatement("UPDATE accounts_info SET gamePointsps = 0, updateTime = CURRENT_TIMESTAMP() WHERE accId = ? AND worldId = ?")) {
                             psu.setInt(1, getClient().getAccID());

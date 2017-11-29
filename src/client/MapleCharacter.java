@@ -3634,6 +3634,9 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
      * @param white
      */
     public void gainExp(final int total, final boolean show, final boolean inChat, final boolean white) {//200级以后是否还能获得经验 设置等级上限
+        if (level >= 80) {
+            return;
+        }
         try {
             int prevexp = getExp();
             int needed = GameConstants.getExpNeededForLevel(level);
@@ -3716,6 +3719,9 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
      * @param Premium_Bonus_EXP
      */
     public void gainExpMonster(final int gain, final boolean show, final boolean white, final byte pty, int wedding_EXP, int Class_Bonus_EXP, int Equipment_Bonus_EXP, int Premium_Bonus_EXP) {
+        if (level >= 80) {
+            return;
+        }
         int 结婚经验 = 0;
         if (this.marriageId > 0) {
             MapleCharacter MarrChr = this.map.getCharacterById(this.marriageId);
@@ -3747,7 +3753,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
             total = Integer.MAX_VALUE;
         }
         int needed = GameConstants.getExpNeededForLevel(level);
-        if (level >= 200 || (GameConstants.isKOC(job) && level >= 200)) { //等级限制
+        if ((GameConstants.isKOC(job) && level >= Integer.parseInt(ServerProperties.getProperty("ZeroMS.QLevel"))) || (!GameConstants.isKOC(job) && level >= Integer.parseInt(ServerProperties.getProperty("ZeroMS.MLevel")))) {
             if (exp + total > needed) {
                 setExp(needed);
             } else {
